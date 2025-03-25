@@ -12,3 +12,30 @@ const servicePartModel = require('./servicePart')(db)
 const serviceTypeModel = require('./serviceType')(db)
 const supplierModel = require('./supplier')(db)
 const userModel = require('./user')(db)
+const repairModel = require('./repair')(db)
+
+//user-car
+
+
+//car-appointment
+
+
+//invoice-appointment
+
+
+//service-appointment
+
+
+//appointment-employee-serviceType
+
+
+//repair-feedback
+
+
+//employee-request
+
+
+//repair-part
+
+
+//part-supplier
