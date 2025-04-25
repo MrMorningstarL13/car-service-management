@@ -1,5 +1,9 @@
-@import "tailwindcss"
+@import "tailwindcss";
 
-/* @theme {
-    --color-primary: rgba()
-} */
+@theme {
+    --color-primary: rgba(189, 198, 103, 1);
+    --color-secondary: rgba(119, 150, 109, 1);  
+    --color-tertiary: rgba(98, 109, 88, 1);
+    --color-contrast-primary: rgba(84, 67, 67, 1);
+    --color-contrast-secondary: rgba(86, 40, 45, 1);
+}
