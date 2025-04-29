@@ -1,44 +1,75 @@
 const db = require('../config/db')
 
-const appointmentModel = require('./appointment')(db)
-const carModel = require('./car')(db)
-const employeeModel = require('./employee')(db)
-const feedbackModel = require('./feedback')(db)
-const invoiceModel = require('./invoice')(db)
-const partModel = require('./part')(db)
-const requestModel = require('./request')(db)
-const serviceModel = require('./service')(db)
-const servicePartModel = require('./servicePart')(db)
-const serviceTypeModel = require('./serviceType')(db)
-const supplierModel = require('./supplier')(db)
-const userModel = require('./user')(db)
-const repairModel = require('./repair')(db)
+const Appointment = require('./appointment')(db)
+const Car = require('./car')(db)
+const Employee = require('./employee')(db)
+const Feedback = require('./feedback')(db)
+const Invoice = require('./invoice')(db)
+const Part = require('./part')(db)
+const Request = require('./request')(db)
+const Service = require('./service')(db)
+const ServicePart = require('./servicePart')(db)
+const ServiceType = require('./serviceType')(db)
+const Supplier = require('./supplier')(db)
+const User = require('./user')(db)
+const Repair = require('./repair')(db)
 
-//user-car
+User.hasMany(Car)
+Car.belongsTo(User)
 
-
-//car-appointment
-
+Car.hasMany(Appointment)
+Appointment.belongsTo(Car)
 
 //invoice-appointment
-
+Invoice.hasOne(Appointment)
+Appointment.belongsTo(Invoice)
 
 //service-appointment
-
+Service.hasMany(Appointment)
+Appointment.belongsTo(Service)
 
 //appointment-employee-serviceType
+Appointment.belongsToMany(Employee, {through: Repair })
+Employee.belongsToMany(Appointment, {through: Repair })
 
+Appointment.belongsToMany(ServiceType, {through: Repair })
+ServiceType.belongsToMany(Appointment, {through: Repair })
+
+Employee.belongsToMany(ServiceType, {through: Repair })
+ServiceType.belongsToMany(Employee, {through: Repair })
 
 //repair-feedback
-
+Repair.hasMany(Feedback)
+Feedback.belongsTo(Repair)
 
 //employee-request
-
+Employee.hasMany(Request)
+Request.belongsTo(Employee)
 
 //repair-part
-
+Repair.hasMany(Part)
+Part.belongsTo(Repair)
 
 //part-supplier
-
+Part.belongsToMany(Supplier)
+Supplier.belongsToMany(Part)
 
 //user-service
+User.belongsToMany(Service, {through: 'Favourite' })
+Service.belongsToMany(User, {through: 'Favourite' })
+
+module.exports = {
+    db,
+    Car,
+    Employee,
+    Feedback,
+    Invoice,
+    Part,
+    Request,
+    Service,
+    ServicePart,
+    ServiceType,
+    Supplier,
+    User,
+    Repair,
+}
