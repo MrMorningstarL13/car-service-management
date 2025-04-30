@@ -20,4 +20,6 @@ module.exports = (db) => {
     }, {
         freezeTableName: true
     })
+
+    return requestModel;
 }

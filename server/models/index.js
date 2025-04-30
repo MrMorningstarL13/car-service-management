@@ -2,10 +2,10 @@ const db = require('../config/db')
 
 const Appointment = require('./appointment')(db)
 const Car = require('./car')(db)
-const Employee = require('./employee')(db)
 const Feedback = require('./feedback')(db)
 const Invoice = require('./invoice')(db)
 const Part = require('./part')(db)
+const Employee = require('./employee')(db)
 const Request = require('./request')(db)
 const Service = require('./service')(db)
 const ServicePart = require('./servicePart')(db)
@@ -51,8 +51,8 @@ Repair.hasMany(Part)
 Part.belongsTo(Repair)
 
 //part-supplier
-Part.belongsToMany(Supplier)
-Supplier.belongsToMany(Part)
+Part.belongsToMany(Supplier, {through: "part_supplier_junc" })
+Supplier.belongsToMany(Part, {through: "part_supplier_junc" })
 
 //user-service
 User.belongsToMany(Service, {through: 'Favourite' })
