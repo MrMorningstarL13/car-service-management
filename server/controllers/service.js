@@ -29,6 +29,22 @@ const serviceController = {
         } catch (error) {
             res.status(500).json('An error occurred while getting the services.');
         }
+    },
+
+    getById: async (req, res) => {
+        try {
+            const serviceId = req.params.serviceId;
+
+            const searchedService = Service.findByPk(serviceId)
+
+            if(searchedService){
+                res.status(200).json(searchedService)
+            } else {
+                res.status(404).json("No such service was found.")
+            }
+        } catch (error) {
+            res.status(500).json('An error ocurred while getting the specified service.')
+        }
     }
 }
 

@@ -60,7 +60,7 @@ export default function ShopCard({ shop }: ShopProps) {
         </div>
         <div className="flex items-center bg-[rgba(119,150,109,0.2)] px-2 py-1 rounded-full">
           <Star className="h-4 w-4 text-[rgba(86,40,45,1)] mr-1" />
-          <span className="font-medium text-[rgba(84,67,67,1)]">{shop.rating}</span>
+          {/* <span className="font-medium text-[rgba(84,67,67,1)]">{shop.rating}</span> */}
         </div>
       </div>
 
@@ -70,15 +70,15 @@ export default function ShopCard({ shop }: ShopProps) {
             <img src={shop.image || "/placeholder.svg"} alt={shop.name} className="object-cover w-full h-full" />
           </div>
           <div className="ml-4">
-            <div className="text-[rgba(84,67,67,0.9)] mb-1">Distance: {shop.distance}</div>
-            <div className="text-sm text-[rgba(98,109,88,1)]">{shop.availableServices.length} services available</div>
+            {/* <div className="text-[rgba(84,67,67,0.9)] mb-1">Distance: {shop.distance}</div> */}
+            {/* <div className="text-sm text-[rgba(98,109,88,1)]">{shop.availableServices.length} services available</div> */}
           </div>
         </div>
 
         <div className="mt-2">
           <h4 className="text-sm font-medium text-[rgba(84,67,67,1)] mb-2">Available Services:</h4>
           <div className="flex flex-wrap gap-3">
-            {shop.availableServices.map((service, index) => renderServiceIcon(service, index))}
+            {/* {shop.availableServices.map((service, index) => renderServiceIcon(service, index))} */}
           </div>
         </div>
       </div>

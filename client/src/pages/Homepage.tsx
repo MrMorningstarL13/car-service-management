@@ -1,8 +1,17 @@
 import ShopCard from "../components/ShopCard"
 import Navbar from "../components/Navbar"
+import useServiceStore from "../stores/serviceStore"
+import {useEffect} from 'react'
 
 export default function Home() {
-  const shops = [
+
+  const {services, fetchShops} = useServiceStore()
+  useEffect(() => {
+    fetchShops()
+    console.warn(services)
+  }, [fetchShops])
+
+  const shops = services.length > 0 ? services : [
     {
       id: 1,
       name: "Downtown Auto Care",
