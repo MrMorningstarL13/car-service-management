@@ -1,4 +1,5 @@
 const db = require('../config/db')
+const serviceType = require('./serviceType')
 
 const Appointment = require('./appointment')(db)
 const Car = require('./car')(db)
@@ -20,15 +21,12 @@ Car.belongsTo(User)
 Car.hasMany(Appointment)
 Appointment.belongsTo(Car)
 
-//invoice-appointment
 Invoice.hasOne(Appointment)
 Appointment.belongsTo(Invoice)
 
-//service-appointment
 Service.hasMany(Appointment)
 Appointment.belongsTo(Service)
 
-//appointment-employee-serviceType
 Appointment.belongsToMany(Employee, {through: Repair })
 Employee.belongsToMany(Appointment, {through: Repair })
 
@@ -38,25 +36,23 @@ ServiceType.belongsToMany(Appointment, {through: Repair })
 Employee.belongsToMany(ServiceType, {through: Repair })
 ServiceType.belongsToMany(Employee, {through: Repair })
 
-//repair-feedback
 Repair.hasMany(Feedback)
 Feedback.belongsTo(Repair)
 
-//employee-request
 Employee.hasMany(Request)
 Request.belongsTo(Employee)
 
-//repair-part
 Repair.hasMany(Part)
 Part.belongsTo(Repair)
 
-//part-supplier
 Part.belongsToMany(Supplier, {through: "part_supplier_junc" })
 Supplier.belongsToMany(Part, {through: "part_supplier_junc" })
 
-//user-service
 User.belongsToMany(Service, {through: 'Favourite' })
 Service.belongsToMany(User, {through: 'Favourite' })
+
+Service.belongsToMany(serviceType, {through: "available_service_type"})
+serviceType.belongsToMany(Service, {through: "available_service_type" })
 
 module.exports = {
     db,

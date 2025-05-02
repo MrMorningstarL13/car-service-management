@@ -20,7 +20,7 @@ app.use(cors({
 
 app.get('/reset', async (req, res) => {
     try {
-        db.sync({force: true});
+        db.sync({alter: true});
         res.status(200).json({message: "reset ok"})
     } catch(err) {
         res.status(500).warn("there was an error during reset")
