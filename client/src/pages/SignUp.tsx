@@ -1,6 +1,4 @@
 
-
-
 export default function SignUp() {
 
     return (
@@ -8,7 +6,7 @@ export default function SignUp() {
             <div className="bg-primary rounded-xl p-4">
                 <div className="flex flex-col">
                     <label className="text-black">Email</label>
-                    <input type="text" placeholder="type email here nigga" className="w-full pl-10 py-2 pr-3 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"/>
+                    <input type="text" placeholder="type email here" className="w-full pl-10 py-2 pr-3 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"/>
                 </div>
 
             </div>
