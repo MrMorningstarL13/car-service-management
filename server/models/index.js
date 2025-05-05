@@ -1,5 +1,4 @@
 const db = require('../config/db')
-const serviceType = require('./serviceType')
 
 const Appointment = require('./appointment')(db)
 const Car = require('./car')(db)
@@ -51,8 +50,8 @@ Supplier.belongsToMany(Part, {through: "part_supplier_junc" })
 User.belongsToMany(Service, {through: 'Favourite' })
 Service.belongsToMany(User, {through: 'Favourite' })
 
-Service.belongsToMany(serviceType, {through: "available_service_type"})
-serviceType.belongsToMany(Service, {through: "available_service_type" })
+Service.belongsToMany(ServiceType, {through: "available_service_type"})
+ServiceType.belongsToMany(Service, {through: "available_service_type" })
 
 module.exports = {
     db,
