@@ -20,9 +20,9 @@ const userController = {
             })
 
             const cookieName = `${createdUser.id}-token`
+            Cookies.set(cookieName, token, { expires: 1/12 })
 
             if(createdUser){
-                Cookies.set(cookieName, token, { expires: 1/12 })
                 res.status(200).json(token)
             } else {
                 res.status(500).json("received user is not ok")
