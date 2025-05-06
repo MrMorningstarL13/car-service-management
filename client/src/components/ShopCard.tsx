@@ -1,4 +1,4 @@
-import { MapPin, Star, AlertOctagon, BatteryCharging, Droplet, RefreshCw, Settings, Thermometer } from "lucide-react"
+import { MapPin, Star, AlertOctagon, BatteryCharging, Droplet, RefreshCw, Settings, Thermometer, Car, Wrench } from "lucide-react"
 
 interface ShopProps {
   shop: {
@@ -67,10 +67,13 @@ export default function ShopCard({ shop }: ShopProps) {
       <div className="p-4">
         <div className="flex items-center mb-4">
           <div className="relative h-20 w-32 rounded-md overflow-hidden">
+            {shop.image ?
             <img src={shop.image || "/placeholder.svg"} alt={shop.name} className="object-cover w-full h-full" />
-          </div>
+              :
+              <Car className="w-full h-full bg-primary" strokeWidth={1.25}/>
+          }
+            </div>
           <div className="ml-4">
-            {/* <div className="text-[rgba(84,67,67,0.9)] mb-1">Distance: {shop.distance}</div> */}
             {/* <div className="text-sm text-[rgba(98,109,88,1)]">{shop.availableServices.length} services available</div> */}
           </div>
         </div>

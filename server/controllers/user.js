@@ -19,10 +19,10 @@ const userController = {
                 expiresIn: '2h'
             })
 
-            const cookieName = `${createdUser.id}-token`
-            Cookies.set(cookieName, token, { expires: 1/12 })
-
+            
             if(createdUser){
+                const cookieName = `token-${createdUser.id}`
+                Cookies.set(cookieName, token, { expires: 1/12 })
                 res.status(200).json(token)
             } else {
                 res.status(500).json("received user is not ok")
@@ -31,6 +31,33 @@ const userController = {
             console.warn("error when creating a user")
         }
     },
+
+    logIn: async (req, res) => {
+        try {
+            const { email, password } = req.body
+            const user = await User.findOne({ where: { email: email } })
+
+            if(!user) {
+                res.status(404).json("User not found")
+            } else {
+                const isPasswordCorrect = await bcrypt.compare(password, user.password)
+
+                if(!isPasswordCorrect) {
+                    res.status(401).json("Password is incorrect")
+                } else {
+                    const token = jwt.sign({ id: user.id }, JWT_SECRET, {
+                        expiresIn: '2h'
+                    })
+
+                    const cookieName = `token-${user.id}`
+                    Cookies.set(cookieName, token, { expires: 1/12 })
+                    res.status(200).json(token)
+                }
+            }
+        } catch (error) {
+            console.warn("error when logging in")
+        }
+     },
 
     getAllUsers: async (req, res) => {
         try {
