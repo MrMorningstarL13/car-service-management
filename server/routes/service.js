@@ -7,5 +7,6 @@ router.post('/create', serviceController.create)
 router.get('/getAllShops', serviceController.getAll)
 router.get('/getServiceById', serviceController.getById)
 router.get('/getServiceTypes/:shopId', serviceController.getServiceTypesByShop)
+router.post('/addServiceType/:shopId/:serviceTypeName', serviceController.addServiceTypeToShop)
 
 module.exports = router

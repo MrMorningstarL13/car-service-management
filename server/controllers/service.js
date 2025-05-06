@@ -19,9 +19,15 @@ const serviceController = {
 
     getAll: async (req, res) => {
         try {
-            const services = await Service.findAll();
+            const services = await Service.findAll({
+                include: {
+                    model: ServiceType,
+                    as: 'availableServiceTypes',
+                    through: { attributes: [] },
+                }
+            });
 
-            if(services.length === 0){
+            if (services.length === 0) {
                 res.status(404).json("There are no services.")
             } else {
                 res.status(200).json(services)
@@ -38,7 +44,7 @@ const serviceController = {
 
             const searchedService = Service.findByPk(serviceId)
 
-            if(searchedService){
+            if (searchedService) {
                 res.status(200).json(searchedService)
             } else {
                 res.status(404).json("No such service was found.")
@@ -48,45 +54,33 @@ const serviceController = {
         }
     },
 
-    getServiceTypesByShop: async (req, res) => {
-        try {
-            const { shopId } = req.params
-            const searchedShop = await Service.findByPk(shopId, {
-                include: [{
-                    model: ServiceType,
-                    as: 'serviceTypes',
-                    through: {
-                        attributes: [],
-                    },
-                }]
-            })
-
-            if(!searchedShop) {
-                res.status(404).json("Shop not found")
-            } else {
-
-            }
-            
-        } catch (error) {
-            console.warn("error when getting all service types")
-        }
-    },
-
     addServiceTypeToShop: async (req, res) => {
         try {
-        
+            
             const service = await Service.findByPk(req.params.shopId)
-            const searchedServiceType = await ServiceType.findOne({ where: { name: req.params.serviceTypeName } })
-            const wasAssigned = await service.addServiceType(searchedServiceType)
 
-            if(wasAssigned) {
-                res.status(200).json("Service type was added successfully")
+//            console.log(Object.getOwnPropertyNames(Object.getPrototypeOf(service)));
+
+            if (!service) {
+                res.status(404).json("Shop not found")
             } else {
-                res.status(404).json("Service type was not added to shop")
+                const searchedServiceType = await ServiceType.findOne({ where: { name: req.params.serviceTypeName } })
+                if (!searchedServiceType) {
+                    res.status(404).json("Service type not found")
+                } else {
+                    const wasAssigned = await service.addService_type(searchedServiceType)
+
+                    if (wasAssigned) {
+                        res.status(200).json("Service type was added successfully")
+                    } else {
+                        res.status(404).json("Service type was not added to shop")
+                    }
+
+                }
             }
-        
+
         } catch (error) {
-            console.warn("error when adding service type to shop")
+            console.warn(error.message)
         }
     }
 }
