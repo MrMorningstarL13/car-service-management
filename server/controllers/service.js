@@ -22,7 +22,7 @@ const serviceController = {
             const services = await Service.findAll({
                 include: {
                     model: ServiceType,
-                    as: 'availableServiceTypes',
+                    as: 'service_types',
                     through: { attributes: [] },
                 }
             });
@@ -34,7 +34,7 @@ const serviceController = {
             }
 
         } catch (error) {
-            res.status(500).json('An error occurred while getting the services.');
+            res.status(500).json("There was an error when retrieving the services.");
         }
     },
 
@@ -59,8 +59,6 @@ const serviceController = {
             
             const service = await Service.findByPk(req.params.shopId)
 
-//            console.log(Object.getOwnPropertyNames(Object.getPrototypeOf(service)));
-
             if (!service) {
                 res.status(404).json("Shop not found")
             } else {
@@ -80,7 +78,7 @@ const serviceController = {
             }
 
         } catch (error) {
-            console.warn(error.message)
+            console.warn("error when adding service type to shop")
         }
     }
 }

@@ -7,7 +7,7 @@ interface ShopProps {
     address: string
     rating: number
     distance: string
-    availableServices: string[]
+    service_types: string[]
     image: string
   }
 }
@@ -68,13 +68,13 @@ export default function ShopCard({ shop }: ShopProps) {
         <div className="flex items-center mb-4">
           <div className="relative h-20 w-32 rounded-md overflow-hidden">
             {shop.image ?
-            <img src={shop.image || "/placeholder.svg"} alt={shop.name} className="object-cover w-full h-full" />
+            <img src={shop.image} alt={shop.name} className="object-cover w-full h-full" />
               :
               <Car className="w-full h-full bg-primary" strokeWidth={1.25}/>
           }
             </div>
           <div className="ml-4">
-            {/* <div className="text-sm text-[rgba(98,109,88,1)]">{shop.availableServices.length} services available</div> */}
+            <div className="text-sm text-[rgba(98,109,88,1)]">{shop.service_types.length} services available</div>
           </div>
         </div>
 
