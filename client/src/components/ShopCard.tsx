@@ -14,11 +14,11 @@ interface ShopProps {
 
 export default function ShopCard({ shop }: ShopProps) {
   // Function to render service icons
-  const renderServiceIcon = (iconName: string, index: number) => {
+  const renderServiceIcon = (service: string, index: number) => {
     const iconSize = "h-5 w-5"
     const iconClass = "text-[rgba(98,109,88,1)]"
 
-    switch (iconName) {
+    switch (service) {
       case "oil-can":
         return <Droplet key={index} className={`${iconSize} ${iconClass}`} >
           <title>Oil Change</title>
@@ -81,7 +81,7 @@ export default function ShopCard({ shop }: ShopProps) {
         <div className="mt-2">
           <h4 className="text-sm font-medium text-[rgba(84,67,67,1)] mb-2">Available Services:</h4>
           <div className="flex flex-wrap gap-3">
-            {/* {shop.availableServices.map((service, index) => renderServiceIcon(service, index))} */}
+            {shop.service_types.map((service, index) => renderServiceIcon(service, index))}
           </div>
         </div>
       </div>
