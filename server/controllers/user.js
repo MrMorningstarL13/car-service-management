@@ -55,12 +55,12 @@ const userController = {
                     res.cookie("bearer", token, {
                         maxAge: 4 * 60 * 60 * 1000,
                         httpOnly: true,
-                    }).status(200)
+                    }).status(200).json(user)
 
                 }
             }
         } catch (error) {
-            console.warn("error when logging in")
+            console.warn("Error when logging in")
         }
      },
 

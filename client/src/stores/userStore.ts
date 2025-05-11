@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import axios from 'axios';
+import { useAuthStore } from './useAuthStore';
 const URL: string = 'http://localhost:8080/api/user';
 
 type User = {
@@ -19,20 +20,17 @@ type LogInUser = {
 
 type Store = {
     user: object;
-    isloggedIn: boolean;
     createUser: (newUser: User) => Promise<void>;
     logIn: (user: LogInUser) => Promise<void>;
 };
 
 const useUserStore = create<Store>((set) => ({
     user: {},
-    isloggedIn: false,
     createUser: async (newUser) => {
         try {
 
             const response = await axios.post(`${URL}/signUp`, newUser)
             set({ user: response.data })
-            set({ isloggedIn: true })
 
         } catch (error) {
             console.warn('error creating user');
@@ -42,9 +40,13 @@ const useUserStore = create<Store>((set) => ({
 
     logIn: async (user) => {
         try {
-            const response = await axios.post(`${URL}/logIn`, user)
+            const response = await axios.post(`${URL}/logIn`, user, {
+                withCredentials: true,
+            })
+
             set({ user: response.data })
-            set({ isloggedIn: true })
+
+            await useAuthStore.getState().checkAuth();
         } catch (error) {
             console.warn('error logging in user');
         }

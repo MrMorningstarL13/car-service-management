@@ -1,10 +1,12 @@
 import useUserStore from "../stores/userStore"
 import { useNavigate } from 'react-router'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuthStore } from "../stores/useAuthStore";
 export default function LogIn() {
 
     const { logIn } = useUserStore();
+    const { loggedIn } = useAuthStore();
     const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
@@ -15,11 +17,13 @@ export default function LogIn() {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         await logIn(formData);
-
-        if(useUserStore.getState().isloggedIn) {
-            navigate("/")
-        }
     }
+
+    useEffect(() => {
+        if (loggedIn) {
+            navigate("/");
+        }
+    },[loggedIn])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

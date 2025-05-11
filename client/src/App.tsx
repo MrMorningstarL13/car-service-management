@@ -16,10 +16,10 @@ function App() {
 
                 <Route element={<AuthGate />}>
                     <Route path="/" element={<Home />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/history" element={<History />} />
                 </Route>
 
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/history" element={<History />} />
             </Routes>
         </Router>
     )
