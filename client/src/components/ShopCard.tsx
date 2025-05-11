@@ -13,7 +13,6 @@ interface ShopProps {
 }
 
 export default function ShopCard({ shop }: ShopProps) {
-  // Function to render service icons
   const renderServiceIcon = (service: string, index: number) => {
     const iconSize = "h-5 w-5"
     const iconClass = "text-[rgba(98,109,88,1)]"
