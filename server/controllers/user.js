@@ -16,13 +16,16 @@ const userController = {
             const createdUser = await User.create(data)
 
             const token = jwt.sign({ id: createdUser.id }, JWT_SECRET, {
-                expiresIn: '2h'
+                expiresIn: '4h'
             })
 
             
             if(createdUser){
-                const cookieName = `token-${createdUser.id}`
-                Cookies.set(cookieName, token, { expires: 1/12 })
+
+                res.cookie("bearer", token, {
+                    maxAge: 4 * 60 * 60 * 1000,
+                    httpOnly: true,
+                })
                 res.status(200).json(token)
             } else {
                 res.status(500).json("received user is not ok")
@@ -38,20 +41,22 @@ const userController = {
             const user = await User.findOne({ where: { email: email } })
 
             if(!user) {
-                res.status(404).json("User not found")
+                return res.status(404).json("User not found")
             } else {
                 const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
                 if(!isPasswordCorrect) {
-                    res.status(401).json("Password is incorrect")
+                    return res.status(401).json("Password is incorrect")
                 } else {
                     const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-                        expiresIn: '2h'
+                        expiresIn: '4h'
                     })
 
-                    const cookieName = `token-${user.id}`
-                    Cookies.set(cookieName, token, { expires: 1/12 })
-                    res.status(200).json(token)
+                    res.cookie("bearer", token, {
+                        maxAge: 4 * 60 * 60 * 1000,
+                        httpOnly: true,
+                    }).status(200)
+
                 }
             }
         } catch (error) {

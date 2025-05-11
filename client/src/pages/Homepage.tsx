@@ -1,6 +1,7 @@
 import ShopCard from "../components/ShopCard"
 import Navbar from "../components/Navbar"
 import useServiceStore from "../stores/serviceStore"
+import userStore from "../stores/userStore"
 import { useEffect } from 'react'
 
 export default function Home() {
@@ -8,7 +9,6 @@ export default function Home() {
   const { services, fetchShops } = useServiceStore()
   useEffect(() => {
     fetchShops()
-    console.warn(services)
   }, [fetchShops])
 
   return (

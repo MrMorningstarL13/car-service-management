@@ -3,10 +3,12 @@ require('dotenv').config()
 const { db } = require('./models') 
 const router = require('./routes')
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 
 const port = 8080
 const app = express()
 
+app.use(cookieParser())
 app.use(express.json())
 
 app.listen(port, () => {

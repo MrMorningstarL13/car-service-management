@@ -1,9 +1,12 @@
 import useUserStore from "../stores/userStore"
-import { useState } from 'react'
+import { useNavigate } from 'react-router'
 
+import { useState } from 'react'
 export default function LogIn() {
 
     const { logIn } = useUserStore();
+    const navigate = useNavigate()
+
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -12,6 +15,10 @@ export default function LogIn() {
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         await logIn(formData);
+
+        if(useUserStore.getState().isloggedIn) {
+            navigate("/")
+        }
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,6 +43,7 @@ export default function LogIn() {
                     </div>
                     <button type="submit">Log in</button>
                 </form>
+                <a href="/signup" className="text-blue-500 hover:underline mt-4 block text-center">Don't have an account? Create one now</a>
             </div>
         </main>
     )
