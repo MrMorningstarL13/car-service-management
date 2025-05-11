@@ -22,6 +22,7 @@ type Store = {
     user: object;
     createUser: (newUser: User) => Promise<void>;
     logIn: (user: LogInUser) => Promise<void>;
+    logOut: () => Promise<void>;
 };
 
 const useUserStore = create<Store>((set) => ({
@@ -29,9 +30,13 @@ const useUserStore = create<Store>((set) => ({
     createUser: async (newUser) => {
         try {
 
-            const response = await axios.post(`${URL}/signUp`, newUser)
+            const response = await axios.post(`${URL}/signUp`, newUser, {
+                withCredentials: true,
+            })
+
             set({ user: response.data })
 
+            await useAuthStore.getState().checkAuth();
         } catch (error) {
             console.warn('error creating user');
         }
@@ -51,6 +56,18 @@ const useUserStore = create<Store>((set) => ({
             console.warn('error logging in user');
         }
     },
+
+    logOut: async () => {
+        try {
+            await axios.post(`${URL}/logOut`, {}, {
+                withCredentials: true
+            })
+            set({ user: {} })
+            useAuthStore.getState().loggedIn = false;
+        } catch (error) {
+            console.warn('error logging out user');
+        }
+    }
 }))
 
 export default useUserStore;

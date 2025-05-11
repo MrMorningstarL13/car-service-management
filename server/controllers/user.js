@@ -25,8 +25,8 @@ const userController = {
                 res.cookie("bearer", token, {
                     maxAge: 4 * 60 * 60 * 1000,
                     httpOnly: true,
-                })
-                res.status(200).json(token)
+                }).status(200).json(createdUser)
+
             } else {
                 res.status(500).json("received user is not ok")
             }
@@ -61,6 +61,16 @@ const userController = {
             }
         } catch (error) {
             console.warn("Error when logging in")
+        }
+     },
+
+     logOut: async (req, res) => {
+        try {
+            res.clearCookie("bearer", {
+                httpOnly: true,
+            }).status(200).json("User logged out")
+        } catch (error) {
+            console.warn("Error when logging out")
         }
      },
 

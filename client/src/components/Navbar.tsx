@@ -1,11 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Home, User, Clock, Menu, X } from "lucide-react"
-import { useLocation } from "react-router"
+import { Search, Home, User, Clock, Menu, X, LogOut } from "lucide-react"
+import { useLocation, useNavigate } from "react-router"
 import NavButton from "./NavButton"
+import useUserStore from "../stores/userStore"
 
 export default function Navbar() {
+    const navigate = useNavigate()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const location = useLocation()
@@ -13,6 +15,13 @@ export default function Navbar() {
     const isHomePage = location.pathname === "/"
     const isProfilePage = location.pathname === "/profile"
     const isHistoryPage = location.pathname === "/history"
+
+    const { logOut } = useUserStore()
+
+    const handleLogout = async () => {
+        await logOut()
+        navigate("/login")
+    }
 
     return (
         <nav className="bg-[rgba(189,198,103,1)] shadow-md relative">
@@ -39,6 +48,7 @@ export default function Navbar() {
                         <NavButton icon={Home} label="Home" href="/" isActive={isHomePage} />
                         <NavButton icon={User} label="Profile" href="/profile" isActive={isProfilePage} />
                         <NavButton icon={Clock} label="History" href="/history" isActive={isHistoryPage} />
+                        <NavButton icon={LogOut} label="Log out" href="/login" isActive={false} onClick={handleLogout} />
                     </div>
 
                     <div className="md:hidden">
@@ -91,9 +101,18 @@ export default function Navbar() {
                                 isMobile={true}
                                 onClick={() => setIsMenuOpen(false)}
                             />
-
+                            <NavButton
+                                icon={LogOut}
+                                label="Log out"
+                                href="/login"
+                                isActive={false}
+                                isMobile={true}
+                                onClick={() => {
+                                    setIsMenuOpen(false)
+                                    handleLogout()
+                                }}
+                            />
                         </div>
-
                     </div>
                 )}
             </div>

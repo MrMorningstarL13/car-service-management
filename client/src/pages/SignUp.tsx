@@ -1,8 +1,11 @@
 import useUserStore from "../stores/userStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAuthStore } from "../stores/useAuthStore";
+import { useNavigate } from "react-router";
 
 export default function SignUp() {
-
+    const navigate = useNavigate();
+    const { loggedIn } = useAuthStore();
     const { createUser } = useUserStore();
     const [formData, setFormData] = useState({
         firstName: "",
@@ -18,6 +21,12 @@ export default function SignUp() {
         e.preventDefault();
         await createUser(formData);
     }
+
+    useEffect(() => {
+            if (loggedIn) {
+                navigate("/");
+            }
+        },[loggedIn])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
