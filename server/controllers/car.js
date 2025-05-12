@@ -43,6 +43,23 @@ const carController = {
             res.status(500).json({ message: error.message });
         }
     },
+
+    deleteById: async (req, res) => {
+        try {
+            const carId = req.params.carId;
+            const deletedCar = await Car.destroy({
+                where: { id: carId },
+            });
+
+            if (!deletedCar) {
+                return res.status(404).json({ message: "Car not found" });
+            }
+
+            res.status(200).json({ message: "Car deleted successfully" });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    },
 }
 
 module.exports = carController;
