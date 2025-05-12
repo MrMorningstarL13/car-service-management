@@ -1,5 +1,9 @@
 const { User } = require('../models');
 const { Car } = require('../models');
+const axios = require('axios');
+
+const CUSTOM_SEARCH_API_KEY =  'AIzaSyDdVkqy-pvJS12ERY2hVbcbQM6KfE7MJwo' 
+const SEARCH_ENGINE_ID = '262303ae0aceb464d';
 
 const carController = {
     create: async (req, res) => {
@@ -22,7 +26,7 @@ const carController = {
 
     getAllByUserId: async (req, res) => {
         try {
-            
+
             const userId = req.params.userId;
             const searchedUser = await User.findByPk(userId);
             if (!searchedUser) {
@@ -60,6 +64,40 @@ const carController = {
             res.status(500).json({ message: error.message });
         }
     },
+
+    getImage: async (req, res) => {
+        try {
+            const { brand, model } = req.query;
+            if (!brand || !model) {
+                return res.status(400).json({ message: "Brand and model are required" });
+            }
+            
+            const query = `${brand} ${model} car`;
+            
+            const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+                params: {
+                    q: query,
+                    cx: SEARCH_ENGINE_ID,
+                    key: CUSTOM_SEARCH_API_KEY,
+                    searchType: 'image',
+                    num: 1,
+                },
+            })
+
+            const imageUrl = response.data.items[0]?.link;
+
+            if (!imageUrl) {
+                return res.status(404).json({ message: "No image found" });
+            } else return res.status(200).json({ imageUrl });
+
+        } catch (error) {
+            return res.status(500).json(error.message);
+        }
+    },
+
+    //     <script async src="https://cse.google.com/cse.js?cx=262303ae0aceb464d">
+    //     </script>
+    //     <div class="gcse-search"></div>
 }
 
 module.exports = carController;

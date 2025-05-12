@@ -4,7 +4,6 @@ import { useAuthStore } from './useAuthStore';
 const URL: string = 'http://localhost:8080/api/user';
 
 type User = {
-    id: string;
     firstName: string;
     lastName: string;
     email: string;

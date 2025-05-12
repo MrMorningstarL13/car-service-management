@@ -1,38 +1,40 @@
 import { create } from 'zustand';
 import axios from 'axios';
-const URL: string = 'http://localhost:8080/api/car/';
+const URL: string = 'http://localhost:8080/api/car';
 import useUserStore from './userStore';
 
-type Car = {
-    id: string;
+type BaseCar = {
     brand: string;
     model: string;
-    yearOfProduction: number;
+    yearOfProduction: string;
     engineType: string;
-    kilometrage: number;
+    kilometrage: string;
     isInsured: boolean;
 }
 
+type BackendCar = BaseCar & { id: number }
+
 type Store = {
-    cars: Car[];
+    cars: BackendCar[];
     fetchCars: () => Promise<void>;
-    addCar: (newCar: Car) => Promise<void>;
+    addCar: (newCar: BaseCar) => Promise<void>;
     deleteCar: (carId: string) => Promise<void>;
+    getImage: (brand: string, model: string) => Promise<any>;
 }
 
 const useCarStore = create<Store>((set) => ({
     cars: [],
     fetchCars: async () => {
         try {
-            const response = await axios.get(`${URL}/${(useUserStore.getState().user as { id: string }).id}`, { withCredentials: true });
+            const response = await axios.get(`${URL}/getByUser/${(useUserStore.getState().user as { id: string }).id}`, { withCredentials: true });
             set({ cars: response.data });
         } catch (error) {
-            console.warn('error fetching cars');
+            console.warn(error);
         }
     },
     addCar: async (newCar) => {
         try {
-            const response = await axios.post(`${URL}/${(useUserStore.getState().user as { id: string }).id}`, newCar, { withCredentials: true });
+            const response = await axios.post(`${URL}/create/${(useUserStore.getState().user as { id: string }).id}`, newCar, { withCredentials: true });
             set((state) => ({ cars: [...state.cars, response.data] }));
         } catch (error) {
             console.warn('error adding car');
@@ -40,10 +42,20 @@ const useCarStore = create<Store>((set) => ({
     },
     deleteCar: async (carId) => {
         try {
-            await axios.delete(`${URL}/${carId}`, { withCredentials: true });
-            set((state) => ({ cars: state.cars.filter(car => car.id !== carId) }));
+            await axios.delete(`${URL}/delete/${carId}`, { withCredentials: true });
+            set((state) => ({ cars: state.cars.filter(car => (car).id !== Number(carId)) }));
         } catch (error) {
             console.warn('error deleting car');
         }
+    },
+    getImage: async (brand, model) => {
+        try {
+            const response = await axios.get(`${URL}/search?brand=${brand}&model=${model}`, { withCredentials: true });
+            return response;
+        } catch (error) {
+            console.warn(error);
+        }
     }
 }))
+
+export default useCarStore;
