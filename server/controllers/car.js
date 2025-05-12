@@ -4,17 +4,21 @@ const Car = require('../models/car');
 const carController = {
     create: async (req, res) => {
         try {
-            const car = req.body;
+            const searchedUser = await User.findByPk(req.params.userId);
+            const createdCar = await Car.create(req.body);
 
-            await Car.create(car);
-
-            res.status(201).json(car);
+            const isOk = await searchedUser.addCar(createdCar);
+            if (isOk) {
+                res.status(200).json(createdCar);
+            } else {
+                res.status(400).json('Failed to create car.');
+            }
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
     },
 
-    getAllPerUser: async (req, res) => {
+    getAllByUserId: async (req, res) => {
         try {
             
             const userId = req.params.userId;
@@ -36,5 +40,7 @@ const carController = {
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    }
+    },
 }
+
+module.exports = carController;
