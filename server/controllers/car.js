@@ -1,11 +1,13 @@
 const { User } = require('../models');
-const Car = require('../models/car');
+const { Car } = require('../models');
 
 const carController = {
     create: async (req, res) => {
         try {
             const searchedUser = await User.findByPk(req.params.userId);
-            const createdCar = await Car.create(req.body);
+
+            const data = req.body;
+            const createdCar = await Car.create(data);
 
             const isOk = await searchedUser.addCar(createdCar);
             if (isOk) {
