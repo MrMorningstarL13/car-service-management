@@ -32,7 +32,7 @@ const useCarStore = create<Store>((set) => ({
     },
     addCar: async (newCar) => {
         try {
-            const response = await axios.post(`${URL}/add/${(useUserStore.getState().user as { id: string }).id}`, newCar, { withCredentials: true });
+            const response = await axios.post(`${URL}/${(useUserStore.getState().user as { id: string }).id}`, newCar, { withCredentials: true });
             set((state) => ({ cars: [...state.cars, response.data] }));
         } catch (error) {
             console.warn('error adding car');
@@ -40,7 +40,7 @@ const useCarStore = create<Store>((set) => ({
     },
     deleteCar: async (carId) => {
         try {
-            await axios.delete(`${URL}/delete/${carId}`, { withCredentials: true });
+            await axios.delete(`${URL}/${carId}`, { withCredentials: true });
             set((state) => ({ cars: state.cars.filter(car => car.id !== carId) }));
         } catch (error) {
             console.warn('error deleting car');
