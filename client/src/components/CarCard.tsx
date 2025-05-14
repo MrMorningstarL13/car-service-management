@@ -46,11 +46,12 @@ export default function CarCard({ car }: CarCardProps) {
 
     useEffect(() => {
         const fetchImage = async () => {
-            const image = await getImage(car.brand, car.model);
-            setImageUrl(image);
+            const image = await getImage(car.brand, car.model, car.yearOfProduction);
+            console.warn(image.data.imageUrl);
+            setImageUrl(image.data.imageUrl);
         };
         fetchImage();
-    }, [car.brand, car.model, getImage]);
+    }, [car.brand, car.model, car.yearOfProduction, getImage]);
 
     return (
         <div className="car-card overflow-hidden rounded-lg border border-[rgba(189,198,103,0.5)] transition-all duration-300 hover:shadow-lg">

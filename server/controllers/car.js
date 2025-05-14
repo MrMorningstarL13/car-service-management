@@ -67,12 +67,12 @@ const carController = {
 
     getImage: async (req, res) => {
         try {
-            const { brand, model } = req.query;
-            if (!brand || !model) {
-                return res.status(400).json({ message: "Brand and model are required" });
+            const { brand, model, yearOfProduction } = req.query;
+            if (!brand || !model || !yearOfProduction) {
+                return res.status(400).json({ message: "Brand, model and production year are required" });
             }
             
-            const query = `${brand} ${model} car`;
+            const query = `${brand} ${model} ${yearOfProduction} car`;
             
             const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
                 params: {
@@ -94,10 +94,6 @@ const carController = {
             return res.status(500).json(error.message);
         }
     },
-
-    //     <script async src="https://cse.google.com/cse.js?cx=262303ae0aceb464d">
-    //     </script>
-    //     <div class="gcse-search"></div>
 }
 
 module.exports = carController;

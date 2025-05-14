@@ -19,7 +19,7 @@ type Store = {
     fetchCars: () => Promise<void>;
     addCar: (newCar: BaseCar) => Promise<void>;
     deleteCar: (carId: string) => Promise<void>;
-    getImage: (brand: string, model: string) => Promise<any>;
+    getImage: (brand: string, model: string, yearOfProduction: string) => Promise<any>;
 }
 
 const useCarStore = create<Store>((set) => ({
@@ -48,9 +48,9 @@ const useCarStore = create<Store>((set) => ({
             console.warn('error deleting car');
         }
     },
-    getImage: async (brand, model) => {
+    getImage: async (brand, model, yearOfProduction) => {
         try {
-            const response = await axios.get(`${URL}/search?brand=${brand}&model=${model}`, { withCredentials: true });
+            const response = await axios.get(`${URL}/search?brand=${brand}&model=${model}&yearOfProduction=${yearOfProduction}`, { withCredentials: true });
             return response;
         } catch (error) {
             console.warn(error);
