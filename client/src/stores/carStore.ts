@@ -18,7 +18,7 @@ type Store = {
     cars: BackendCar[];
     fetchCars: () => Promise<void>;
     addCar: (newCar: BaseCar) => Promise<void>;
-    deleteCar: (carId: string) => Promise<void>;
+    deleteCar: (carId: number) => Promise<void>;
     getImage: (brand: string, model: string, yearOfProduction: string) => Promise<any>;
 }
 

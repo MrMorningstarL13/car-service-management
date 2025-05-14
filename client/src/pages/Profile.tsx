@@ -46,6 +46,10 @@ export default function Profile() {
         })
     }
 
+    const handleDelete = (id: number) => {
+        deleteCar(id)
+    }
+
     useEffect(() => {
         fetchCars();
     }, [fetchCars])
@@ -176,7 +180,6 @@ export default function Profile() {
                         </div>
                     </div>
 
-                    {/* Content - Right Side */}
                     <div className="w-full md:w-2/3">
                         <div className="bg-white rounded-lg shadow-md p-6 border border-[rgba(189,198,103,0.3)]">
 
@@ -188,7 +191,8 @@ export default function Profile() {
 
                                             return (
                                                 <div className="mb-4" key={car.id}>
-                                                    <CarCard car={car} />
+                                                    <CarCard car={car}
+                                                    onDelete={() => handleDelete(car.id)} />
                                                 </div>
                                             )
                                         })
@@ -198,7 +202,6 @@ export default function Profile() {
                                 (<h2 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">You have no registered cars. Consider adding one using the form.</h2>)
                             }
 
-                            {/* You can add more profile content here */}
                         </div>
                     </div>
                 </div>

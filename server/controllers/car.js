@@ -72,7 +72,7 @@ const carController = {
                 return res.status(400).json({ message: "Brand, model and production year are required" });
             }
             
-            const query = `${brand} ${model} ${yearOfProduction} car`;
+            const query = `${brand} ${model} ${yearOfProduction} car desktop wallpaper`;
             
             const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
                 params: {
@@ -85,6 +85,7 @@ const carController = {
             })
 
             const imageUrl = response.data.items[0]?.link;
+            console.warn(imageUrl);
 
             if (!imageUrl) {
                 return res.status(404).json({ message: "No image found" });

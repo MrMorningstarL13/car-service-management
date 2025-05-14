@@ -3,7 +3,7 @@ import useCarStore from "../stores/carStore";
 import { useEffect, useState } from "react"
 
 export interface CarData {
-
+    id: number
     brand: string;
     model: string;
     yearOfProduction: string;
@@ -14,10 +14,10 @@ export interface CarData {
 
 interface CarCardProps {
     car: CarData
-    onDelete?: (id: number) => void
+    onDelete: (id: number) => void
 }
 
-export default function CarCard({ car }: CarCardProps) {
+export default function CarCard({ car, onDelete }: CarCardProps) {
 
     const getEngineDisplayName = (type: string) => {
         const types: Record<string, string> = {
@@ -139,12 +139,12 @@ export default function CarCard({ car }: CarCardProps) {
             >
               Edit
             </button> */}
-                        {/* <button
-              onClick={() => onDelete && onDelete(car.id)}
+                        <button
+              onClick={() => onDelete(car.id)}
               className="px-3 py-1 text-sm rounded border border-[rgba(86,40,45,1)] text-[rgba(86,40,45,1)] hover:bg-[rgba(86,40,45,0.1)] transition-colors duration-200"
             >
               Delete
-            </button> */}
+            </button>
                     </div>
                 </div>
             </div>
