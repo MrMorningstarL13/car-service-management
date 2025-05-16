@@ -13,39 +13,6 @@ interface ShopProps {
 }
 
 export default function ShopCard({ shop }: ShopProps) {
-  const renderServiceIcon = (service: string, index: number) => {
-    const iconSize = "h-5 w-5"
-    const iconClass = "text-[rgba(98,109,88,1)]"
-
-    switch (service) {
-      case "oil-can":
-        return <Droplet key={index} className={`${iconSize} ${iconClass}`} >
-          <title>Oil Change</title>
-        </Droplet>
-      case "refresh-cw":
-        return <RefreshCw key={index} className={`${iconSize} ${iconClass}`} >
-          <title>Tire Rotation</title>
-        </RefreshCw>
-      case "alert-octagon":
-        return <AlertOctagon key={index} className={`${iconSize} ${iconClass}`} >
-          <title>Brake Service</title>
-        </AlertOctagon>
-      case "settings":
-        return <Settings key={index} className={`${iconSize} ${iconClass}`} >
-          <title>Engine Tune-Up</title>
-        </Settings>
-      case "thermometer":
-        return <Thermometer key={index} className={`${iconSize} ${iconClass}`} >
-          <title>A/C Service</title>
-        </Thermometer>
-      case "battery-charging":
-        return <BatteryCharging key={index} className={`${iconSize} ${iconClass}`} >
-          <title>Battery Replacement</title>
-        </BatteryCharging>
-      default:
-        return null
-    }
-  }
 
   return (
     <div className="overflow-hidden rounded-lg border border-[rgba(119,150,109,0.5)] hover:shadow-md transition-shadow duration-300 bg-white">
@@ -74,13 +41,6 @@ export default function ShopCard({ shop }: ShopProps) {
             </div>
           <div className="ml-4">
             <div className="text-sm text-[rgba(98,109,88,1)]">{shop.service_types.length} services available</div>
-          </div>
-        </div>
-
-        <div className="mt-2">
-          <h4 className="text-sm font-medium text-[rgba(84,67,67,1)] mb-2">Available Services:</h4>
-          <div className="flex flex-wrap gap-3">
-            {shop.service_types.map((service, index) => renderServiceIcon(service, index))}
           </div>
         </div>
       </div>
