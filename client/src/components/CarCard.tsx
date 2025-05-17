@@ -133,12 +133,6 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
                     </div>
 
                     <div className="mt-4 flex justify-end space-x-2">
-                        {/* <button
-              onClick={() => onEdit && onEdit(car)}
-              className="px-3 py-1 text-sm rounded border border-[rgba(119,150,109,1)] text-[rgba(119,150,109,1)] hover:bg-[rgba(119,150,109,0.1)] transition-colors duration-200"
-            >
-              Edit
-            </button> */}
                         <button
               onClick={() => onDelete(car.id)}
               className="px-3 py-1 text-sm rounded border border-[rgba(86,40,45,1)] text-[rgba(86,40,45,1)] hover:bg-[rgba(86,40,45,0.1)] transition-colors duration-200"

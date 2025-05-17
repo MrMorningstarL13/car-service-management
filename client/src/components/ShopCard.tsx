@@ -1,4 +1,4 @@
-import { MapPin, Star, AlertOctagon, BatteryCharging, Droplet, RefreshCw, Settings, Thermometer, Car, Wrench } from "lucide-react"
+import { MapPin, Star, Car } from "lucide-react"
 
 interface ShopProps {
   shop: {

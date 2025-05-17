@@ -2,7 +2,7 @@ const { User } = require('../../models')
 const jwt = require('jsonwebtoken')
 const JWT_SECRET = process.env.JWT_SECRET || 'secret'
 
-const checkAuth = (req, res) => {
+const checkAuth = (req, res, next) => {
 
     const token = req.cookies.bearer
 
