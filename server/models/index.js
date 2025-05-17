@@ -21,7 +21,9 @@ Car.hasMany(Appointment)
 Appointment.belongsTo(Car)
 
 Invoice.hasOne(Appointment)
-Appointment.belongsTo(Invoice)
+Appointment.belongsTo(Invoice,
+    {foreignKey: { name: 'invoiceId', allowNull: true },}
+)
 
 Service.hasMany(Appointment)
 Appointment.belongsTo(Service)

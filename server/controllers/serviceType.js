@@ -26,6 +26,25 @@ const serviceTypeController = {
         } catch (error) {
             console.warn("error when getting all service types")
         }
+    },
+
+    getServiceTypesByShop: async (req, res) => {
+        try {
+            const serviceTypes = await Service.findByPk(req.params.serviceId,{
+                include: {
+                    model: ServiceType,
+                    as: 'service_types',
+                    through: { attributes: [] },
+                }
+            })
+            if(serviceTypes.length === 0){
+                res.status(404).json("There are no service types.")
+            } else {
+                res.status(200).json(serviceTypes)
+            }
+        } catch (error) {
+            console.warn("error when getting service types by shop")
+        }
     }
 }
 
