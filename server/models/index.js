@@ -28,14 +28,14 @@ Appointment.belongsTo(Invoice,
 Service.hasMany(Appointment)
 Appointment.belongsTo(Service)
 
-Appointment.belongsToMany(Employee, {through: Repair })
-Employee.belongsToMany(Appointment, {through: Repair })
+Repair.belongsTo(Appointment)
+Appointment.hasMany(Repair)
 
-Appointment.belongsToMany(ServiceType, {through: Repair })
-ServiceType.belongsToMany(Appointment, {through: Repair })
+Repair.belongsTo(Employee)
+Employee.hasMany(Repair)
 
-Employee.belongsToMany(ServiceType, {through: Repair })
-ServiceType.belongsToMany(Employee, {through: Repair })
+Repair.belongsTo(ServiceType)
+ServiceType.hasMany(Repair)
 
 Repair.hasMany(Feedback)
 Feedback.belongsTo(Repair)

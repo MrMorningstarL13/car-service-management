@@ -31,8 +31,8 @@ export default function NavButton({
         className={cn(
           "flex items-center px-4 py-2 rounded-md transition-colors",
           isActive
-            ? "bg-[rgba(119,150,109,0.4)] text-[rgba(86,40,45,1)] font-medium"
-            : "text-[rgba(84,67,67,1)] hover:text-[rgba(86,40,45,1)] hover:bg-[rgba(189,198,103,0.8)]",
+            ? "bg-[rgba(119,150,109,0.4)] text-contrast-secondary font-medium"
+            : "text-contrast-primary hover:text-contrast-secondary hover:bg-[rgba(189,198,103,0.8)]",
         )}
         onClick={onClick}
       >
@@ -49,8 +49,8 @@ export default function NavButton({
       className={cn(
         "flex items-center px-4 py-2 rounded-md",
         isActive
-          ? "bg-[rgba(119,150,109,0.3)] text-[rgba(86,40,45,1)] font-medium"
-          : "text-[rgba(84,67,67,1)] hover:bg-[rgba(119,150,109,0.3)]",
+          ? "bg-[rgba(119,150,109,0.3)] text-contrast-secondary font-medium"
+          : "text-contrast-primary hover:bg-[rgba(119,150,109,0.3)]",
       )}
       onClick={onClick}
     >

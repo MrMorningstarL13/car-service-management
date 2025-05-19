@@ -16,7 +16,7 @@ export default function Home() {
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-[rgba(84,67,67,1)] mb-6">Auto Shops Near You</h1>
+        <h1 className="text-3xl font-bold text-contrast-primary mb-6">Auto Shops Near You</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((shop) => (

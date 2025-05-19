@@ -65,7 +65,7 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
                 <div className="w-full md:w-3/5 p-5">
                     <div className="flex justify-between items-start">
                         <div className="flex flex-col items-start">
-                            <h3 className="text-xl font-bold text-[rgba(84,67,67,1)]">
+                            <h3 className="text-xl font-bold text-contrast-primary">
                                 {car.brand} {car.model}
                             </h3>
                             <div
@@ -84,30 +84,30 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
                                 }`}
                         >
                             {car.isInsured ? (
-                                <Check size={16} className="text-[rgba(119,150,109,1)]" />
+                                <Check size={16} className="text-secondary" />
                             ) : (
-                                <AlertTriangle size={16} className="text-[rgba(86,40,45,1)]" />
+                                <AlertTriangle size={16} className="text-contrast-secondary" />
                             )}
                         </div>
                     </div>
 
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                         <div className="flex items-center">
-                            <Calendar size={18} className="text-[rgba(119,150,109,1)] mr-2" />
+                            <Calendar size={18} className="text-secondary mr-2" />
                             <span className="text-sm text-[rgba(84,67,67,0.9)]">
                                 <span className="font-medium">Year:</span> {car.yearOfProduction}
                             </span>
                         </div>
 
                         <div className="flex items-center">
-                            <Gauge size={18} className="text-[rgba(119,150,109,1)] mr-2" />
+                            <Gauge size={18} className="text-secondary mr-2" />
                             <span className="text-sm text-[rgba(84,67,67,0.9)]">
                                 <span className="font-medium">Kilometrage:</span> {car.kilometrage.toLocaleString()} km
                             </span>
                         </div>
 
                         <div className="flex items-center">
-                            <Fuel size={18} className="text-[rgba(119,150,109,1)] mr-2" />
+                            <Fuel size={18} className="text-secondary mr-2" />
                             <span className="text-sm text-[rgba(84,67,67,0.9)]">
                                 <span className="font-medium">Engine:</span> {getEngineDisplayName(car.engineType)}
                             </span>
@@ -116,14 +116,14 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
                         <div className="flex items-center">
                             {car.isInsured ? (
                                 <>
-                                    <Check size={18} className="text-[rgba(119,150,109,1)] mr-2" />
+                                    <Check size={18} className="text-secondary mr-2" />
                                     <span className="text-sm text-[rgba(84,67,67,0.9)]">
                                         <span className="font-medium">Insurance:</span> Active
                                     </span>
                                 </>
                             ) : (
                                 <>
-                                    <X size={18} className="text-[rgba(86,40,45,1)] mr-2" />
+                                    <X size={18} className="text-contrast-secondary mr-2" />
                                     <span className="text-sm text-[rgba(84,67,67,0.9)]">
                                         <span className="font-medium">Insurance:</span> Not Insured
                                     </span>
@@ -135,7 +135,7 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
                     <div className="mt-4 flex justify-end space-x-2">
                         <button
               onClick={() => onDelete(car.id)}
-              className="px-3 py-1 text-sm rounded border border-[rgba(86,40,45,1)] text-[rgba(86,40,45,1)] hover:bg-[rgba(86,40,45,0.1)] transition-colors duration-200"
+              className="px-3 py-1 text-sm rounded border border-contrast-secondary text-contrast-secondary hover:bg-[rgba(86,40,45,0.1)] transition-colors duration-200"
             >
               Delete
             </button>

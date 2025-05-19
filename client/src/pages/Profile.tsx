@@ -59,12 +59,12 @@ export default function Profile() {
             <Navbar />
 
             <div className="container mx-auto px-4 py-8">
-                <h1 className="text-3xl font-bold text-[rgba(84,67,67,1)] mb-6">Profile</h1>
+                <h1 className="text-3xl font-bold text-contrast-primary mb-6">Profile</h1>
 
                 <div className="flex flex-col md:flex-row gap-8">
                     <div className="w-full md:w-1/3">
                         <div className="bg-white rounded-lg shadow-md p-6 border border-[rgba(189,198,103,0.3)]">
-                            <h2 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Add a Car</h2>
+                            <h2 className="text-xl font-semibold text-contrast-primary mb-4">Add a Car</h2>
 
                             <form onSubmit={handleSubmit}>
                                 <div className="space-y-4">
@@ -78,7 +78,7 @@ export default function Profile() {
                                             name="brand"
                                             value={carData.brand}
                                             onChange={handleChange}
-                                            className="w-full px-3 py-2 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"
+                                            className="w-full px-3 py-2 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
                                             required
                                         />
                                     </div>
@@ -93,7 +93,7 @@ export default function Profile() {
                                             name="model"
                                             value={carData.model}
                                             onChange={handleChange}
-                                            className="w-full px-3 py-2 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"
+                                            className="w-full px-3 py-2 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
                                             required
                                         />
                                     </div>
@@ -113,7 +113,7 @@ export default function Profile() {
                                             onChange={handleChange}
                                             min="1900"
                                             max={new Date().getFullYear()}
-                                            className="w-full px-3 py-2 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"
+                                            className="w-full px-3 py-2 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
                                             required
                                         />
                                     </div>
@@ -127,7 +127,7 @@ export default function Profile() {
                                             name="engineType"
                                             value={carData.engineType}
                                             onChange={handleChange}
-                                            className="w-full px-3 py-2 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"
+                                            className="w-full px-3 py-2 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
                                             required
                                         >
                                             <option value="">Select engine type</option>
@@ -150,7 +150,7 @@ export default function Profile() {
                                             value={carData.kilometrage}
                                             onChange={handleChange}
                                             min="0"
-                                            className="w-full px-3 py-2 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"
+                                            className="w-full px-3 py-2 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
                                             required
                                         />
                                     </div>
@@ -162,7 +162,7 @@ export default function Profile() {
                                             name="isInsured"
                                             checked={carData.isInsured}
                                             onChange={handleChange}
-                                            className="h-4 w-4 text-[rgba(119,150,109,1)] border-[rgba(119,150,109,1)] rounded focus:ring-[rgba(189,198,103,1)]"
+                                            className="h-4 w-4 text-secondary border-secondary rounded focus:ring-primary"
                                         />
                                         <label htmlFor="isInsured" className="ml-2 block text-sm text-[rgba(84,67,67,0.9)]">
                                             Is Insured
@@ -171,7 +171,7 @@ export default function Profile() {
 
                                     <button
                                         type="submit"
-                                        className="w-full mt-2 py-2 px-4 bg-[rgba(119,150,109,1)] hover:bg-[rgba(98,109,88,1)] text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[rgba(189,198,103,1)] focus:ring-opacity-50"
+                                        className="w-full mt-2 py-2 px-4 bg-secondary hover:bg-tertiary text-white font-medium rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50"
                                     >
                                         Add Car
                                     </button>
@@ -185,7 +185,7 @@ export default function Profile() {
 
                             {cars.length > 0 ?
                                 (<>
-                                    <h2 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Your registered cars</h2>
+                                    <h2 className="text-xl font-semibold text-contrast-primary mb-4">Your registered cars</h2>
                                     {
                                         cars.map((car) => {
 
@@ -199,7 +199,7 @@ export default function Profile() {
                                     }
                                 </>)
                                 :
-                                (<h2 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">You have no registered cars. Consider adding one using the form.</h2>)
+                                (<h2 className="text-xl font-semibold text-contrast-primary mb-4">You have no registered cars. Consider adding one using the form.</h2>)
                             }
 
                         </div>
