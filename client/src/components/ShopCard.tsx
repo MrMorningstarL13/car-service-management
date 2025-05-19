@@ -16,10 +16,23 @@ interface ShopProps {
 
 export default function ShopCard({ shop }: ShopProps) {
     const [isBookingMenuOpen, setIsBookingMenuOpen] = useState(false)
-
+    // Add a key state to force remount of BookingMenu
+    const [bookingKey, setBookingKey] = useState(0)
+    
+    // Function to handle opening the booking menu
+    const openBookingMenu = () => {
+        setIsBookingMenuOpen(true)
+    }
+    
+    // Function to handle closing the booking menu and incrementing the key
+    const closeBookingMenu = () => {
+        setIsBookingMenuOpen(false)
+        // Increment key to force a remount when reopened
+        setBookingKey(prevKey => prevKey + 1)
+    }
+    
     return (
         <>
-
             <div className="overflow-hidden rounded-lg border border-[rgba(119,150,109,0.5)] hover:shadow-md transition-shadow duration-300 bg-white">
                 <div className="p-4 flex flex-row items-center space-x-4 bg-[rgba(189,198,103,0.2)]">
                     <div className="flex-1">
@@ -31,10 +44,9 @@ export default function ShopCard({ shop }: ShopProps) {
                     </div>
                     <div className="flex items-center bg-[rgba(119,150,109,0.2)] px-2 py-1 rounded-full">
                         <Star className="h-4 w-4 text-[rgba(86,40,45,1)] mr-1" />
-                        {/* <span className="font-medium text-[rgba(84,67,67,1)]">{shop.rating}</span> */}
+                        <span className="font-medium text-[rgba(84,67,67,1)]">{shop.rating}</span>
                     </div>
                 </div>
-
                 <div className="p-4">
                     <div className="flex items-center mb-4">
                         <div className="relative h-20 w-32 rounded-md overflow-hidden">
@@ -49,25 +61,29 @@ export default function ShopCard({ shop }: ShopProps) {
                         </div>
                     </div>
                 </div>
-
                 <div className="p-4 bg-[rgba(189,198,103,0.1)] flex justify-between">
                     <button className="px-4 py-2 border border-secondary text-tertiary rounded-md hover:bg-[rgba(119,150,109,0.2)] hover:text-[rgba(84,67,67,1)]">
                         View Details
                     </button>
-                    <button className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-tertiary"
-                        onClick={() => setIsBookingMenuOpen(true)}
+                    <button 
+                        className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-tertiary"
+                        onClick={openBookingMenu}
                     >
                         Book Service
                     </button>
                 </div>
             </div>
-
-            <BookingMenu
-                isOpen={isBookingMenuOpen}
-                onClose={() => setIsBookingMenuOpen(false)}
-                shopId={shop.id}
-                shopName={shop.name}
-            />
+           
+            {isBookingMenuOpen && (
+                <BookingMenu
+                    key={bookingKey}
+                    isOpen={isBookingMenuOpen}
+                    onClose={closeBookingMenu}
+                    shopId={shop.id}
+                    shopName={shop.name}
+                    serviceTypes={shop.service_types}
+                />
+            )}
         </>
     )
 }
