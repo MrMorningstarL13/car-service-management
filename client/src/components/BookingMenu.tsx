@@ -38,7 +38,7 @@ interface BookingWizardProps {
 
 export default function BookingWizard({ isOpen, onClose, shopId, shopName, serviceTypes }: BookingWizardProps) {
     const [currentStep, setCurrentStep] = useState(1)
-    const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>([])
+    const [selectedVehicles, setSelectedVehicles] = useState<string[]>([])
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
     const [selectedTime, setSelectedTime] = useState<string | null>(null)
     const [selectedServices, setSelectedServices] = useState<string[]>([])
@@ -104,10 +104,10 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         }
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let priority = "normal"
         for(let service of services){
-            if(service.name.toLowerCase().includes(`/(premium service)/g`))
+            if(service.name.toLowerCase().includes(`premium service`))
                 priority = 'premium'
         }
 
@@ -116,22 +116,19 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
 
         const appointmentData = {priority, date}
 
-        let vehicle:Vehicle;
-
-        for( vehicle of selectedVehicles){
-           create(vehicle.id, shopId, appointmentData)
+        for (const vehicleId of selectedVehicles) {
+            const result = await create(vehicleId, shopId, appointmentData)
+            console.log(result)
         }
 
-        console.log({
-            shopId,
-            vehicles: selectedVehicles,
-            date: selectedDate,
-            time: selectedTime,
-            services: selectedServices,
-        })
+        // console.log({
+        //     shopId,
+        //     vehicles: selectedVehicles,
+        //     date: selectedDate,
+        //     time: selectedTime,
+        //     services: selectedServices,
+        // })
 
-
-        // Reset and close
         onClose()
     }
 
