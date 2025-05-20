@@ -2,6 +2,13 @@ import { MapPin, Star, Car } from "lucide-react"
 import { useState } from "react"
 import BookingMenu from "./BookingMenu"
 
+type service_type = {
+    id: number
+    name: string
+    description: string
+    baseCost: number
+}
+
 interface ShopProps {
     shop: {
         id: number
@@ -9,7 +16,7 @@ interface ShopProps {
         address: string
         rating: number
         distance: string
-        service_types: string[]
+        service_types: service_type[]
         image: string
     }
 }

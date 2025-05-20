@@ -11,7 +11,6 @@ const useServiceStore = create<Store>((set) => ({
     services: [],
     fetchShops: async () => {
         try {
-            
             await axios.get(URL)
             .then( (response) => {
                 set({ services: response.data })

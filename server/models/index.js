@@ -57,6 +57,7 @@ ServiceType.belongsToMany(Service, {through: "available_service_type" })
 
 module.exports = {
     db,
+    Appointment,
     Car,
     Employee,
     Feedback,

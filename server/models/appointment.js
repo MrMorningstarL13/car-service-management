@@ -13,7 +13,6 @@ module.exports = (db) => {
         },
         estimatedDuration: {
             type: DataTypes.STRING,
-            allowNull: false,
         },
         checkIn: {
             type: DataTypes.DATE,
@@ -22,7 +21,7 @@ module.exports = (db) => {
             type: DataTypes.DATE,
         },
         status: {
-            type: DataTypes.ENUM("waiting", "cancelled", "finished"),
+            type: DataTypes.ENUM("waiting", "cancelled", "accepted", "in progress", "denied", "finished"),
             allowNull: false,
         },
         priority: {

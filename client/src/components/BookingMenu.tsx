@@ -9,6 +9,7 @@ import { format } from "date-fns"
 import { Car, CalendarIcon, Wrench, CheckCircle2, ChevronRight, ChevronLeft, X, Clock3 } from "lucide-react"
 
 import carStore from "../stores/carStore"
+import useAppointmentStore from "../stores/appointmentStore"
 
 interface Vehicle {
     id: string
@@ -20,14 +21,11 @@ interface Vehicle {
     isInsured: boolean;
 }
 
-type shop = {
+type service_type = {
     id: number
     name: string
-    address: string
-    rating: number
-    distance: string
-    service_types: string[]
-    image: string
+    description: string
+    baseCost: number
 }
 
 interface BookingWizardProps {
@@ -35,18 +33,18 @@ interface BookingWizardProps {
     onClose: () => void
     shopId: number
     shopName: string
-    serviceTypes: shop["service_types"][]
-    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    serviceTypes: service_type[]
 }
 
 export default function BookingWizard({ isOpen, onClose, shopId, shopName, serviceTypes }: BookingWizardProps) {
     const [currentStep, setCurrentStep] = useState(1)
-    const [selectedVehicles, setSelectedVehicles] = useState<string[]>([])
+    const [selectedVehicles, setSelectedVehicles] = useState<Vehicle[]>([])
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
     const [selectedTime, setSelectedTime] = useState<string | null>(null)
     const [selectedServices, setSelectedServices] = useState<string[]>([])
 
     const { cars } = carStore();
+    const { create } = useAppointmentStore();
 
     const vehicles: Vehicle[] = cars.map((car: any) => ({
         id: String(car.id),
@@ -58,7 +56,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         yearOfProduction: car.year ?? car.yearOfProduction ?? "",
     }));
 
-    const services = serviceTypes
+    const services: service_type[] = serviceTypes
 
     const timeSlots = [
         "9:00 AM",
@@ -76,7 +74,6 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         "3:00 PM",
         "3:30 PM",
         "4:00 PM",
-        "4:30 PM",
     ]
 
     const toggleVehicle = (id: string) => {
@@ -108,7 +105,23 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
     }
 
     const handleSubmit = () => {
-        // Here you would submit the booking data
+        let priority = "normal"
+        for(let service of services){
+            if(service.name.toLowerCase().includes(`/(premium service)/g`))
+                priority = 'premium'
+        }
+
+        let date = selectedDate;
+        
+
+        const appointmentData = {priority, date}
+
+        let vehicle:Vehicle;
+
+        for( vehicle of selectedVehicles){
+           create(vehicle.id, shopId, appointmentData)
+        }
+
         console.log({
             shopId,
             vehicles: selectedVehicles,
@@ -116,6 +129,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
             time: selectedTime,
             services: selectedServices,
         })
+
 
         // Reset and close
         onClose()
@@ -137,8 +151,8 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
     const calculateTotal = () => {
         return (
             selectedServices.reduce((total, serviceId) => {
-                const service = services.find((s) => s.id === serviceId)
-                return total + (service?.price || 0)
+                const service = services.find((s) => s.id === Number(serviceId))
+                return total + (service?.baseCost || 0)
             }, 0) * selectedVehicles.length
         )
     }
@@ -148,7 +162,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
     }
 
     const getSelectedServiceNames = () => {
-        return services.filter((s) => selectedServices.includes(s.id)).map((s) => s.name)
+        return services.filter((s) => selectedServices.includes(String(s.id))).map((s) => s.name)
     }
 
     return (
@@ -285,7 +299,6 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                             onSelect={setSelectedDate}
                                             className="mx-auto"
                                             disabled={(date: any) => {
-                                                // Disable past dates and Sundays
                                                 return date < new Date() || date.getDay() === 0
                                             }}
                                         />
@@ -342,8 +355,8 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                 {services.map((service) => (
                                     <div
                                         key={service.id}
-                                        onClick={() => toggleService(service.id)}
-                                        className={`p-4 rounded-lg cursor-pointer transition-all ${selectedServices.includes(service.id)
+                                        onClick={() => toggleService(String(service.id))}
+                                        className={`p-4 rounded-lg cursor-pointer transition-all ${selectedServices.includes(String(service.id))
                                             ? "bg-primary/20 border-2 border-secondary"
                                             : "bg-white border border-secondary/20 hover:border-secondary/50"
                                             }`}
@@ -353,20 +366,16 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                                 <div className="flex items-center">
                                                     <h4 className="font-medium text-contrast-primary">{service.name}</h4>
                                                     <Badge className="ml-2 bg-secondary/10 text-tertiary border-0">
-                                                        ${service.price.toFixed(2)}
+                                                        ${service.baseCost.toFixed(2)}
                                                     </Badge>
                                                 </div>
                                                 <p className="text-sm text-tertiary mt-1">{service.description}</p>
-                                                <div className="flex items-center mt-1 text-xs text-tertiary">
-                                                    <Clock3 className="h-3 w-3 mr-1" />
-                                                    <span>{service.duration}</span>
-                                                </div>
                                             </div>
                                             <div
-                                                className={`w-6 h-6 rounded-full border flex items-center justify-center ${selectedServices.includes(service.id) ? "bg-secondary border-secondary" : "border-tertiary"
+                                                className={`w-6 h-6 rounded-full border flex items-center justify-center ${selectedServices.includes(String(service.id)) ? "bg-secondary border-secondary" : "border-tertiary"
                                                     }`}
                                             >
-                                                {selectedServices.includes(service.id) && <CheckCircle2 className="h-4 w-4 text-white" />}
+                                                {selectedServices.includes(String(service.id)) && <CheckCircle2 className="h-4 w-4 text-white" />}
                                             </div>
                                         </div>
                                     </div>
@@ -415,11 +424,11 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                     </h4>
                                     <div className="space-y-2">
                                         {services
-                                            .filter((s) => selectedServices.includes(s.id))
+                                            .filter((s) => selectedServices.includes(String(s.id)))
                                             .map((service) => (
                                                 <div key={service.id} className="flex justify-between text-sm pl-6">
                                                     <span className="text-tertiary">{service.name}</span>
-                                                    <span className="text-contrast-primary font-medium">${service.price.toFixed(2)}</span>
+                                                    <span className="text-contrast-primary font-medium">${service.baseCost.toFixed(2)}</span>
                                                 </div>
                                             ))}
                                     </div>
