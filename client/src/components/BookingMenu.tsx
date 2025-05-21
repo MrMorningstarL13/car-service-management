@@ -117,17 +117,18 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         const appointmentData = {priority, date}
 
         for (const vehicleId of selectedVehicles) {
-            const result = await create(vehicleId, shopId, appointmentData)
-            console.log(result)
+            console.log({
+                shopId,
+                vehicleId,
+                vehicles: selectedVehicles,
+                date: selectedDate,
+                time: selectedTime,
+                services: selectedServices,
+            })
+            // const result = await create(vehicleId, shopId, appointmentData)
+            // console.log(result)
         }
 
-        // console.log({
-        //     shopId,
-        //     vehicles: selectedVehicles,
-        //     date: selectedDate,
-        //     time: selectedTime,
-        //     services: selectedServices,
-        // })
 
         onClose()
     }
