@@ -14,6 +14,9 @@ module.exports = (db) => {
         estimatedDuration: {
             type: DataTypes.STRING,
         },
+        estimatedCost:{
+            type: DataTypes.FLOAT,
+        },
         checkIn: {
             type: DataTypes.DATE,
         },

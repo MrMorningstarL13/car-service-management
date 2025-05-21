@@ -117,16 +117,17 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         const appointmentData = {priority, date}
 
         for (const vehicleId of selectedVehicles) {
-            console.log({
-                shopId,
-                vehicleId,
-                vehicles: selectedVehicles,
-                date: selectedDate,
-                time: selectedTime,
-                services: selectedServices,
-            })
-            // const result = await create(vehicleId, shopId, appointmentData)
-            // console.log(result)
+            const result = await create(vehicleId, shopId, appointmentData)
+            console.log(result)
+            for(const serviceTypeId of selectedServices){
+                console.log({
+                    shopId,
+                    vehicleId,
+                    date: selectedDate,
+                    time: selectedTime,
+                    serviceTypes: selectedServices,
+                })
+            }
         }
 
 
@@ -237,9 +238,8 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                     </div>
                 </div>
 
-                {/* Content area */}
                 <div className="p-6 max-h-[60vh] overflow-y-auto">
-                    {/* Step 1: Vehicle Selection */}
+                    {/* Vehicle Selection */}
                     {currentStep === 1 && (
                         <div className="space-y-6">
                             <div>
@@ -279,7 +279,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                         </div>
                     )}
 
-                    {/* Step 2: Date & Time Selection */}
+                    {/* Date & Time Selection */}
                     {currentStep === 2 && (
                         <div className="space-y-6">
                             <div>
@@ -340,7 +340,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                         </div>
                     )}
 
-                    {/* Step 3: Service Selection */}
+                    {/* Service Selection */}
                     {currentStep === 3 && (
                         <div className="space-y-6">
                             <div>
@@ -381,7 +381,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                         </div>
                     )}
 
-                    {/* Step 4: Confirmation */}
+                    {/* Confirmation */}
                     {currentStep === 4 && (
                         <div className="space-y-6">
                             <div>
