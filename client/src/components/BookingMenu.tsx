@@ -165,7 +165,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
 
     return (
         <Dialog open={isOpen} onOpenChange={(open: any) => !open && onClose()}>
-            <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden">
+            <DialogContent className="sm:max-w-[550px] p-0 overflow-hidden" title="Book a service appointment">
                 <div className="bg-primary/20 p-6 border-b border-secondary/20">
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl font-semibold text-contrast-primary">Book Service</h2>
@@ -295,7 +295,6 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                             mode="single"
                                             selected={selectedDate}
                                             onSelect={setSelectedDate}
-                                            className="mx-auto"
                                             disabled={(date: any) => {
                                                 return date < new Date() || date.getDay() === 0
                                             }}
