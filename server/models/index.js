@@ -13,6 +13,13 @@ const ServiceType = require('./serviceType')(db)
 const Supplier = require('./supplier')(db)
 const User = require('./user')(db)
 const Repair = require('./repair')(db)
+const AuthUser = require('./authUser')(db)
+
+AuthUser.hasMany(User)
+User.belongsTo(AuthUser)
+
+AuthUser.hasMany(employee)
+Employee.belongsTo(AuthUser)
 
 User.hasMany(Car)
 Car.belongsTo(User)
@@ -22,20 +29,22 @@ Appointment.belongsTo(Car)
 
 Invoice.hasOne(Appointment)
 Appointment.belongsTo(Invoice,
-    {foreignKey: { name: 'invoiceId', allowNull: true },}
+    { foreignKey: { name: 'invoiceId', allowNull: true } }
 )
 
 Service.hasMany(Appointment)
 Appointment.belongsTo(Service)
 
-Repair.belongsTo(Appointment)
 Appointment.hasMany(Repair)
+Repair.belongsTo(Appointment)
 
-Repair.belongsTo(Employee)
 Employee.hasMany(Repair)
+Repair.belongsTo(Employee,
+    { foreignKey: { name: 'employeeId', allowNull: true } }
+)
 
-Repair.belongsTo(ServiceType)
 ServiceType.hasMany(Repair)
+Repair.belongsTo(ServiceType)
 
 Repair.hasMany(Feedback)
 Feedback.belongsTo(Repair)
