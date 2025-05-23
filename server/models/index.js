@@ -15,11 +15,15 @@ const User = require('./user')(db)
 const Repair = require('./repair')(db)
 const AuthUser = require('./authUser')(db)
 
-AuthUser.hasMany(User)
-User.belongsTo(AuthUser)
+AuthUser.hasOne(User)
+User.belongsTo(AuthUser, 
+    { foreignKey: 'authUserId' }
+)
 
-AuthUser.hasMany(employee)
-Employee.belongsTo(AuthUser)
+AuthUser.hasOne(Employee)
+Employee.belongsTo(AuthUser,
+    { foreignKey: 'authUserId' }
+)
 
 User.hasMany(Car)
 Car.belongsTo(User)
@@ -42,6 +46,9 @@ Employee.hasMany(Repair)
 Repair.belongsTo(Employee,
     { foreignKey: { name: 'employeeId', allowNull: true } }
 )
+
+Service.hasMany(Employee)
+Employee.belongsTo(Service)
 
 ServiceType.hasMany(Repair)
 Repair.belongsTo(ServiceType)
@@ -79,4 +86,5 @@ module.exports = {
     Supplier,
     User,
     Repair,
+    AuthUser,
 }

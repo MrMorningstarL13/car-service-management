@@ -1,37 +1,111 @@
-const { User } = require('../models')
+const { User, AuthUser, Employee, Service } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const Cookies = require('js-cookie')
+const sequelize = require('sequelize')
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret'
 
 const userController = {
     createUser: async (req, res) => {
         try {
-            const data = req.body
 
-            const {password} = data
-            const hashedPassword = await bcrypt.hash(password, 10)
-            data.password = hashedPassword
-            const createdUser = await User.create(data)
+            const result = await sequelize.transaction(async t => {
+                //can't send res.json from inside the transaction
 
-            const token = jwt.sign({ id: createdUser.id }, JWT_SECRET, {
-                expiresIn: '4h'
+                const {
+                    firstName,
+                    lastName,
+                    email,
+                    role,
+                } = req.body
+
+                const existingUser = await AuthUser.findOne({ where: { email: email } }, { transaction: t } )
+                if (existingUser) {
+                    return res.status(409).json("A user already exists with this email")
+                }
+
+                const password = req.body.password
+                const hashedPassword = await bcrypt.hash(password, 10)
+
+                const authUserData = {
+                    firstName,
+                    lastName,
+                    email,
+                    password: hashedPassword,
+                    role,
+                }
+                const createdAuthUser = await AuthUser.create( authUserData, { transaction: t } )
+                let createdEntity = null;
+
+                if (role === 'customer') {
+                    const {
+                        dateOfBirth,
+                        phone,
+                    } = req.body
+
+                    const userData = {
+                        dateOfBirth,
+                        phone,
+                    }
+
+                    const createdUser = await createdAuthUser.createUser( userData, { transaction: t } )
+
+                    if (createdUser)
+                        createdEntity = createdUser
+                    else {
+                        return res.status(500).json("error when creating user")
+                    }
+
+                } else {
+                    const {
+                        hireDate,
+                        position,
+                        experienceLevel,
+                        salary,
+                        isRep,
+                        serviceId
+                    } = req.body
+
+                    const employeeData = {
+                        hireDate,
+                        position,
+                        experienceLevel,
+                        salary,
+                        isRep,
+                        serviceId
+                    }
+
+                    const isServiceValid = await Service.findByPk(serviceId, { transaction: t } )
+
+                    if (!isServiceValid) {
+                        return res.status(404).json("Cannot create employee for inexistent service")
+                    }
+
+                    const createdEmployee = await createdAuthUser.createEmployee( employeeData, { transaction: t } )
+
+                    if (createdEmployee)
+                        createdEntity = createdEmployee
+                    else {
+                        return res.status(500).json("error when creating employee")
+                    }
+                }
+
+                const token = jwt.sign({ id: createdAuthUser.id }, JWT_SECRET, {
+                    expiresIn: '4h'
+                })
+
+                if (createdAuthUser && createdEntity) {
+                    return res.cookie("bearer", token, {
+                        maxAge: 4 * 60 * 60 * 1000,
+                        httpOnly: true,
+                    }).status(200).json({ user: { createdAuthUser, createdEntity } })
+                } else {
+                    return res.status(418).json("error when creating cookie")
+                }
             })
 
-            
-            if(createdUser){
-
-                res.cookie("bearer", token, {
-                    maxAge: 4 * 60 * 60 * 1000,
-                    httpOnly: true,
-                }).status(200).json(createdUser)
-
-            } else {
-                res.status(500).json("received user is not ok")
-            }
         } catch (error) {
-            console.warn("error when creating a user")
+            return res.status(500).json("Internal server error")
         }
     },
 
@@ -40,12 +114,12 @@ const userController = {
             const { email, password } = req.body
             const user = await User.findOne({ where: { email: email } })
 
-            if(!user) {
+            if (!user) {
                 return res.status(404).json("User not found")
             } else {
                 const isPasswordCorrect = await bcrypt.compare(password, user.password)
 
-                if(!isPasswordCorrect) {
+                if (!isPasswordCorrect) {
                     return res.status(401).json("Password is incorrect")
                 } else {
                     const token = jwt.sign({ id: user.id }, JWT_SECRET, {
@@ -60,25 +134,25 @@ const userController = {
                 }
             }
         } catch (error) {
-            console.warn("Error when logging in")
+            return res.status(500).json("Error when logging in")
         }
-     },
+    },
 
-     logOut: async (req, res) => {
+    logOut: async (req, res) => {
         try {
             res.clearCookie("bearer", {
                 httpOnly: true,
             }).status(200).json("User logged out")
         } catch (error) {
-            console.warn("Error when logging out")
+            return res.status(500).json("Error when logging out")
         }
-     },
+    },
 
     getAllUsers: async (req, res) => {
         try {
             const users = await User.findAll()
 
-            if(users.length === 0){
+            if (users.length === 0) {
                 res.status(404).json("There are no users.")
             } else {
                 res.status(200).json(users)

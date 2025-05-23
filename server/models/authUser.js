@@ -23,6 +23,10 @@ module.exports = (db) => {
             type: DataTypes.TEXT,
             allowNull: false,
         },
+        role: {
+            type: DataTypes.ENUM('customer', 'employee'),
+            allowNull: false,
+        }
     },{
         freezeTableName: true
     })
