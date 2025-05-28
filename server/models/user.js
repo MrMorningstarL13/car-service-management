@@ -15,7 +15,6 @@ module.exports = (db) => {
             type: DataTypes.TEXT,
             allowNull: false,
         },
-        
     },{
         freezeTableName: true
     })

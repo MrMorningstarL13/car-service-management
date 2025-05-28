@@ -76,7 +76,7 @@ const userController = {
 
                 const isServiceValid = await Service.findByPk(serviceId)
 
-                if (!isServiceValid) {
+                if (!isServiceValid && !isRep) {
                     return res.status(404).json("Cannot create employee for inexistent service")
                 }
 
@@ -113,7 +113,7 @@ const userController = {
     logIn: async (req, res) => {
         try {
             const { email, password } = req.body
-            const user = await User.findOne({ where: { email: email } })
+            const user = await AuthUser.findOne({ where: { email: email } })
 
             if (!user) {
                 return res.status(404).json("User not found")

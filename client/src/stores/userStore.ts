@@ -6,13 +6,29 @@ import { useAuthStore } from "./useAuthStore"
 const URL: string = "http://localhost:8080/api/user"
 
 type User = {
+  phone: string
+  dateOfBirth: Date
+}
+
+type AuthUser = {
   firstName: string
   lastName: string
   email: string
   password: string
-  phone: string
-  dateOfBirth: Date
-  isAdmin: boolean
+  role: string
+}
+
+type Employee = {
+  hireDate: Date
+  position: string
+  experienceLevel: string
+  salary: number
+  isRep: boolean
+}
+
+type Entity = {
+  user?: User
+  employee?: Employee
 }
 
 type LogInUser = {
@@ -22,7 +38,7 @@ type LogInUser = {
 
 type Store = {
   user: object
-  createUser: (newUser: User) => Promise<void>
+  createUser: (newAuthUser: AuthUser, entity: Entity) => Promise<void>
   logIn: (user: LogInUser) => Promise<void>
   logOut: () => Promise<void>
   initializeUser: () => Promise<void>
@@ -32,9 +48,10 @@ const useUserStore = create<Store>()(
   persist(
     (set, get) => ({
       user: {},
-      createUser: async (newUser) => {
+      createUser: async ( newAuthUser, entity ) => {
+        const entityData = entity.user || entity.employee
         try {
-          const response = await axios.post(`${URL}/signUp`, newUser, {
+          const response = await axios.post(`${URL}/signUp`, { ...newAuthUser, ...entityData }, {
             withCredentials: true,
           })
 
