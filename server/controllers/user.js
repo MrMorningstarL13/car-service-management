@@ -1,111 +1,112 @@
 const { User, AuthUser, Employee, Service } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const sequelize = require('sequelize')
+const sequelize = require('../config/db')
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret'
 
 const userController = {
     createUser: async (req, res) => {
+
+        const t = await sequelize.transaction();
+
         try {
+            const {
+                firstName,
+                lastName,
+                email,
+                role,
+            } = req.body
 
-            const result = await sequelize.transaction(async t => {
-                //can't send res.json from inside the transaction
+            const existingUser = await AuthUser.findOne({ where: { email: email } }, {transaction: t})
+            if (existingUser) {
+                return res.status(409).json("A user already exists with this email")
+            }
 
+            const password = req.body.password
+            const hashedPassword = await bcrypt.hash(password, 10)
+
+            const authUserData = {
+                firstName,
+                lastName,
+                email,
+                password: hashedPassword,
+                role,
+            }
+            const createdAuthUser = await AuthUser.create(authUserData, {transaction: t})
+            let createdEntity = null;
+
+            if (role === 'customer') {
                 const {
-                    firstName,
-                    lastName,
-                    email,
-                    role,
+                    dateOfBirth,
+                    phone,
                 } = req.body
 
-                const existingUser = await AuthUser.findOne({ where: { email: email } }, { transaction: t } )
-                if (existingUser) {
-                    return res.status(409).json("A user already exists with this email")
+                const userData = {
+                    dateOfBirth,
+                    phone,
                 }
 
-                const password = req.body.password
-                const hashedPassword = await bcrypt.hash(password, 10)
+                const createdUser = await createdAuthUser.createUser(userData, {transaction: t})
 
-                const authUserData = {
-                    firstName,
-                    lastName,
-                    email,
-                    password: hashedPassword,
-                    role,
-                }
-                const createdAuthUser = await AuthUser.create( authUserData, { transaction: t } )
-                let createdEntity = null;
-
-                if (role === 'customer') {
-                    const {
-                        dateOfBirth,
-                        phone,
-                    } = req.body
-
-                    const userData = {
-                        dateOfBirth,
-                        phone,
-                    }
-
-                    const createdUser = await createdAuthUser.createUser( userData, { transaction: t } )
-
-                    if (createdUser)
-                        createdEntity = createdUser
-                    else {
-                        return res.status(500).json("error when creating user")
-                    }
-
-                } else {
-                    const {
-                        hireDate,
-                        position,
-                        experienceLevel,
-                        salary,
-                        isRep,
-                        serviceId
-                    } = req.body
-
-                    const employeeData = {
-                        hireDate,
-                        position,
-                        experienceLevel,
-                        salary,
-                        isRep,
-                        serviceId
-                    }
-
-                    const isServiceValid = await Service.findByPk(serviceId, { transaction: t } )
-
-                    if (!isServiceValid) {
-                        return res.status(404).json("Cannot create employee for inexistent service")
-                    }
-
-                    const createdEmployee = await createdAuthUser.createEmployee( employeeData, { transaction: t } )
-
-                    if (createdEmployee)
-                        createdEntity = createdEmployee
-                    else {
-                        return res.status(500).json("error when creating employee")
-                    }
+                if (createdUser)
+                    createdEntity = createdUser
+                else {
+                    return res.status(500).json("error when creating user")
                 }
 
-                const token = jwt.sign({ id: createdAuthUser.id }, JWT_SECRET, {
-                    expiresIn: '4h'
-                })
+            } else {
+                const {
+                    hireDate,
+                    position,
+                    experienceLevel,
+                    salary,
+                    isRep,
+                    serviceId
+                } = req.body
 
-                if (createdAuthUser && createdEntity) {
-                    return res.cookie("bearer", token, {
-                        maxAge: 4 * 60 * 60 * 1000,
-                        httpOnly: true,
-                    }).status(200).json({ user: { createdAuthUser, createdEntity } })
-                } else {
-                    return res.status(418).json("error when creating cookie")
+                const employeeData = {
+                    hireDate,
+                    position,
+                    experienceLevel,
+                    salary,
+                    isRep,
+                    serviceId
                 }
+
+                const isServiceValid = await Service.findByPk(serviceId)
+
+                if (!isServiceValid) {
+                    return res.status(404).json("Cannot create employee for inexistent service")
+                }
+
+                const createdEmployee = await createdAuthUser.createEmployee(employeeData, {transaction: t})
+
+                if (createdEmployee)
+                    createdEntity = createdEmployee
+                else {
+                    return res.status(500).json("error when creating employee")
+                }
+            }
+
+            const token = jwt.sign({ id: createdAuthUser.id }, JWT_SECRET, {
+                expiresIn: '4h'
             })
 
+            if (createdAuthUser && createdEntity) {
+                await t.commit();
+
+                return res.cookie("bearer", token, {
+                    maxAge: 4 * 60 * 60 * 1000,
+                    httpOnly: true,
+                }).status(200).json({ user: { createdAuthUser, createdEntity } })
+            } else {
+                return res.status(418).json("error when creating cookie")
+            }
+
         } catch (error) {
-            return res.status(500).json("Internal server error")
+            await t.rollback()
+            return res.status(500).json(error.message)
         }
     },
 
