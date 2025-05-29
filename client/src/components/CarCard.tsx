@@ -1,15 +1,16 @@
-import { Calendar, Gauge, Fuel, Check, X, AlertTriangle } from "lucide-react"
+import { Calendar, Gauge, Fuel, Check, X, AlertTriangle, IdCard } from "lucide-react"
 import useCarStore from "../stores/carStore";
 import { useEffect, useState } from "react"
 
 export interface CarData {
     id: number
-    brand: string;
-    model: string;
-    yearOfProduction: string;
-    engineType: string;
-    kilometrage: string;
-    isInsured: boolean;
+    brand: string
+    model: string
+    yearOfProduction: string
+    engineType: string
+    kilometrage: string
+    plateNumber: string
+    isInsured: boolean
 }
 
 interface CarCardProps {
@@ -57,7 +58,7 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
         <div className="car-card overflow-hidden rounded-lg border border-[rgba(189,198,103,0.5)] transition-all duration-300 hover:shadow-lg">
             <div className="flex flex-col md:flex-row">
                 <div className="w-full md:w-2/5 bg-[rgba(119,150,109,0.1)] flex items-center justify-center h-48 md:h-auto">
-                    <div className="text-[rgba(119,150,109,0.7)]">
+                    <div className="max-h-60 text-[rgba(119,150,109,0.7)]">
                         <img src={imageUrl!} />
                     </div>
                 </div>
@@ -110,6 +111,13 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
                             <Fuel size={18} className="text-secondary mr-2" />
                             <span className="text-sm text-[rgba(84,67,67,0.9)]">
                                 <span className="font-medium">Engine:</span> {getEngineDisplayName(car.engineType)}
+                            </span>
+                        </div>
+
+                        <div className="flex items-center">
+                            <IdCard size={18} className="text-secondary mr-2" />
+                            <span className="text-sm text-[rgba(84,67,67,0.9)]">
+                                <span className="font-medium">Plate Number:</span> {car.plateNumber}
                             </span>
                         </div>
 

@@ -15,6 +15,7 @@ export default function Profile() {
         yearOfProduction: "",
         engineType: "",
         kilometrage: "",
+        plateNumber: "",
         isInsured: false,
     })
 
@@ -42,6 +43,7 @@ export default function Profile() {
             yearOfProduction: "",
             engineType: "",
             kilometrage: "",
+            plateNumber: "",
             isInsured: false,
         })
     }
@@ -119,6 +121,24 @@ export default function Profile() {
                                     </div>
 
                                     <div>
+                                        <label
+                                            htmlFor="plateNumber"
+                                            className="block text-sm font-medium text-[rgba(84,67,67,0.9)] mb-1"
+                                        >
+                                            Plate Number
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="plateNumber"
+                                            name="plateNumber"
+                                            value={carData.plateNumber}
+                                            onChange={handleChange}
+                                            className="w-full px-3 py-2 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div>
                                         <label htmlFor="engineType" className="block text-sm font-medium text-[rgba(84,67,67,0.9)] mb-1">
                                             Engine Type
                                         </label>
@@ -162,7 +182,7 @@ export default function Profile() {
                                             name="isInsured"
                                             checked={carData.isInsured}
                                             onChange={handleChange}
-                                            className="h-4 w-4 text-secondary border-secondary rounded focus:ring-primary"
+                                            className="h-4 w-4 border-secondary rounded focus:ring-primary"
                                         />
                                         <label htmlFor="isInsured" className="ml-2 block text-sm text-[rgba(84,67,67,0.9)]">
                                             Is Insured

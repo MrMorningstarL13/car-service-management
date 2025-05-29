@@ -6,7 +6,6 @@ const Feedback = require('./feedback')(db)
 const Invoice = require('./invoice')(db)
 const Part = require('./part')(db)
 const Employee = require('./employee')(db)
-const Request = require('./request')(db)
 const Service = require('./service')(db)
 const ServicePart = require('./servicePart')(db)
 const ServiceType = require('./serviceType')(db)
@@ -55,9 +54,6 @@ Repair.belongsTo(ServiceType)
 
 Repair.hasMany(Feedback)
 Feedback.belongsTo(Repair)
-
-Employee.hasMany(Request)
-Request.belongsTo(Employee)
 
 Repair.hasMany(Part)
 Part.belongsTo(Repair)

@@ -9,6 +9,7 @@ type BaseCar = {
     yearOfProduction: string;
     engineType: string;
     kilometrage: string;
+    plateNumber: string
     isInsured: boolean;
 }
 

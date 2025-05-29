@@ -31,6 +31,10 @@ module.exports = (db) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
+        plateNumber: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        }
     }, {
         freezeTableName: true
     })
