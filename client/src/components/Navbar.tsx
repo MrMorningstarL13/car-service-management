@@ -9,7 +9,6 @@ import useUserStore from "../stores/userStore"
 export default function Navbar() {
     const navigate = useNavigate()
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const location = useLocation()
 
     const isHomePage = location.pathname === "/"

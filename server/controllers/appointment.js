@@ -20,6 +20,17 @@ const controller = {
             return res.status(500).send(error.message)
         }
     },
+    getAppointmentsByUser: async (req, res) => {
+        try {
+            
+            const user = req.params.userId;
+
+            
+
+        } catch (error) {
+            return res.status(500).send(error.message)
+        }
+    }
 }
 
 module.exports = controller

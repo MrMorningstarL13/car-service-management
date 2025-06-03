@@ -112,20 +112,24 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         }
 
         let date = selectedDate;
-        
 
-        const appointmentData = {priority, date}
+        const datePart = selectedDate?.toISOString().split('T')[0]
+        const dateTime = `${datePart} ${selectedTime}`
+        
+        const scheduledDate = new Date(dateTime);
+        const status = "waiting"
+
+        const appointmentData = {priority, scheduledDate, status}
 
         for (const vehicleId of selectedVehicles) {
             const result = await create(vehicleId, shopId, appointmentData)
-            console.log(result)
             for(const serviceTypeId of selectedServices){
                 console.log({
                     shopId,
                     vehicleId,
                     date: selectedDate,
                     time: selectedTime,
-                    serviceTypes: selectedServices,
+                    serviceTypes: serviceTypeId,
                 })
             }
         }
