@@ -135,7 +135,7 @@ const userController = {
                 }
             }
         } catch (error) {
-            return res.status(500).json("Error when logging in")
+            return res.status(500).json(error.message)
         }
     },
 
