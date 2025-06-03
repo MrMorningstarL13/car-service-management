@@ -123,6 +123,11 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
 
         for (const vehicleId of selectedVehicles) {
             const result = await create(vehicleId, shopId, appointmentData)
+
+            const appointmentId = 0;
+            console.log(result);
+
+            
             for(const serviceTypeId of selectedServices){
                 console.log({
                     shopId,
