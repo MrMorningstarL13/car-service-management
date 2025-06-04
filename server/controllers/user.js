@@ -162,14 +162,6 @@ const userController = {
             res.status(500).json("There was an error when retrieving the users.")
         }
     },
-
-    getAppointmentsByCar: async (req, res) => {
-        try {
-            
-        } catch (error) {
-            return res.status(500).json(error.message)
-        }
-    }
 }
 
 module.exports = userController
