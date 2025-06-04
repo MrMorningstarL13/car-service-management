@@ -1,18 +1,18 @@
-const {Appointment} = require('../models')
+const { Appointment, Car } = require('../models')
 
 const controller = {
-    createAppointment: async(req, res) => {
+    createAppointment: async (req, res) => {
         try {
             const data = req.body;
-            const {carId, serviceId} = req.params;
-    
-            const appointmentData = {...data, carId, serviceId}
-    
+            const { carId, serviceId } = req.params;
+
+            const appointmentData = { ...data, carId, serviceId }
+
             console.log(appointmentData)
             const response = await Appointment.create(appointmentData)
             console.log(response)
-    
-            if(!response){
+
+            if (!response) {
                 return res.status(400).json("Error when creating appointment")
             }
             return res.status(200).json(response)
@@ -22,10 +22,24 @@ const controller = {
     },
     getAppointmentsByUser: async (req, res) => {
         try {
-            
-            const user = req.params.userId;
+            const userId = req.params.userId
 
-            
+            const carsWithAppointments = await Car.findAll({
+                where: { userId },
+                attributes: ['id', 'brand', 'model', 'yearOfProduction'],
+                include: [
+                    {
+                        model: Appointment,
+                        attributes: ['id', 'scheduledDate', 'status', 'serviceId', 'checkIn', 'checkOut', 'estimatedDuration', 'estimatedCost']
+                    },
+                ],
+            });
+
+            if(carsWithAppointments.length === 0 ){
+                return res.status(404).json("No cars were found. Consider adding a car beforehand")
+            }
+
+            return res.status(200).json(carsWithAppointments)
 
         } catch (error) {
             return res.status(500).send(error.message)

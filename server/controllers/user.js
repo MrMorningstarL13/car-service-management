@@ -161,7 +161,7 @@ const userController = {
         } catch (error) {
             res.status(500).json("There was an error when retrieving the users.")
         }
-    }
+    },
 }
 
 module.exports = userController

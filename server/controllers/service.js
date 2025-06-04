@@ -23,7 +23,6 @@ const serviceController = {
                 include: {
                     model: ServiceType,
                     as: 'service_types',
-                    through: { attributes: [] },
                 }
             });
 
@@ -34,7 +33,7 @@ const serviceController = {
             }
 
         } catch (error) {
-            res.status(500).json("There was an error when retrieving the services.");
+            res.status(500).json(error.message);
         }
     },
 

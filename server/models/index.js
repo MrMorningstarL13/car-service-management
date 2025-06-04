@@ -64,8 +64,8 @@ Supplier.belongsToMany(Part, {through: "part_supplier_junc" })
 User.belongsToMany(Service, {through: 'Favourite' })
 Service.belongsToMany(User, {through: 'Favourite' })
 
-Service.belongsToMany(ServiceType, {through: "available_service_type"})
-ServiceType.belongsToMany(Service, {through: "available_service_type" })
+Service.hasMany(ServiceType)
+ServiceType.belongsTo(Service)
 
 module.exports = {
     db,

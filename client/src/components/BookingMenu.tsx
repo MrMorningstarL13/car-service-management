@@ -111,7 +111,6 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                 priority = 'premium'
         }
 
-        let date = selectedDate;
 
         const datePart = selectedDate?.toISOString().split('T')[0]
         const dateTime = `${datePart} ${selectedTime}`
@@ -124,9 +123,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         for (const vehicleId of selectedVehicles) {
             const result = await create(vehicleId, shopId, appointmentData)
 
-            const appointmentId = 0;
             console.log(result);
-
             
             for(const serviceTypeId of selectedServices){
                 console.log({
@@ -451,9 +448,8 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                         <div className="text-xl font-bold text-contrast-primary">${calculateTotal().toFixed(2)}</div>
                                     </div>
                                 </div>
-
-                                <p className="text-xs text-tertiary italic">
-                                    Note: Payment will be collected at the shop after service completion.
+                                <p>
+                                    
                                 </p>
                             </div>
                         </div>
