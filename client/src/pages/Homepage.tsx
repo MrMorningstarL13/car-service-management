@@ -2,14 +2,20 @@ import ShopCard from "../components/ShopCard"
 import Navbar from "../components/Navbar"
 import useServiceStore from "../stores/serviceStore"
 import userStore from "../stores/userStore"
+import useCarStore from "../stores/carStore"
 import { useEffect } from 'react'
+
 
 export default function Home() {
 
+  const { user } = userStore()
   const { services, fetchShops } = useServiceStore()
+  const { fetchCars } = useCarStore()
+
   useEffect(() => {
     fetchShops()
-  }, [fetchShops])
+    fetchCars()
+  }, [fetchShops, fetchCars])
 
   return (
     <main className="min-h-screen bg-[#f8f9f4]">

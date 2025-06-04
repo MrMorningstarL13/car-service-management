@@ -13,7 +13,7 @@ type BaseCar = {
     plateNumber: string
     isInsured: boolean;
 }
-
+ 
 type BackendCar = BaseCar & { id: number }
 
 type Store = {
@@ -32,7 +32,7 @@ const useCarStore = create<Store>()(
                 try {
 
                     const currentUser: any = useUserStore.getState().user;
-                    const currentUserId = currentUser.user.createdEntity.id
+                    const currentUserId = currentUser.user.createdEntity.id;
 
                     const response = await axios.get(`${URL}/getByUser/${currentUserId}`, { withCredentials: true });
                     set({ cars: response.data });

@@ -117,13 +117,12 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         
         const scheduledDate = new Date(dateTime);
         const status = "waiting"
+        const estimatedCost = calculateTotal().toFixed(2)
 
-        const appointmentData = {priority, scheduledDate, status}
+        const appointmentData = {priority, scheduledDate, status, estimatedCost}
 
         for (const vehicleId of selectedVehicles) {
             const result = await create(vehicleId, shopId, appointmentData)
-
-            console.log(result);
             
             for(const serviceTypeId of selectedServices){
                 console.log({
@@ -448,8 +447,8 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                         <div className="text-xl font-bold text-contrast-primary">${calculateTotal().toFixed(2)}</div>
                                     </div>
                                 </div>
-                                <p>
-                                    
+                                <p className="text-xs text-tertiary mt-2">
+                                    The price contains the cost of manual labor, parts, and any additional fees. Please note that the final price may vary based on the actual condition of your vehicle and any additional services required.
                                 </p>
                             </div>
                         </div>

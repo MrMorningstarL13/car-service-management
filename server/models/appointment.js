@@ -24,7 +24,7 @@ module.exports = (db) => {
             type: DataTypes.DATE,
         },
         status: {
-            type: DataTypes.ENUM("waiting", "cancelled", "accepted", "in progress", "denied", "finished"),
+            type: DataTypes.ENUM("waiting", "accepted", "in progress", "denied", "cancelled", "finished"),
             allowNull: false,
         },
         priority: {
