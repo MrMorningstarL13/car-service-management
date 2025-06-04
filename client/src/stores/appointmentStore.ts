@@ -9,7 +9,8 @@ type appointment = {
 
 type Store = {
     appointments: any[],
-    create: (carId: string, serviceId: number, appointmentData: any) => Promise<void>
+    create: (carId: string, serviceId: number, appointmentData: any) => Promise<void>,
+    getByUser: (userId: any) => Promise<void>
 }
 
 const useAppointmentStore = create<Store>((set) => ({
@@ -20,6 +21,16 @@ const useAppointmentStore = create<Store>((set) => ({
             set((state) => ({ appointments: [...state.appointments, response.data] }));
         } catch (error) {
             console.warn('error creating appointment')
+        }
+    },
+    getByUser: async (userId) => {
+        try {
+            const response = await axios.get(`${URL}/getByUser/${userId}`)
+            if(response != null){
+                set((state) => ({ appointments: [...state.appointments, response.data]}))
+            }
+        } catch (error) {
+            console.warn( "error in appointment store, getByUser" )
         }
     }
 }))
