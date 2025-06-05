@@ -99,7 +99,13 @@ const serviceController = {
         } catch (error) {
             console.warn("error when adding service type to shop")
         }
+    },
+    getDistances: async(req, res) => {
+        const { destinations, origin } = req.body;
+
+        
     }
+
 }
 
 module.exports = serviceController;

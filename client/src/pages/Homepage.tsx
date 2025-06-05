@@ -17,6 +17,25 @@ export default function Home() {
     fetchCars()
   }, [fetchShops, fetchCars])
 
+  const serviceCoordinates = services.map( (service) => {
+    id: service.id;
+    lat: service.lat;
+    lng: service.lng;
+  })
+
+  const getUserLocation = (): Promise<{ lat: number, lng: number}> => {
+    return new Promise((resolve, reject) => {
+      if(!navigator.geolocation){
+        reject("Geolocation not supported")
+      } else {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve ({ lat: pos.coords.latitude, lng: pos.coords.longitude}),
+          (err) => reject(err.message)
+        )
+      }
+    })
+  }
+
   return (
     <main className="min-h-screen bg-[#f8f9f4]">
       <Navbar />
