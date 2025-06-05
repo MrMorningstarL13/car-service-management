@@ -17,24 +17,26 @@ interface ShopProps {
         rating: number
         distance: string
         service_types: service_type[]
-        image: string
+        image: string,
+        lat: string,
+        lng: string
     }
 }
 
+const maps_api = "AIzaSyDPw9SB4FhLogrD6j2egPKAzibDljwkHtI"
+
+
+
 export default function ShopCard({ shop }: ShopProps) {
     const [isBookingMenuOpen, setIsBookingMenuOpen] = useState(false)
-    // Add a key state to force remount of BookingMenu
     const [bookingKey, setBookingKey] = useState(0)
     
-    // Function to handle opening the booking menu
     const openBookingMenu = () => {
         setIsBookingMenuOpen(true)
     }
     
-    // Function to handle closing the booking menu and incrementing the key
     const closeBookingMenu = () => {
         setIsBookingMenuOpen(false)
-        // Increment key to force a remount when reopened
         setBookingKey(prevKey => prevKey + 1)
     }
     

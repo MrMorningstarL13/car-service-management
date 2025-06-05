@@ -19,6 +19,12 @@ module.exports = (db) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
+        lat: {
+            type: DataTypes.STRING,
+        },
+        lng: {
+            type: DataTypes.STRING,
+        },
     }, {
         freeezeTableName: true,
     })

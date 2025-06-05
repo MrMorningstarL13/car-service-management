@@ -46,7 +46,7 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center space-x-2 relative">
                         <NavButton icon={Home} label="Home" href="/" isActive={isHomePage} />
                         <NavButton icon={User} label="Profile" href="/profile" isActive={isProfilePage} />
-                        <NavButton icon={Clock} label="History" href="/history" isActive={isHistoryPage} />
+                        <NavButton icon={Clock} label="Appointments" href="/history" isActive={isHistoryPage} />
                         <NavButton icon={LogOut} label="Log out" href="/login" isActive={false} onClick={handleLogout} />
                     </div>
 

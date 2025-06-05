@@ -1,19 +1,39 @@
 const { Service } = require('../models')
 const { ServiceType } = require('../models')
 
+const OPENCAGE_API_KEY = "6e3710ec44c149cb95e7a21de41f1a72"
+
 const serviceController = {
     create: async (req, res) => {
         try {
             const data = req.body;
-            const createdService = await Service.create(data);
+            
+            const fullAddress = encodeURIComponent(`${data.address}, ${data.city}`)
 
-            if (createdService) {
-                res.status(200).json(createdService);
+            const url = `https://api.opencagedata.com/geocode/v1/json?q=${fullAddress}&key=${OPENCAGE_API_KEY}`
+
+            const apiResult = await fetch(url);
+            const apiResultJson = await apiResult.json()
+
+            let completeServiceData
+            
+            if(apiResultJson){
+                let { lat, lng } = apiResultJson.results[0].geometry
+                completeServiceData ={
+                    ...data,
+                    lat,
+                    lng,
+                }
+            }
+            
+            if (completeServiceData) {
+                const createdService = await Service.create(completeServiceData);
+                res.status(200).json(completeServiceData);
             } else {
                 res.status(400).json('Failed to create service.');
             }
         } catch (error) {
-            res.status(500).json('An error occurred while creating the service.');
+            res.status(500).json(error.message);
         }
     },
 
