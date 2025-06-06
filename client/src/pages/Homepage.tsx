@@ -49,7 +49,21 @@ export default function Home() {
         })
     }
 
-    console.log(userStore.getState().user.role)
+    if(userStore.getState().user.user.createdAuthUser.role === "employee") {
+        return (
+            <main className="min-h-screen bg-[#f8f9f4]">
+                <Navbar />
+                <div className="flex items-center justify-center min-h-screen bg-[#f8f9f4]">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-contrast-primary mb-4">Welcome to Auto Shops</h1>
+                        <p className="text-secondary">Please wait while we load the employee interface.</p>
+                    </div>
+                </div>
+            </main>
+        )
+    }
+
+    console.log(userStore.getState().user.user.createdAuthUser.role)
 
     if (!answeredPrompt) {
         return (
