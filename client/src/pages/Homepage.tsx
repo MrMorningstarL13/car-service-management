@@ -3,10 +3,12 @@ import Navbar from "../components/Navbar"
 import useServiceStore from "../stores/serviceStore"
 import userStore from "../stores/userStore"
 import useCarStore from "../stores/carStore"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 
 export default function Home() {
+
+  const [answeredPrompt, setAnsweredPrompt] = useState(false)
 
   const { user } = userStore()
   const { services, fetchShops } = useServiceStore()
@@ -20,6 +22,8 @@ export default function Home() {
       } catch (error) {
         console.warn(error)
         fetchShops(undefined)
+      } finally {
+        setAnsweredPrompt(true)
       }
       fetchCars()
     }
@@ -44,6 +48,20 @@ export default function Home() {
         )
       }
     })
+  }
+
+  if (!answeredPrompt) {
+    return (
+      <main className="min-h-screen bg-[#f8f9f4]">
+      <Navbar />
+      <div className="flex items-center justify-center min-h-screen bg-[#f8f9f4]">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-contrast-primary mb-4">Finding Auto Shops...</h1>
+          <p className="text-secondary">Please allow location access to find shops near you.</p>
+        </div>
+      </div>
+      </main>
+    )
   }
 
   return (
