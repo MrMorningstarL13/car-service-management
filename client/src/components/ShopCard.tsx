@@ -23,10 +23,6 @@ interface ShopProps {
     }
 }
 
-const maps_api = "AIzaSyDPw9SB4FhLogrD6j2egPKAzibDljwkHtI"
-
-
-
 export default function ShopCard({ shop }: ShopProps) {
     const [isBookingMenuOpen, setIsBookingMenuOpen] = useState(false)
     const [bookingKey, setBookingKey] = useState(0)

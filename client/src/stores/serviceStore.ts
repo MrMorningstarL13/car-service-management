@@ -4,15 +4,14 @@ const URL: string = "http://localhost:8080/api/service"
 
 type Store = {
     services: any[],
-    fetchShops: () => Promise<void>
-    getDistances: () => Promise<any>
+    fetchShops: (origin: any) => Promise<void>
 }
 
 const useServiceStore = create<Store>((set) => ({
     services: [],
-    fetchShops: async () => {
+    fetchShops: async (origin) => {
         try {
-            await axios.get(`${URL}/getAllShops`)
+            await axios.post(`${URL}/getAllShops`, { origin })
                 .then((response) => {
                     set({ services: response.data })
                 })
@@ -22,15 +21,6 @@ const useServiceStore = create<Store>((set) => ({
 
         } catch (error) {
             console.warn("error fetching services")
-        }
-    },
-    getDistances: async () => {
-        try {
-            const response = await axios.get(`${URL}/getDistances`);
-            return response.data as any;
-        } catch (error) {
-            console.warn(error);
-            return [];
         }
     }
 }))

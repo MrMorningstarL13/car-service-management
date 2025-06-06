@@ -13,8 +13,18 @@ export default function Home() {
   const { fetchCars } = useCarStore()
 
   useEffect(() => {
-    fetchShops()
-    fetchCars()
+    const fetchData = async () => {
+      try {
+        const userLocation = await getUserLocation()
+        fetchShops(userLocation)
+      } catch (error) {
+        console.warn(error)
+        fetchShops(undefined)
+      }
+      fetchCars()
+    }
+    
+    fetchData()
   }, [fetchShops, fetchCars])
 
   const serviceCoordinates = services.map( (service) => {
