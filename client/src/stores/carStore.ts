@@ -32,9 +32,8 @@ const useCarStore = create<Store>()(
                 try {
 
                     const currentUser: any = useUserStore.getState().user;
-                    const currentUserId = currentUser.user.createdEntity.id;
 
-                    const response = await axios.get(`${URL}/getByUser/${currentUserId}`, { withCredentials: true });
+                    const response = await axios.get(`${URL}/getByUser/${currentUser.id}`, { withCredentials: true });
                     set({ cars: response.data });
                 } catch (error) {
                     console.warn(error);
@@ -44,9 +43,9 @@ const useCarStore = create<Store>()(
                 try {
 
                     const currentUser: any = useUserStore.getState().user;
-                    const currentUserId = currentUser.user.createdEntity.id
+                    // const currentUserId = currentUser.user.createdEntity.id
 
-                    const response = await axios.post(`${URL}/create/${currentUserId}`, newCar, { withCredentials: true });
+                    const response = await axios.post(`${URL}/create/${currentUser.id}`, newCar, { withCredentials: true });
                     set((state) => ({ cars: [...state.cars, response.data] }));
                 } catch (error) {
                     console.warn('error adding car');

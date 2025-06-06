@@ -104,6 +104,7 @@ const serviceController = {
         const { destinations, origin } = req.body;
 
         
+        
     }
 
 }

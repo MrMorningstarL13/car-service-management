@@ -112,7 +112,9 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         }
 
 
-        const datePart = selectedDate?.toISOString().split('T')[0]
+        const datePart = selectedDate?.toDateString()
+        console.log("datePart", datePart)
+        console.log("selectedDate", selectedDate?.toDateString())
         const dateTime = `${datePart} ${selectedTime}`
         
         const scheduledDate = new Date(dateTime);

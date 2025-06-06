@@ -10,7 +10,7 @@ export default function History() {
     const { fetchCars } = useCarStore()
     const { appointments, getByUser } = useAppointmentStore()
     const currentUser: any = useUserStore.getState().user;
-    const currentUserId = currentUser.user.createdEntity.id;
+    const currentUserId = currentUser.id;
 
     useEffect(() => {
         fetchCars()
