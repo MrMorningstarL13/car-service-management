@@ -37,17 +37,16 @@ type LogInUser = {
 }
 
 type Store = {
-    user: object
+    user: AuthUser & User | AuthUser & Employee
     createUser: (newAuthUser: AuthUser, entity: Entity) => Promise<void>
     logIn: (user: LogInUser) => Promise<void>
     logOut: () => Promise<void>
-    initializeUser: () => Promise<void>
 }
 
 const useUserStore = create<Store>()(
     persist(
         (set, get) => ({
-            user: {},
+            user: {} as AuthUser & User | AuthUser & Employee,
             createUser: async (newAuthUser, entity) => {
                 const entityData = entity.user || entity.employee
                 try {
@@ -86,30 +85,10 @@ const useUserStore = create<Store>()(
                             withCredentials: true,
                         },
                     )
-                    set({ user: {} })
+                    set({ user: {} as AuthUser & User | AuthUser & Employee })
                     useAuthStore.getState().loggedIn = false
                 } catch (error) {
                     console.warn("error logging out user")
-                }
-            },
-
-            initializeUser: async () => {
-                try {
-                    const response = await axios.get(`${URL}/me`, {
-                        withCredentials: true,
-                    })
-
-                    if (response.data.loggedIn) {
-                        set({ user: response.data.user })
-                        useAuthStore.getState().loggedIn = true
-                    } else {
-                        set({ user: {} })
-                        useAuthStore.getState().loggedIn = false
-                    }
-                } catch (error) {
-                    console.warn("Session expired or invalid")
-                    set({ user: {} })
-                    useAuthStore.getState().loggedIn = false
                 }
             },
         }),
