@@ -4,7 +4,7 @@ const router = express.Router();
 const { serviceController } = require('../controllers')
 
 router.post('/create', serviceController.create)
-router.get('/getAllShops', serviceController.getAll)
+router.post('/getAllShops', serviceController.getAll)
 router.get('/getServiceById', serviceController.getById)
 router.post('/addServiceType/:shopId/:serviceTypeName', serviceController.addServiceTypeToShop)
 
