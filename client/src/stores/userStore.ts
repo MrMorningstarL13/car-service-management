@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import axios from "axios"
 import { useAuthStore } from "./useAuthStore"
+import useCarStore from "./carStore"
 
 const URL: string = "http://localhost:8080/api/user"
 
@@ -86,6 +87,7 @@ const useUserStore = create<Store>()(
                         },
                     )
                     set({ user: {} as AuthUser & User | AuthUser & Employee })
+                    useCarStore.getState().cars = []
                     useAuthStore.getState().loggedIn = false
                 } catch (error) {
                     console.warn("error logging out user")

@@ -49,7 +49,10 @@ export default function Home() {
         })
     }
 
-    if(userStore.getState().user.user.createdAuthUser.role === "employee") {
+    //@ts-ignore
+    console.log(userStore.getState().user)
+    // @ts-ignore
+    if(userStore.getState().user.role === "employee") {
         return (
             <main className="min-h-screen bg-[#f8f9f4]">
                 <Navbar />
@@ -62,8 +65,6 @@ export default function Home() {
             </main>
         )
     }
-
-    console.log(userStore.getState().user.user.createdAuthUser.role)
 
     if (!answeredPrompt) {
         return (

@@ -30,10 +30,12 @@ const useCarStore = create<Store>()(
             cars: [],
             fetchCars: async () => {
                 try {
-
                     const currentUser: any = useUserStore.getState().user;
 
                     const response = await axios.get(`${URL}/getByUser/${currentUser.id}`, { withCredentials: true });
+
+                    //this console log fixed the issue with cars appearing
+                    console.log(response)
                     set({ cars: response.data });
                 } catch (error) {
                     console.warn(error);
@@ -66,7 +68,7 @@ const useCarStore = create<Store>()(
                 } catch (error) {
                     console.warn(error);
                 }
-            }
+            },
         })
         ),
         {
