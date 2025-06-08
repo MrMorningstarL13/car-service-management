@@ -39,6 +39,7 @@ type LogInUser = {
 
 type Store = {
     user: AuthUser & User | AuthUser & Employee
+    currentServiceId: number,
     createUser: (newAuthUser: AuthUser, entity: Entity) => Promise<void>
     logIn: (user: LogInUser) => Promise<void>
     logOut: () => Promise<void>
@@ -48,6 +49,7 @@ const useUserStore = create<Store>()(
     persist(
         (set, get) => ({
             user: {} as AuthUser & User | AuthUser & Employee,
+            currentServiceId: 0,
             createUser: async (newAuthUser, entity) => {
                 const entityData = entity.user || entity.employee
                 try {
@@ -68,8 +70,8 @@ const useUserStore = create<Store>()(
                     const response = await axios.post(`${URL}/logIn`, user, {
                         withCredentials: true,
                     })
-
                     set({ user: response.data })
+                    set({ currentServiceId: response.data.employee.serviceId || 0 })
 
                     await useAuthStore.getState().checkAuth()
                 } catch (error) {
@@ -87,6 +89,7 @@ const useUserStore = create<Store>()(
                         },
                     )
                     set({ user: {} as AuthUser & User | AuthUser & Employee })
+                    set({ currentServiceId: 0 })
                     useCarStore.getState().cars = []
                     useAuthStore.getState().loggedIn = false
                 } catch (error) {
@@ -97,7 +100,10 @@ const useUserStore = create<Store>()(
         {
             name: "user-storage",
             storage: createJSONStorage(() => localStorage),
-            partialize: (state) => ({ user: state.user }),
+            partialize: (state) => ({ 
+                user: state.user,
+                currentServiceId: state.currentServiceId,
+            }),
         },
     ),
 )

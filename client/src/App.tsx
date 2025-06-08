@@ -2,10 +2,11 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router"
 import Home from "./pages/Homepage"
 import Profile from "./pages/Profile"
-import History from "./pages/History"
+import Appointments from "./pages/Appointments"
 import LogIn from './pages/LogIn'
 import SignUp from './pages/SignUp'
 import AuthGate from './components/AuthGate'
+import Employees from './pages/Employees'
 
 function App() {
     return (
@@ -17,7 +18,8 @@ function App() {
                 <Route element={<AuthGate />}>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/history" element={<History />} />
+                    <Route path="/appointments" element={<Appointments />} />
+                    <Route path='/employees' element={<Employees />} />
                 </Route>
 
             </Routes>

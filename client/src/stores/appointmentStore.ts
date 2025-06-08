@@ -5,7 +5,8 @@ const URL: string = "http://localhost:8080/api/appointment"
 type Store = {
     appointments: any[],
     create: (carId: string, serviceId: number, appointmentData: any) => Promise<void>,
-    getByUser: (userId: any) => Promise<void>
+    getByUser: (userId: any) => Promise<void>,
+    update: (appointmentId: string, appointmentData: any) => Promise<void>,
 }
 
 const useAppointmentStore = create<Store>((set) => ({
@@ -31,7 +32,25 @@ const useAppointmentStore = create<Store>((set) => ({
         } catch (error) {
             console.warn( "error in appointment store, getByUser" )
         }
+    },
+    update: async (appointmentId, appointmentData) => {
+    try {
+        const response = await axios.patch(`${URL}/update/${appointmentId}`, appointmentData)
+        const updatedAppointment = response.data
+
+        set((state) => ({
+            appointments: state.appointments.map((car) => ({
+                ...car,
+                appointments: car.appointments.map((appointment: any) =>
+                    appointment.id === updatedAppointment.id ? updatedAppointment : appointment
+                ),
+            })),
+        }))
+    } catch (error) {
+        console.warn('error updating appointment', error)
     }
+}
+
 }))
 
 export default useAppointmentStore;

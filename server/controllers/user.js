@@ -2,6 +2,7 @@ const { User, AuthUser, Employee, Service } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sequelize = require('../config/db')
+const generator = require('generate-password')
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret'
 
@@ -113,7 +114,7 @@ const userController = {
     logIn: async (req, res) => {
         try {
             const { email, password } = req.body
-            const user = await AuthUser.findOne({ where: { email: email } })
+            const user = await AuthUser.findOne({ where: { email: email }, include: { model: Employee || User} })
 
             if (!user) {
                 return res.status(404).json("User not found")

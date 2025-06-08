@@ -45,9 +45,15 @@ const controller = {
             return res.status(500).send(error.message)
         }
     },
-    updateAppointmentStatus: async( req, res ) => {
+    updateAppointment: async( req, res ) => {
         try {
-            
+                const searchedAppointment = await Appointment.findByPk(req.params.appointmentId)
+                if (!searchedAppointment) {
+                    return res.status(404).json("Appointment not found")
+                }
+                const updatedAppointment = await searchedAppointment.update(req.body)
+
+                return res.status(200).json(updatedAppointment)
         } catch (error) {
             return res.status(500).json(error.message)
         }

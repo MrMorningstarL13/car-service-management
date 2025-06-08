@@ -5,7 +5,7 @@ const { serviceController } = require('../controllers')
 
 router.post('/create', serviceController.create)
 router.post('/getAllShops', serviceController.getAll)
-router.get('/getServiceById', serviceController.getById)
+router.get('/getServiceById/:serviceId', serviceController.getById)
 router.post('/addServiceType/:shopId/:serviceTypeName', serviceController.addServiceTypeToShop)
 
 module.exports = router

@@ -49,17 +49,17 @@ export default function Home() {
         })
     }
 
-    //@ts-ignore
-    console.log(userStore.getState().user)
+    // //@ts-ignore
+    // console.log(userStore.getState().user)
     // @ts-ignore
-    if(userStore.getState().user.role === "employee") {
+    if(userStore.getState().user.role === "employee" && userStore.getState().user.employee.isRep) {
         return (
             <main className="min-h-screen bg-[#f8f9f4]">
-                <Navbar />
+                <Navbar role="rep"/>
                 <div className="flex items-center justify-center min-h-screen bg-[#f8f9f4]">
                     <div className="text-center">
                         <h1 className="text-2xl font-bold text-contrast-primary mb-4">Welcome to Auto Shops</h1>
-                        <p className="text-secondary">Please wait while we load the employee interface.</p>
+                        <p className="text-secondary">Please wait while the employee interface is loading.</p>
                     </div>
                 </div>
             </main>

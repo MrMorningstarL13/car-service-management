@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { Dialog, DialogContent } from "./ui/Dialog"
 import { Button } from "./ui/Button"
@@ -38,7 +36,7 @@ interface BookingWizardProps {
 
 export default function BookingWizard({ isOpen, onClose, shopId, shopName, serviceTypes }: BookingWizardProps) {
     const [currentStep, setCurrentStep] = useState(1)
-    const [selectedVehicles, setSelectedVehicles] = useState<string[]>([])
+    const [selectedVehicle, setSelectedVehicle] = useState<string | null>(null)
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
     const [selectedTime, setSelectedTime] = useState<string | null>(null)
     const [selectedServices, setSelectedServices] = useState<string[]>([])
@@ -76,12 +74,8 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
         "4:00 PM",
     ]
 
-    const toggleVehicle = (id: string) => {
-        if (selectedVehicles.includes(id)) {
-            setSelectedVehicles(selectedVehicles.filter((v) => v !== id))
-        } else {
-            setSelectedVehicles([...selectedVehicles, id])
-        }
+    const selectVehicle = (id: string) => {
+        setSelectedVehicle(id)
     }
 
     const toggleService = (id: string) => {
@@ -111,7 +105,6 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                 priority = 'premium'
         }
 
-
         const datePart = selectedDate?.toDateString()
         console.log("datePart", datePart)
         console.log("selectedDate", selectedDate?.toDateString())
@@ -123,13 +116,13 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
 
         const appointmentData = {priority, scheduledDate, status, estimatedCost}
 
-        for (const vehicleId of selectedVehicles) {
-            const result = await create(vehicleId, shopId, appointmentData)
+        if (selectedVehicle) {
+            const result = await create(selectedVehicle, shopId, appointmentData)
             
             for(const serviceTypeId of selectedServices){
                 console.log({
                     shopId,
-                    vehicleId,
+                    vehicleId: selectedVehicle,
                     date: selectedDate,
                     time: selectedTime,
                     serviceTypes: serviceTypeId,
@@ -137,14 +130,13 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
             }
         }
 
-
         onClose()
     }
 
     const isNextDisabled = () => {
         switch (currentStep) {
             case 1:
-                return selectedVehicles.length === 0
+                return !selectedVehicle
             case 2:
                 return !selectedDate || !selectedTime
             case 3:
@@ -155,16 +147,14 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
     }
 
     const calculateTotal = () => {
-        return (
-            selectedServices.reduce((total, serviceId) => {
-                const service = services.find((s) => s.id === Number(serviceId))
-                return total + (service?.baseCost || 0)
-            }, 0) * selectedVehicles.length
-        )
+        return selectedServices.reduce((total, serviceId) => {
+            const service = services.find((s) => s.id === Number(serviceId))
+            return total + (service?.baseCost || 0)
+        }, 0)
     }
 
-    const getSelectedVehicles = () => {
-        return vehicles.filter((v) => selectedVehicles.includes(v.id))
+    const getSelectedVehicle = () => {
+        return vehicles.find((v) => v.id === selectedVehicle)
     }
 
     const getSelectedServiceNames = () => {
@@ -191,7 +181,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                 <Car className="h-5 w-5" />
                             </div>
                             <span className={`text-xs mt-1 ${currentStep >= 1 ? "text-contrast-primary" : "text-tertiary"}`}>
-                                Vehicles
+                                Vehicle
                             </span>
                         </div>
 
@@ -250,16 +240,16 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                     {currentStep === 1 && (
                         <div className="space-y-6">
                             <div>
-                                <h3 className="text-lg font-medium text-contrast-primary">Select Your Vehicles</h3>
-                                <p className="text-sm text-tertiary mt-1">Choose one or more vehicles for service at {shopName}</p>
+                                <h3 className="text-lg font-medium text-contrast-primary">Select Your Vehicle</h3>
+                                <p className="text-sm text-tertiary mt-1">Choose one vehicle for service at {shopName}</p>
                             </div>
 
                             <div className="grid gap-4">
                                 {vehicles.map((vehicle) => (
                                     <div
                                         key={vehicle.id}
-                                        onClick={() => toggleVehicle(vehicle.id)}
-                                        className={`p-4 rounded-lg cursor-pointer transition-all ${selectedVehicles.includes(vehicle.id)
+                                        onClick={() => selectVehicle(vehicle.id)}
+                                        className={`p-4 rounded-lg cursor-pointer transition-all ${selectedVehicle === vehicle.id
                                             ? "bg-primary/20 border-2 border-secondary"
                                             : "bg-white border border-secondary/20 hover:border-secondary/50"
                                             }`}
@@ -274,10 +264,10 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                                 </h4>
                                             </div>
                                             <div
-                                                className={`w-6 h-6 rounded-full border flex items-center justify-center ${selectedVehicles.includes(vehicle.id) ? "bg-secondary border-secondary" : "border-tertiary"
+                                                className={`w-6 h-6 rounded-full border flex items-center justify-center ${selectedVehicle === vehicle.id ? "bg-secondary border-secondary" : "border-tertiary"
                                                     }`}
                                             >
-                                                {selectedVehicles.includes(vehicle.id) && <CheckCircle2 className="h-4 w-4 text-white" />}
+                                                {selectedVehicle === vehicle.id && <CheckCircle2 className="h-4 w-4 text-white" />}
                                             </div>
                                         </div>
                                     </div>
@@ -400,14 +390,12 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                 <div className="bg-primary/10 p-4 rounded-lg">
                                     <h4 className="text-sm font-medium text-contrast-primary mb-2 flex items-center">
                                         <Car className="h-4 w-4 mr-2 text-secondary" />
-                                        Vehicles ({selectedVehicles.length})
+                                        Vehicle
                                     </h4>
-                                    <div className="space-y-2">
-                                        {getSelectedVehicles().map((vehicle) => (
-                                            <div key={vehicle.id} className="text-sm text-tertiary pl-6">
-                                                {vehicle.yearOfProduction} {vehicle.brand} {vehicle.model}
-                                            </div>
-                                        ))}
+                                    <div className="text-sm text-tertiary pl-6">
+                                        {getSelectedVehicle() && (
+                                            `${getSelectedVehicle()?.yearOfProduction} ${getSelectedVehicle()?.brand} ${getSelectedVehicle()?.model}`
+                                        )}
                                     </div>
                                 </div>
 
@@ -443,7 +431,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
                                         <div>
                                             <h4 className="font-medium text-contrast-primary">Total Estimate</h4>
                                             <p className="text-xs text-tertiary mt-1">
-                                                For {selectedVehicles.length} vehicle{selectedVehicles.length > 1 ? "s" : ""}
+                                                For 1 vehicle
                                             </p>
                                         </div>
                                         <div className="text-xl font-bold text-contrast-primary">${calculateTotal().toFixed(2)}</div>

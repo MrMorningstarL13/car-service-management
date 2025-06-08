@@ -142,11 +142,11 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
 
                     <div className="mt-4 flex justify-end space-x-2">
                         <button
-              onClick={() => onDelete(car.id)}
-              className="px-3 py-1 text-sm rounded border border-contrast-secondary text-contrast-secondary hover:bg-[rgba(86,40,45,0.1)] transition-colors duration-200"
-            >
-              Delete
-            </button>
+                            onClick={() => onDelete(car.id)}
+                            className="px-3 py-1 text-sm rounded border border-contrast-secondary text-contrast-secondary hover:bg-[rgba(86,40,45,0.1)] transition-colors duration-200"
+                        >
+                            Delete
+                        </button>
                     </div>
                 </div>
             </div>
