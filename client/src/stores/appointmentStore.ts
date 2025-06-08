@@ -4,7 +4,7 @@ const URL: string = "http://localhost:8080/api/appointment"
 
 type Store = {
     appointments: any[],
-    create: (carId: string, serviceId: number, appointmentData: any) => Promise<void>,
+    create: (carId: string, serviceId: number, appointmentData: any) => Promise<number>,
     getByUser: (userId: any) => Promise<void>,
     update: (appointmentId: string, appointmentData: any) => Promise<void>,
 }
@@ -15,9 +15,10 @@ const useAppointmentStore = create<Store>((set) => ({
         try {
             const response = await axios.post(`${URL}/create/${carId}/${serviceId}`, appointmentData)
             if(response != null) {
-                console.log("Appointment created successfully:", response.data);
+                console.log("Appointment created successfully");
             } else 
                 console.warn("No response data received when creating appointment");
+            return response.data.id;
             // set((state) => ({ appointments: [...state.appointments, response.data] }));
         } catch (error) {
             console.warn('error creating appointment')

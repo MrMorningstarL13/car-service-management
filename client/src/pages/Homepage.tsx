@@ -49,8 +49,6 @@ export default function Home() {
         })
     }
 
-    // //@ts-ignore
-    // console.log(userStore.getState().user)
     // @ts-ignore
     if(userStore.getState().user.role === "employee" && userStore.getState().user.employee.isRep) {
         return (
@@ -58,7 +56,21 @@ export default function Home() {
                 <Navbar role="rep"/>
                 <div className="flex items-center justify-center min-h-screen bg-[#f8f9f4]">
                     <div className="text-center">
-                        <h1 className="text-2xl font-bold text-contrast-primary mb-4">Welcome to Auto Shops</h1>
+                        <h1 className="text-2xl font-bold text-contrast-primary mb-4">Rep Interface</h1>
+                        <p className="text-secondary">Please wait while the rep interface is loading.</p>
+                    </div>
+                </div>
+            </main>
+        )
+    }
+
+    if(userStore.getState().user.role === "employee"){
+        return (
+            <main className="min-h-screen bg-[#f8f9f4]">
+                <Navbar role="emp"/>
+                <div className="flex items-center justify-center min-h-screen bg-[#f8f9f4]">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-contrast-primary mb-4">Employee Interface</h1>
                         <p className="text-secondary">Please wait while the employee interface is loading.</p>
                     </div>
                 </div>

@@ -71,11 +71,11 @@ const useUserStore = create<Store>()(
                         withCredentials: true,
                     })
                     set({ user: response.data })
-                    set({ currentServiceId: response.data.employee.serviceId || 0 })
+                    set({ currentServiceId: response?.data?.employee?.serviceId || 0 })
 
                     await useAuthStore.getState().checkAuth()
                 } catch (error) {
-                    console.warn("error logging in user")
+                    console.warn(error)
                 }
             },
 

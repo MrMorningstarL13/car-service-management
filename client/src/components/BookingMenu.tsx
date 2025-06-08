@@ -8,6 +8,7 @@ import { Car, CalendarIcon, Wrench, CheckCircle2, ChevronRight, ChevronLeft, X, 
 
 import carStore from "../stores/carStore"
 import useAppointmentStore from "../stores/appointmentStore"
+import repairStore from "../stores/repairStore"
 
 interface Vehicle {
     id: string
@@ -43,6 +44,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
 
     const { cars } = carStore();
     const { create } = useAppointmentStore();
+    const { createRepair } = repairStore()
 
     const vehicles: Vehicle[] = cars.map((car: any) => ({
         id: String(car.id),
@@ -120,13 +122,7 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
             const result = await create(selectedVehicle, shopId, appointmentData)
             
             for(const serviceTypeId of selectedServices){
-                console.log({
-                    shopId,
-                    vehicleId: selectedVehicle,
-                    date: selectedDate,
-                    time: selectedTime,
-                    serviceTypes: serviceTypeId,
-                })
+                const repairResult = await createRepair(result, Number(serviceTypeId))
             }
         }
 

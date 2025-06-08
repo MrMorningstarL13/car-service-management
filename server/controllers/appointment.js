@@ -8,9 +8,7 @@ const controller = {
 
             const appointmentData = { ...data, carId, serviceId }
 
-            console.log(appointmentData)
             const response = await Appointment.create(appointmentData)
-            console.log(response)
 
             if (!response) {
                 return res.status(400).json("Error when creating appointment")
@@ -43,6 +41,13 @@ const controller = {
 
         } catch (error) {
             return res.status(500).send(error.message)
+        }
+    },
+    getAppointmentsByService: async(req, res) => {
+        try {
+            
+        } catch (error) {
+            return res.status(500).json(error.message)
         }
     },
     updateAppointment: async( req, res ) => {
