@@ -7,6 +7,10 @@ module.exports = (db) => {
             primaryKey: true,
             autoIncrement: true,
         },
+        isComplete: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        }
     }, {
         freezeTableName: true
     })
