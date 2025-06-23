@@ -1,8 +1,9 @@
 const { User } = require('../models');
 const { Car } = require('../models');
 const axios = require('axios');
+const { createClient } = require("redis")
 
-const CUSTOM_SEARCH_API_KEY =  'AIzaSyDdVkqy-pvJS12ERY2hVbcbQM6KfE7MJwo' 
+const CUSTOM_SEARCH_API_KEY = 'AIzaSyDdVkqy-pvJS12ERY2hVbcbQM6KfE7MJwo'
 const SEARCH_ENGINE_ID = '262303ae0aceb464d';
 
 const carController = {
@@ -67,13 +68,36 @@ const carController = {
 
     getImage: async (req, res) => {
         try {
+            // const redisClient = await createClient().on("error", (err) => console.log("Redis Client Error", err)).connect();
+            // console.log(redisClient.isReady)
+
+
+            const client = createClient({
+                username: 'default',
+                password: 'jJVYBOihsKmOVCjp4Vh8wY4xjuPu1KNU',
+                socket: {
+                    host: 'redis-16689.c328.europe-west3-1.gce.redns.redis-cloud.com',
+                    port: 16689
+                }
+            });
+
+            client.on('error', err => console.log('Redis Client Error', err));
+
+            await client.connect();
+
+            await client.set('foo', 'bar');
+            const result = await client.get('foo');
+            console.log(result)  // >>> bar
+
+
+
             const { brand, model, yearOfProduction } = req.query;
             if (!brand || !model || !yearOfProduction) {
                 return res.status(400).json({ message: "Brand, model and production year are required" });
             }
-            
+
             const query = `${brand} ${model} ${yearOfProduction} car desktop wallpaper`;
-            
+
             const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
                 params: {
                     q: query,
@@ -85,7 +109,6 @@ const carController = {
             })
 
             const imageUrl = response.data.items[0]?.link;
-            console.warn(imageUrl);
 
             if (!imageUrl) {
                 return res.status(404).json({ message: "No image found" });

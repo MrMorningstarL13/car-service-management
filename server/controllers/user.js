@@ -53,7 +53,8 @@ const userController = {
                 if (createdUser)
                     createdEntity = createdUser
                 else {
-                    return res.status(500).json("error when creating user")
+                    await t.rollback()
+                    return res.status(500).json("error when creating customer")
                 }
 
             } else {
@@ -63,7 +64,6 @@ const userController = {
                     experienceLevel,
                     salary,
                     isRep,
-                    serviceId
                 } = req.body
 
                 const employeeData = {
@@ -72,20 +72,14 @@ const userController = {
                     experienceLevel,
                     salary,
                     isRep,
-                    serviceId
-                }
-
-                const isServiceValid = await Service.findByPk(serviceId)
-
-                if (!isServiceValid && !isRep) {
-                    return res.status(404).json("Cannot create employee for inexistent service")
                 }
 
                 const createdEmployee = await createdAuthUser.createEmployee(employeeData, {transaction: t})
 
                 if (createdEmployee)
-                    createdEntity = createdEmployee
+                    createdEntity = {createdEmployee}
                 else {
+                    await t.rollback()
                     return res.status(500).json("error when creating employee")
                 }
             }
@@ -102,7 +96,8 @@ const userController = {
                     httpOnly: true,
                 }).status(200).json({ user: { createdAuthUser, createdEntity } })
             } else {
-                return res.status(418).json("error when creating cookie")
+                await t.rollback()
+                return res.status(418).json("error when creating complete user")
             }
 
         } catch (error) {

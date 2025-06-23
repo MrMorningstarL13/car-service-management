@@ -26,7 +26,7 @@ const serviceController = {
 
             if (completeServiceData) {
                 const createdService = await Service.create(completeServiceData);
-                res.status(200).json(completeServiceData);
+                res.status(200).json(createdService);
             } else {
                 res.status(400).json('Failed to create service.');
             }
@@ -66,7 +66,6 @@ const serviceController = {
                 return res.status(500).json("Error fetching data from Maps API")
             }
 
-            console.log(data)
             if(data.rows[0].elements.every( (element ) => element.status === "ZERO_RESULTS")) {
                 return res.status(404).json("No shops found withing a reachable driving distance.")
             }
@@ -151,8 +150,6 @@ const serviceController = {
                 return res.status(500).json("Error fetching data from Maps API")
             }
 
-            console.log(data.rows[0].elements)
-
             const sortedShops = destinations.map((dest, index) => ({
                 ...dest,
                 distanceText: data.rows[0].elements[index].distance.text,
@@ -167,7 +164,7 @@ const serviceController = {
                 res.status(200).json(sortedShops);
             }
         } catch (error) {
-            console.warn("Error when getting distances", error)
+            console.warn("Error when getting distances")
             res.status(500).json("There was an error when getting distances")
         }
     }
