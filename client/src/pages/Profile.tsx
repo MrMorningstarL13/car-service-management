@@ -2,7 +2,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import Navbar from "../components/Navbar"
-
+import CustomerStats from "../components/CustomerStats"
 import useCarStore from "../stores/carStore"
 import CarCard from "../components/CarCard"
 
@@ -60,6 +60,8 @@ export default function Profile() {
 
             <div className="container mx-auto px-4 py-8">
                 <h1 className="text-3xl font-bold text-contrast-primary mb-6">Profile</h1>
+
+                <CustomerStats/>
 
                 <div className="flex flex-col md:flex-row gap-8">
                     <div className="w-full md:w-1/3">

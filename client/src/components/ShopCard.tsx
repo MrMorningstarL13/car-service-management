@@ -1,6 +1,10 @@
-import { MapPin, Star, Car } from "lucide-react"
-import { useState } from "react"
+import { MapPin, Star, Car, StarOff } from "lucide-react"
+import { useEffect, useState } from "react"
 import BookingMenu from "./BookingMenu"
+import useFavouriteStore from "../stores/useFavouriteStore"
+import useUserStore from "../stores/userStore"
+import toast, { Toaster } from "react-hot-toast"
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 
 type service_type = {
     id: number
@@ -17,25 +21,52 @@ interface ShopProps {
         rating: number
         distance: string
         service_types: service_type[]
-        image: string,
-        lat: string,
+        image: string
+        lat: string
         lng: string
-    }
+    },
 }
 
 export default function ShopCard({ shop }: ShopProps) {
     const [isBookingMenuOpen, setIsBookingMenuOpen] = useState(false)
     const [bookingKey, setBookingKey] = useState(0)
-    
+    const [isFavourite, setIsFavourite] = useState(false)
+
+    const { favourites, add, remove } = useFavouriteStore()
+    const { user } = useUserStore()
+    const currentUser: any = user
+
+    useEffect(() => {
+        const isFav = favourites.some((fav) => fav.serviceId === shop.id)
+        setIsFavourite(isFav)
+    }, [favourites, shop.id])
+
+    const toggleFavourite = async () => {
+
+    try {
+        if (isFavourite) {
+            await remove(currentUser.id, String(shop.id));
+            toast.error("Service removed from favourites!");
+        } else {
+            await add(currentUser.id, String(shop.id));
+            toast.success("Service added to favourites!");
+        }
+    } catch (error) {
+        console.error("Error toggling favourite:", error);
+        setIsFavourite(!isFavourite); 
+        toast.error("Failed to update favourites");
+    }
+};
+
     const openBookingMenu = () => {
         setIsBookingMenuOpen(true)
     }
-    
+
     const closeBookingMenu = () => {
         setIsBookingMenuOpen(false)
         setBookingKey(prevKey => prevKey + 1)
     }
-    
+
     return (
         <>
             <div className="overflow-hidden rounded-lg border border-[rgba(119,150,109,0.5)] hover:shadow-md transition-shadow duration-300 bg-white">
@@ -47,25 +78,34 @@ export default function ShopCard({ shop }: ShopProps) {
                             <span>{shop.address}</span>
                         </div>
                     </div>
-                    <div className="flex items-center bg-[rgba(119,150,109,0.2)] px-2 py-1 rounded-full">
-                        <Star className="h-4 w-4 text-[rgba(86,40,45,1)] mr-1" />
+                    <div 
+                        className="flex items-center justify-center bg-[rgba(119,150,109,0.2)] px-2 py-1 rounded-full cursor-pointer"
+                        onClick={toggleFavourite}
+                    >
+                        {isFavourite ? (
+                            <AiFillHeart className="h-6 w-6 text-[rgba(86,40,45,1)]" />
+                        ) : (
+                            <AiOutlineHeart className="h-6 w-6 text-[rgba(86,40,45,1)]" />
+                        )}
                         <span className="font-medium text-[rgba(84,67,67,1)]">{shop.rating}</span>
                     </div>
                 </div>
+
                 <div className="p-4">
                     <div className="flex items-center mb-4">
                         <div className="relative h-20 w-32 rounded-md overflow-hidden">
-                            {shop.image ?
+                            {shop.image ? (
                                 <img src={shop.image} alt={shop.name} className="object-cover w-full h-full" />
-                                :
+                            ) : (
                                 <Car className="w-full h-full bg-primary" strokeWidth={1.25} />
-                            }
+                            )}
                         </div>
                         <div className="ml-4">
                             <div className="text-sm text-tertiary">{shop.service_types.length} services available</div>
                         </div>
                     </div>
                 </div>
+
                 <div className="p-4 bg-[rgba(189,198,103,0.1)] flex justify-between">
                     <button className="px-4 py-2 border border-secondary text-tertiary rounded-md hover:bg-[rgba(119,150,109,0.2)] hover:text-[rgba(84,67,67,1)]">
                         View Details
@@ -78,7 +118,7 @@ export default function ShopCard({ shop }: ShopProps) {
                     </button>
                 </div>
             </div>
-           
+
             {isBookingMenuOpen && (
                 <BookingMenu
                     key={bookingKey}

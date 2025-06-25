@@ -18,6 +18,7 @@ export default function Navbar({ role }: NavbarProps) {
     const isAppointmentsPage = location.pathname === "/appointments"
     const isEmployeesPage = location.pathname === "/employees"
     const isInventoryPage = location.pathname === "/inventory"
+    const isServicePage = location.pathname === "/service"
 
     const { logOut } = useUserStore()
 
@@ -32,20 +33,7 @@ export default function Navbar({ role }: NavbarProps) {
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
-                        <span className="text-contrast-primary font-bold text-xl">CarService</span>
-                    </div>
-
-                    <div className="hidden md:block flex-1 max-w-md mx-4">
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search className="h-5 w-5 text-tertiary" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search anything..."
-                                className="w-full pl-10 py-2 pr-3 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
-                            />
-                        </div>
+                        <span className="text-contrast-primary font-bold text-xl">AutoMate</span>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-2 relative">
@@ -112,27 +100,13 @@ export default function Navbar({ role }: NavbarProps) {
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
-                        <span className="text-contrast-primary font-bold text-xl">CarService</span>
-                    </div>
-
-                    <div className="hidden md:block flex-1 max-w-md mx-4">
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <Search className="h-5 w-5 text-tertiary" />
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="Search anything..."
-                                className="w-full pl-10 py-2 pr-3 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
-                            />
-                        </div>
+                        <span className="text-contrast-primary font-bold text-xl">AutoMate</span>
                     </div>
 
                     <div className="hidden md:flex items-center space-x-2 relative">
                         <NavButton icon={Home} label="Dashboard" href="/" isActive={isHomePage} />
                         <NavButton icon={User} label="Employees" href="/employees" isActive={isEmployeesPage} />
-                        <NavButton icon={Clock} label="Appointments" href="/appointments" isActive={isAppointmentsPage} />
-                        <NavButton icon={Box} label="Inventory" href="/inventory" isActive={isInventoryPage} />
+                        <NavButton icon={Clock} label="Service" href="/service" isActive={isServicePage} />
                         <NavButton icon={LogOut} label="Log out" href="/login" isActive={false} onClick={handleLogout} />
                     </div>
 
@@ -219,7 +193,7 @@ export default function Navbar({ role }: NavbarProps) {
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
-                        <span className="text-contrast-primary font-bold text-xl">CarService</span>
+                        <span className="text-contrast-primary font-bold text-xl">AutoMate</span>
                     </div>
 
                     <div className="hidden md:block flex-1 max-w-md mx-4">

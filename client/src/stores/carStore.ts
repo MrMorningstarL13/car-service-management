@@ -34,8 +34,6 @@ const useCarStore = create<Store>()(
 
                     const response = await axios.get(`${URL}/getByUser/${currentUser.id}`, { withCredentials: true });
 
-                    //this console log fixed the issue with cars appearing
-                    console.log(response)
                     set({ cars: response.data });
                 } catch (error) {
                     console.warn(error);
@@ -45,7 +43,6 @@ const useCarStore = create<Store>()(
                 try {
 
                     const currentUser: any = useUserStore.getState().user;
-                    // const currentUserId = currentUser.user.createdEntity.id
 
                     const response = await axios.post(`${URL}/create/${currentUser.id}`, newCar, { withCredentials: true });
                     set((state) => ({ cars: [...state.cars, response.data] }));

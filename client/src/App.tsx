@@ -7,6 +7,7 @@ import LogIn from './pages/LogIn'
 import SignUp from './pages/SignUp'
 import AuthGate from './components/AuthGate'
 import Employees from './pages/Employees'
+import Service from './pages/Service'
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/appointments" element={<Appointments />} />
                     <Route path='/employees' element={<Employees />} />
+                    <Route path='/service' element={<Service/>} />
                 </Route>
 
             </Routes>
