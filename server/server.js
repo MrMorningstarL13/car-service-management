@@ -31,6 +31,6 @@ app.get('/reset', async (req, res) => {
 
 app.use('/api', router)
 
-app.get('/', async (req, res) => {
-    res.json("Hello")
+app.get('/*', async (req, res) => {
+    res.json("This is the default GET, you might have typed the URL wrong :P")
 })

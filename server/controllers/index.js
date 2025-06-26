@@ -5,6 +5,7 @@ const carController = require('./car')
 const appointmentController = require('./appointment')
 const employeeController = require('./employee')
 const repairController = require('./repair')
+const favController = require('./favourites')
 
 module.exports = {
     userController,
@@ -13,5 +14,6 @@ module.exports = {
     carController,
     appointmentController,
     employeeController,
-    repairController
+    repairController,
+    favController,
 }

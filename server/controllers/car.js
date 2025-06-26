@@ -1,8 +1,7 @@
 const { User } = require('../models');
 const { Car } = require('../models');
 const axios = require('axios');
-const { createClient } = require("redis")
-
+const { redisClient } = require('../utils/redisClient');
 const CUSTOM_SEARCH_API_KEY = 'AIzaSyDdVkqy-pvJS12ERY2hVbcbQM6KfE7MJwo'
 const SEARCH_ENGINE_ID = '262303ae0aceb464d';
 
@@ -68,54 +67,40 @@ const carController = {
 
     getImage: async (req, res) => {
         try {
-            // const redisClient = await createClient().on("error", (err) => console.log("Redis Client Error", err)).connect();
-            // console.log(redisClient.isReady)
-
-
-            const client = createClient({
-                username: 'default',
-                password: 'jJVYBOihsKmOVCjp4Vh8wY4xjuPu1KNU',
-                socket: {
-                    host: 'redis-16689.c328.europe-west3-1.gce.redns.redis-cloud.com',
-                    port: 16689
-                }
-            });
-
-            client.on('error', err => console.log('Redis Client Error', err));
-
-            await client.connect();
-
-            await client.set('foo', 'bar');
-            const result = await client.get('foo');
-            console.log(result)  // >>> bar
-
-
-
             const { brand, model, yearOfProduction } = req.query;
             if (!brand || !model || !yearOfProduction) {
-                return res.status(400).json({ message: "Brand, model and production year are required" });
+                return res.status(400).json('Brand, model and production year are required');
+            }
+
+            const cacheKey = `image:${brand.toLowerCase()}:${model.toLowerCase()}:${yearOfProduction}`;
+
+            const cachedUrl = await redisClient.get(cacheKey);
+            if (cachedUrl) {
+                return res.status(200).json({ imageUrl: cachedUrl, cached: true });
             }
 
             const query = `${brand} ${model} ${yearOfProduction} car desktop wallpaper`;
-
-            const response = await axios.get('https://www.googleapis.com/customsearch/v1', {
+            const { data } = await axios.get('https://www.googleapis.com/customsearch/v1', {
                 params: {
                     q: query,
-                    cx: SEARCH_ENGINE_ID,
-                    key: CUSTOM_SEARCH_API_KEY,
+                    cx: process.env.SEARCH_ENGINE_ID,
+                    key: process.env.CUSTOM_SEARCH_API_KEY,
                     searchType: 'image',
                     num: 1,
                 },
-            })
+            });
 
-            const imageUrl = response.data.items[0]?.link;
-
+            const imageUrl = data.items?.[0]?.link;
             if (!imageUrl) {
-                return res.status(404).json({ message: "No image found" });
-            } else return res.status(200).json({ imageUrl });
+                return res.status(404).json({ message: 'No image found' });
+            }
 
-        } catch (error) {
-            return res.status(500).json(error.message);
+            await redisClient.set(cacheKey, imageUrl, { EX: 60 * 60 * 24 * 7, NX: true })
+
+            return res.status(200).json(imageUrl);
+        } catch (err) {
+            console.error(err.message);
+            return res.status(500).json(err.message);
         }
     },
 }

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"
-import { Search, Home, User, Clock, Menu, X, LogOut, Box } from "lucide-react"
+import { useState } from "react"
+import { Search, Home, User, Clock, Menu, X, LogOut, Box, Wrench } from "lucide-react"
 import { useLocation, useNavigate } from "react-router"
 import NavButton from "./NavButton"
 import useUserStore from "../stores/userStore"
@@ -106,7 +106,7 @@ export default function Navbar({ role }: NavbarProps) {
                     <div className="hidden md:flex items-center space-x-2 relative">
                         <NavButton icon={Home} label="Dashboard" href="/" isActive={isHomePage} />
                         <NavButton icon={User} label="Employees" href="/employees" isActive={isEmployeesPage} />
-                        <NavButton icon={Clock} label="Service" href="/service" isActive={isServicePage} />
+                        <NavButton icon={Wrench} label="Service" href="/service" isActive={isServicePage} />
                         <NavButton icon={LogOut} label="Log out" href="/login" isActive={false} onClick={handleLogout} />
                     </div>
 

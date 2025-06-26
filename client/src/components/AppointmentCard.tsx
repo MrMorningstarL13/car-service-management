@@ -1,5 +1,5 @@
 import type React from "react"
-import { Calendar, Clock, DollarSign, Car, CheckCircle, XCircle, AlertCircle, Hourglass } from "lucide-react"
+import { Calendar, Clock, Euro, Car, CheckCircle, XCircle, AlertCircle, Hourglass } from "lucide-react"
 import useAppointmentStore from "../stores/appointmentStore"
 import useServiceStore from "../stores/serviceStore"
 
@@ -131,9 +131,9 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                 </div>
 
                 <div className="flex items-center">
-                    <DollarSign size={18} className="text-[rgba(119,150,109,1)] mr-3" />
+                    <Euro size={18} className="text-[rgba(119,150,109,1)] mr-3" />
                     <div>
-                        <p className="text-sm font-medium text-[rgba(84,67,67,1)]">${appointment.estimatedCost}</p>
+                        <p className="text-sm font-medium text-[rgba(84,67,67,1)]">{appointment.estimatedCost}</p>
                         <p className="text-xs text-[rgba(84,67,67,0.7)]">Estimated Cost</p>
                     </div>
                 </div>

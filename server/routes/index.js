@@ -9,6 +9,7 @@ const carRouter = require('./car')
 const appointmentRouter = require('./appointment')
 const employeeRouter = require('./employee')
 const repairRouter = require('./repair')
+const favouriteRouter = require('./favourites')
 
 router.use('/service', serviceRouter)
 router.use('/user', userRouter)
@@ -17,6 +18,7 @@ router.use('/car', carRouter)
 router.use('/appointment', appointmentRouter)
 router.use('/employee', employeeRouter)
 router.use('/repair', repairRouter)
+router.use('/favourite', favouriteRouter)
 
 router.use('/auth', authRouter)
 

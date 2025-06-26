@@ -48,7 +48,7 @@ export default function CarCard({ car, onDelete }: CarCardProps) {
     useEffect(() => {
         const fetchImage = async () => {
             const image = await getImage(car.brand, car.model, car.yearOfProduction);
-            console.warn(image.data.imageUrl);
+            console.warn(image.data);
             setImageUrl(image.data.imageUrl);
         };
         fetchImage();
