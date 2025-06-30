@@ -10,6 +10,7 @@ const appointmentRouter = require('./appointment')
 const employeeRouter = require('./employee')
 const repairRouter = require('./repair')
 const favouriteRouter = require('./favourites')
+const feedbackRouter = require('./feedback')
 
 router.use('/service', serviceRouter)
 router.use('/user', userRouter)
@@ -19,6 +20,7 @@ router.use('/appointment', appointmentRouter)
 router.use('/employee', employeeRouter)
 router.use('/repair', repairRouter)
 router.use('/favourite', favouriteRouter)
+router.use('/feedback', feedbackRouter)
 
 router.use('/auth', authRouter)
 

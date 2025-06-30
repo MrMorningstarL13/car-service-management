@@ -50,8 +50,8 @@ Employee.belongsTo(Service)
 ServiceType.hasMany(Repair)
 Repair.belongsTo(ServiceType)
 
-Repair.hasMany(Feedback)
-Feedback.belongsTo(Repair)
+Service.hasMany(Feedback)
+Feedback.belongsTo(Service)
 
 User.belongsToMany(Service, {through: Favourite })
 Service.belongsToMany(User, {through: Favourite })

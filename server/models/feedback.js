@@ -14,6 +14,10 @@ module.exports = (db) => {
         comment: {
             type: DataTypes.TEXT,
             allowNull: false,
+        },
+        author: {
+            type: DataTypes.STRING,
+            allowNull: false,
         }
     }, {
         freeezeTableName: true,
