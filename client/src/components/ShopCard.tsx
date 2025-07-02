@@ -52,7 +52,7 @@ export default function ShopCard({ shop }: ShopProps) {
     }, [favourites, shop.id])
 
     const toggleFavourite = async () => {
-        if (isUpdating) return; // Prevent multiple clicks
+        if (isUpdating) return;
         
         setIsUpdating(true);
         

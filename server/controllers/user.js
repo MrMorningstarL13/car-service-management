@@ -1,4 +1,4 @@
-const { User, AuthUser, Employee, Service } = require('../models')
+const { User, AuthUser, Employee, Service, Car, Appointment } = require('../models')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sequelize = require('../config/db')
@@ -19,7 +19,7 @@ const userController = {
                 role,
             } = req.body
 
-            const existingUser = await AuthUser.findOne({ where: { email: email } }, {transaction: t})
+            const existingUser = await AuthUser.findOne({ where: { email: email } }, { transaction: t })
             if (existingUser) {
                 return res.status(409).json("A user already exists with this email")
             }
@@ -34,7 +34,7 @@ const userController = {
                 password: hashedPassword,
                 role,
             }
-            const createdAuthUser = await AuthUser.create(authUserData, {transaction: t})
+            const createdAuthUser = await AuthUser.create(authUserData, { transaction: t })
             let createdEntity = null;
 
             if (role === 'customer') {
@@ -48,7 +48,7 @@ const userController = {
                     phone,
                 }
 
-                const createdUser = await createdAuthUser.createUser(userData, {transaction: t})
+                const createdUser = await createdAuthUser.createUser(userData, { transaction: t })
 
                 if (createdUser)
                     createdEntity = createdUser
@@ -74,10 +74,10 @@ const userController = {
                     isRep,
                 }
 
-                const createdEmployee = await createdAuthUser.createEmployee(employeeData, {transaction: t})
+                const createdEmployee = await createdAuthUser.createEmployee(employeeData, { transaction: t })
 
                 if (createdEmployee)
-                    createdEntity = {createdEmployee}
+                    createdEntity = { createdEmployee }
                 else {
                     await t.rollback()
                     return res.status(500).json("error when creating employee")
@@ -109,7 +109,7 @@ const userController = {
     logIn: async (req, res) => {
         try {
             const { email, password } = req.body
-            const user = await AuthUser.findOne({ where: { email: email }, include: { model: Employee || User} })
+            const user = await AuthUser.findOne({ where: { email: email }, include: { model: Employee || User } })
 
             if (!user) {
                 return res.status(404).json("User not found")
@@ -158,6 +158,50 @@ const userController = {
             res.status(500).json("There was an error when retrieving the users.")
         }
     },
+
+    getStatistics: async (req, res) => {
+        try {
+            /* 
+            average appointment cost by car
+            money spent by car per year
+            spending distribution by car
+            */
+            const { userId } = req.params
+
+            const searchedUser = await User.findByPk(
+                userId,
+                {
+                    attributes: ['id'],
+                    include: {
+                        model: Car,
+                        attributes: ['brand', 'model', 'yearOfProduction', 'plateNumber'],
+                        include: {
+                            model: Appointment,
+                            attributes: ['scheduledDate', 'estimatedCost', 'status']
+                        }
+                    }
+                }
+            )
+
+            const cars = searchedUser.cars
+
+            const appointments = cars.map(el => el.appointments)
+            const totalCost = appointments.flat().map(el => el.estimatedCost).reduce((a,b) => a + b)
+            
+            const noAppointments = appointments.flat().length
+            
+            const averageCost = totalCost / noAppointments
+            
+            const result = {
+                totalCost,
+                averageCost,
+            }
+
+            res.status(200).json(result)
+        } catch (error) {
+            res.status(500).json(error.message)
+        }
+    }
 }
 
 module.exports = userController
