@@ -14,9 +14,9 @@ const useAppointmentStore = create<Store>((set) => ({
     create: async (carId, serviceId, appointmentData) => {
         try {
             const response = await axios.post(`${URL}/create/${carId}/${serviceId}`, appointmentData)
-            if(response != null) {
+            if (response != null) {
                 console.log("Appointment created successfully");
-            } else 
+            } else
                 console.warn("No response data received when creating appointment");
             return response.data.id;
             // set((state) => ({ appointments: [...state.appointments, response.data] }));
@@ -27,30 +27,30 @@ const useAppointmentStore = create<Store>((set) => ({
     getByUser: async (userId) => {
         try {
             const response = await axios.get(`${URL}/getByUser/${userId}`)
-            if(response != null){
-                set((state) => ({ appointments: response.data}))
+            if (response != null) {
+                set((state) => ({ appointments: response.data }))
             }
         } catch (error) {
-            console.warn( "error in appointment store, getByUser" )
+            console.warn("error in appointment store, getByUser")
         }
     },
     update: async (appointmentId, appointmentData) => {
-    try {
-        const response = await axios.patch(`${URL}/update/${appointmentId}`, appointmentData)
-        const updatedAppointment = response.data
+        try {
+            const response = await axios.patch(`${URL}/update/${appointmentId}`, appointmentData)
+            const updatedAppointment = response.data
 
-        set((state) => ({
-            appointments: state.appointments.map((car) => ({
-                ...car,
-                appointments: car.appointments.map((appointment: any) =>
-                    appointment.id === updatedAppointment.id ? updatedAppointment : appointment
-                ),
-            })),
-        }))
-    } catch (error) {
-        console.warn('error updating appointment', error)
+            set((state) => ({
+                appointments: state.appointments.map((car) => ({
+                    ...car,
+                    appointments: car.appointments.map((appointment: any) =>
+                        appointment.id === updatedAppointment.id ? updatedAppointment : appointment
+                    ),
+                })),
+            }))
+        } catch (error) {
+            console.warn('error updating appointment', error)
+        }
     }
-}
 
 }))
 

@@ -6,5 +6,6 @@ router.post('/create/:userId/:serviceId', feedbackController.create)
 router.delete('/delete/:feedbackId', feedbackController.delete)
 router.patch('/update/:feedbackId', feedbackController.update)
 router.get('/getAll/:serviceId', feedbackController.getAllByService)
+router.get('/getAverageRating/:serviceId', feedbackController.getAverage)
 
 module.exports = router

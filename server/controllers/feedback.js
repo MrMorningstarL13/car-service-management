@@ -5,7 +5,6 @@ const controller = {
         const { userId, serviceId } = req.params;
         const { rating, comment } = req.body;
 
-        /* ── 1. Basic validation ─────────────────────────────────────────── */
         if (!rating || !comment) {
             return res.status(400).json('You must add a rating and a comment!');
         }
@@ -70,7 +69,7 @@ const controller = {
                 return res.status(400).json("You must provide both a rating and a comment!");
             }
 
-            if (rating < 0 || rating > 10) {
+            if (rating < 1 || rating > 10) {
                 return res.status(400).json("Invalid rating range, please insert a valid rating!");
             }
 
@@ -112,6 +111,27 @@ const controller = {
             if(result.length === 0)
                 return res.status(404).json("No reviews found for this service")
             return res.status(200).json(result)
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    },
+
+    getAverage: async (req, res) => {
+        try {
+            const { serviceId } = req.params
+
+            const ratings = await Feedback.findAll({
+                where: {serviceId},
+                attributes: ['rating']
+            })
+
+            if(!ratings){
+                return res.status(404).json(0)
+            }
+
+            const averageRating = ratings.map(el => el.rating).reduce((prev, curr) => prev = prev + curr) / ratings.length
+
+            res.status(200).json(averageRating)
         } catch (error) {
             return res.status(500).json(error.message)
         }

@@ -78,9 +78,6 @@ export default function Home() {
     const filteredServices =
         viewMode === "all" ? services : services.filter(service => favourites.some(f => f.serviceId === service.id))
 
-    console.log('services', services)
-    console.log('favourites', favourites)
-
     const mockAppointments = [
         {
             id: 27,

@@ -1,10 +1,14 @@
-import { MapPin, Star, Car, StarOff } from "lucide-react"
+"use client"
+
+import { MapPin, Car } from "lucide-react"
 import { useEffect, useState } from "react"
 import BookingMenu from "./BookingMenu"
+import ServiceDetailsDialog from "./ServiceDetailsDialog"
 import useFavouriteStore from "../stores/useFavouriteStore"
 import useUserStore from "../stores/userStore"
-import toast, { Toaster } from "react-hot-toast"
-import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
+import toast from "react-hot-toast"
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai"
+import useFeedbackStore from "../stores/useFeedbackStore"
 
 type service_type = {
     id: number
@@ -24,39 +28,50 @@ interface ShopProps {
         image: string
         lat: string
         lng: string
-    },
+    }
 }
 
 export default function ShopCard({ shop }: ShopProps) {
     const [isBookingMenuOpen, setIsBookingMenuOpen] = useState(false)
+    const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false)
     const [bookingKey, setBookingKey] = useState(0)
+    const [isUpdating, setIsUpdating] = useState(false)
     const [isFavourite, setIsFavourite] = useState(false)
 
     const { favourites, add, remove } = useFavouriteStore()
     const { user } = useUserStore()
+    const { reset } = useFeedbackStore();
     const currentUser: any = user
 
     useEffect(() => {
-        const isFav = favourites.some((fav) => fav.serviceId === shop.id)
-        setIsFavourite(isFav)
+        let favourite = favourites.find(
+            (fav) => Number(fav.serviceId) === Number(shop.id)
+        )
+        console.log('fav', favourite)
+        setIsFavourite(favourite)
     }, [favourites, shop.id])
 
     const toggleFavourite = async () => {
-
-    try {
-        if (isFavourite) {
-            await remove(currentUser.id, String(shop.id));
-            toast.error("Service removed from favourites!");
-        } else {
-            await add(currentUser.id, String(shop.id));
-            toast.success("Service added to favourites!");
+        if (isUpdating) return; // Prevent multiple clicks
+        
+        setIsUpdating(true);
+        
+        try {
+            if (isFavourite) {
+                await remove(currentUser.id, String(shop.id))
+                toast.success("Service removed from favourites!")
+            } else {
+                await add(currentUser.id, String(shop.id))
+                console.log("serviceCard", favourites)
+                toast.success("Service added to favourites!")
+            }
+        } catch (err) {
+            console.error(err)
+            toast.error("Failed to update favourites")
+        } finally {
+            setIsUpdating(false);
         }
-    } catch (error) {
-        console.error("Error toggling favourite:", error);
-        setIsFavourite(!isFavourite); 
-        toast.error("Failed to update favourites");
     }
-};
 
     const openBookingMenu = () => {
         setIsBookingMenuOpen(true)
@@ -64,7 +79,16 @@ export default function ShopCard({ shop }: ShopProps) {
 
     const closeBookingMenu = () => {
         setIsBookingMenuOpen(false)
-        setBookingKey(prevKey => prevKey + 1)
+        setBookingKey((prevKey) => prevKey + 1)
+    }
+
+    const openDetailsDialog = () => {
+        setIsDetailsDialogOpen(true)
+    }
+
+    const closeDetailsDialog = () => {
+        setIsDetailsDialogOpen(false)
+        reset();
     }
 
     return (
@@ -78,8 +102,11 @@ export default function ShopCard({ shop }: ShopProps) {
                             <span>{shop.address}</span>
                         </div>
                     </div>
-                    <div 
-                        className="flex items-center justify-center bg-[rgba(119,150,109,0.2)] px-2 py-1 rounded-full cursor-pointer"
+
+                    <div
+                        className={`flex items-center justify-center bg-[rgba(119,150,109,0.2)] px-2 py-1 rounded-full cursor-pointer ${
+                            isUpdating ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[rgba(119,150,109,0.3)]'
+                        }`}
                         onClick={toggleFavourite}
                     >
                         {isFavourite ? (
@@ -95,11 +122,12 @@ export default function ShopCard({ shop }: ShopProps) {
                     <div className="flex items-center mb-4">
                         <div className="relative h-20 w-32 rounded-md overflow-hidden">
                             {shop.image ? (
-                                <img src={shop.image} alt={shop.name} className="object-cover w-full h-full" />
+                                <img src={shop.image || "/placeholder.svg"} alt={shop.name} className="object-cover w-full h-full" />
                             ) : (
                                 <Car className="w-full h-full bg-primary" strokeWidth={1.25} />
                             )}
                         </div>
+
                         <div className="ml-4">
                             <div className="text-sm text-tertiary">{shop.service_types.length} services available</div>
                         </div>
@@ -107,13 +135,13 @@ export default function ShopCard({ shop }: ShopProps) {
                 </div>
 
                 <div className="p-4 bg-[rgba(189,198,103,0.1)] flex justify-between">
-                    <button className="px-4 py-2 border border-secondary text-tertiary rounded-md hover:bg-[rgba(119,150,109,0.2)] hover:text-[rgba(84,67,67,1)]">
+                    <button
+                        className="px-4 py-2 border border-secondary text-tertiary rounded-md hover:bg-[rgba(119,150,109,0.2)] hover:text-[rgba(84,67,67,1)]"
+                        onClick={openDetailsDialog}
+                    >
                         View Details
                     </button>
-                    <button 
-                        className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-tertiary"
-                        onClick={openBookingMenu}
-                    >
+                    <button className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-tertiary" onClick={openBookingMenu}>
                         Book Service
                     </button>
                 </div>
@@ -128,6 +156,10 @@ export default function ShopCard({ shop }: ShopProps) {
                     shopName={shop.name}
                     serviceTypes={shop.service_types}
                 />
+            )}
+
+            {isDetailsDialogOpen && (
+                <ServiceDetailsDialog isOpen={isDetailsDialogOpen} onClose={closeDetailsDialog} shop={shop} />
             )}
         </>
     )
