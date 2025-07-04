@@ -162,8 +162,6 @@ const userController = {
     getStatistics: async (req, res) => {
         try {
             /* 
-            average appointment cost by car
-            money spent by car per year
             spending distribution by car
             */
             const { userId } = req.params
@@ -186,15 +184,59 @@ const userController = {
             const cars = searchedUser.cars
 
             const appointments = cars.map(el => el.appointments)
-            const totalCost = appointments.flat().map(el => el.estimatedCost).reduce((a,b) => a + b)
-            
+            const totalCost = appointments.flat().map(el => el.estimatedCost).reduce((a, b) => a + b)
+
             const noAppointments = appointments.flat().length
-            
+
             const averageCost = totalCost / noAppointments
-            
+
+            let averageCostByCar = {}
+            let costByCar = {}
+
+            cars.forEach(car => {
+                let carName = `${car.yearOfProduction} ${car.brand} ${car.model}`;
+
+                let appointmentsByCar = car.appointments.map(el => el.estimatedCost)
+                let noAppointments = appointmentsByCar.flat().length
+                let totalCost = appointmentsByCar.reduce((a, b) => a + b)
+                let averageCost = totalCost / noAppointments
+
+
+                averageCostByCar[carName] = averageCost
+
+                costByCar[carName] = totalCost
+            })
+
+            let spendingByCar = {};
+
+            cars.forEach(car => {
+                let carName = `${car.yearOfProduction} ${car.brand} ${car.model}`;
+                let carSpending = {};
+
+                car.appointments.forEach(appointment => {
+                    let year = new Date(appointment.scheduledDate).getFullYear();
+                    let cost = Number(appointment.estimatedCost);
+
+                    if (!carSpending[year]) {
+                        carSpending[year] = 0;
+                    }
+
+                    carSpending[year] += cost;
+                });
+
+                spendingByCar[carName] = carSpending;
+            });
+
+            cars.forEach(car => {
+                console.log(car)
+            })
+
             const result = {
                 totalCost,
                 averageCost,
+                averageCostByCar,
+                spendingByCar,
+                costByCar
             }
 
             res.status(200).json(result)

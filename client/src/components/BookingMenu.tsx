@@ -5,6 +5,7 @@ import { Badge } from "./ui/Badge"
 import { Calendar } from "./ui/Calendar"
 import { format } from "date-fns"
 import { Car, CalendarIcon, Wrench, CheckCircle2, ChevronRight, ChevronLeft, X, Clock3 } from "lucide-react"
+import { toast } from "react-hot-toast";
 
 import carStore from "../stores/carStore"
 import useAppointmentStore from "../stores/appointmentStore"
@@ -101,32 +102,40 @@ export default function BookingWizard({ isOpen, onClose, shopId, shopName, servi
     }
 
     const handleSubmit = async () => {
-        let priority = "normal"
-        for(let service of services){
-            if(service.name.toLowerCase().includes(`premium service`))
-                priority = 'premium'
-        }
-
-        const datePart = selectedDate?.toDateString()
-        console.log("datePart", datePart)
-        console.log("selectedDate", selectedDate?.toDateString())
-        const dateTime = `${datePart} ${selectedTime}`
-        
-        const scheduledDate = new Date(dateTime);
-        const status = "waiting"
-        const estimatedCost = calculateTotal().toFixed(2)
-
-        const appointmentData = {priority, scheduledDate, status, estimatedCost}
-
-        if (selectedVehicle) {
-            const result = await create(selectedVehicle, shopId, appointmentData)
-            
-            for(const serviceTypeId of selectedServices){
-                const repairResult = await createRepair(result, Number(serviceTypeId))
+        const toastId = toast.loading("Booking your appointment…");
+        try {
+            let priority = "normal"
+            for (let service of services) {
+                if (service.name.toLowerCase().includes(`premium service`))
+                    priority = 'premium'
             }
+
+            const datePart = selectedDate?.toDateString()
+            const dateTime = `${datePart} ${selectedTime}`
+
+            const scheduledDate = new Date(dateTime);
+            const status = "waiting"
+            const estimatedCost = calculateTotal().toFixed(2)
+
+            const appointmentData = { priority, scheduledDate, status, estimatedCost }
+
+            if (selectedVehicle) {
+                const result = await create(selectedVehicle, shopId, appointmentData)
+
+                for (const serviceTypeId of selectedServices) {
+                    const repairResult = await createRepair(result, Number(serviceTypeId))
+                }
+            }
+
+            onClose()
+            toast.success("Appointment booked successfully!", { id: toastId });
+
+        } catch (error : any) {
+            const message = "The selected day is full at the service! Please select another day."
+            toast.error(message, { id: toastId });
         }
 
-        onClose()
+
     }
 
     const isNextDisabled = () => {

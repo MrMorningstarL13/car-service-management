@@ -43,6 +43,7 @@ type Store = {
     createUser: (newAuthUser: AuthUser, entity: Entity) => Promise<void>
     logIn: (user: LogInUser) => Promise<void>
     logOut: () => Promise<void>
+    getStatistics: () => Promise<any>
 }
 
 const useUserStore = create<Store>()(
@@ -96,11 +97,21 @@ const useUserStore = create<Store>()(
                     console.warn("error logging out user")
                 }
             },
+
+            getStatistics: async () => {
+                try {
+                    const currentUser: any = useUserStore.getState().user;
+                    const results = await axios.get(`${URL}/statistics/${currentUser.id}`)
+                    return results.data
+                } catch (error) {
+                    console.warn("error when computing statistics")
+                }
+            }
         }),
         {
             name: "user-storage",
             storage: createJSONStorage(() => localStorage),
-            partialize: (state) => ({ 
+            partialize: (state) => ({
                 user: state.user,
                 currentServiceId: state.currentServiceId,
             }),

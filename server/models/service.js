@@ -25,6 +25,9 @@ module.exports = (db) => {
         lng: {
             type: DataTypes.STRING,
         },
+        max_no_appointments: {
+            type: DataTypes.INTEGER,
+        }
     }, {
         freeezeTableName: true,
     })

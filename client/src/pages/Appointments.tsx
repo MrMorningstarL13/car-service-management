@@ -107,7 +107,7 @@ export default function History() {
                             <p className="text-[rgba(84,67,67,0.7)]">No active appointments found.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-12">
                             {activeAppointments.map(({ appointment, car }) => (
                                 <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} />
                             ))}
@@ -125,7 +125,7 @@ export default function History() {
                             <p className="text-[rgba(84,67,67,0.7)]">No past appointments found.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                             {pastAppointments.map(({ appointment, car }) => (
                                 <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} />
                             ))}

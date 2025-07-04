@@ -19,7 +19,6 @@ const useAppointmentStore = create<Store>((set) => ({
             } else
                 console.warn("No response data received when creating appointment");
             return response.data.id;
-            // set((state) => ({ appointments: [...state.appointments, response.data] }));
         } catch (error) {
             console.warn('error creating appointment')
         }

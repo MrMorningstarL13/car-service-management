@@ -20,9 +20,16 @@ const repairController = {
     },
     assignRepair: async(req, res) => {
         try {
-            
+            const { repairId, employeeId } = req.params
         } catch (error) {
             return res.status(500).json(error.message)
+        }
+    },
+    getRepairsByEmployee: async(req, res) => {
+        try {
+            const { employeeId } = req.params
+        } catch (error) {
+            
         }
     }
 }
