@@ -40,9 +40,11 @@ export default function Home() {
         fetchData()
         getByUser(currentUser.id)
 
-        const serviceId = currentUser.employee.serviceId
-        getByService(serviceId)
-        fetchEmployees(serviceId)
+        if(currentUser.employee != null){
+            const serviceId = currentUser.employee.serviceId
+            getByService(serviceId)
+            fetchEmployees(serviceId)
+        }
 
         console.log("employees", employees)
         console.log("appointments", appointments)
