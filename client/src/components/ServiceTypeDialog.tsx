@@ -25,10 +25,6 @@ export default function ServiceTypeDialog({ isOpen, onClose, onSave, serviceType
         description: "",
         baseCost: 0,
     })
-    const { create } = useServiceTypeStore()
-
-    const currentUser: any = userStore.getState().user
-    const serviceId = currentUser.employee.serviceId
 
     useEffect(() => {
         if (serviceType) {
@@ -48,7 +44,7 @@ export default function ServiceTypeDialog({ isOpen, onClose, onSave, serviceType
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        create(formData, serviceId)
+        onSave(formData)
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

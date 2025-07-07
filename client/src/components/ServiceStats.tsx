@@ -31,7 +31,7 @@ const monthlyData = [
 ]
 
 const serviceTypeData = [
-    { name: "Oil Change", value: 35, color: "rgba(119, 150, 109, 1)" },
+    { name: "Oil Change", value: 30, color: "rgba(119, 150, 109, 1)" },
     { name: "Brake Service", value: 25, color: "rgba(189, 198, 103, 1)" },
     { name: "Tire Service", value: 20, color: "rgba(98, 109, 88, 1)" },
     { name: "Engine Repair", value: 15, color: "rgba(86, 40, 45, 1)" },
@@ -55,11 +55,10 @@ export default function ServiceStatistics() {
                 <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Annual Profit</h3>
+                            <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">All-time Revenue</h3>
                             <p className="text-2xl font-bold text-[rgba(119,150,109,1)]">
                                 ${currentYearData.profit.toLocaleString()}
                             </p>
-                            <p className="text-xs text-[rgba(84,67,67,0.6)]">+12% from last year</p>
                         </div>
                         <div className="p-3 bg-[rgba(119,150,109,0.1)] rounded-full">
                             <TrendingUp size={24} className="text-[rgba(119,150,109,1)]" />
@@ -87,7 +86,6 @@ export default function ServiceStatistics() {
                         <div>
                             <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Active Employees</h3>
                             <p className="text-2xl font-bold text-[rgba(98,109,88,1)]">12</p>
-                            <p className="text-xs text-[rgba(84,67,67,0.6)]">Certified technicians</p>
                         </div>
                         <div className="p-3 bg-[rgba(98,109,88,0.1)] rounded-full">
                             <Users size={24} className="text-[rgba(98,109,88,1)]" />
@@ -98,11 +96,10 @@ export default function ServiceStatistics() {
                 <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Monthly Appointments</h3>
+                            <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Completed Appointments</h3>
                             <p className="text-2xl font-bold text-[rgba(86,40,45,1)]">
                                 {monthlyData[monthlyData.length - 1].appointments}
                             </p>
-                            <p className="text-xs text-[rgba(84,67,67,0.6)]">+8% from last month</p>
                         </div>
                         <div className="p-3 bg-[rgba(86,40,45,0.1)] rounded-full">
                             <Calendar size={24} className="text-[rgba(86,40,45,1)]" />
@@ -111,9 +108,7 @@ export default function ServiceStatistics() {
                 </div>
             </div>
 
-            {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Profit Analysis */}
                 <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                     <h3 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Annual Profit Analysis</h3>
                     <ResponsiveContainer width="100%" height={300}>

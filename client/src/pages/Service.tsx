@@ -2,7 +2,6 @@ import { useState } from "react"
 import ServiceTypeManagement from "../components/ServiceTypeManagement"
 import ServiceInfoEditor from "../components/ServiceInfo"
 import ServiceStatistics from "../components/ServiceStats"
-import PremiumPriceSlider from "../components/PremiumPriceSlider"
 import { Settings, BarChart3, Wrench, DollarSign } from "lucide-react"
 import Navbar from "../components/Navbar"
 
@@ -13,8 +12,9 @@ export default function ServiceManagementPage() {
         { id: "overview", label: "Overview", icon: BarChart3 },
         { id: "service-types", label: "Service Types", icon: Wrench },
         { id: "service-info", label: "Service Info", icon: Settings },
-        { id: "pricing", label: "Premium Pricing", icon: DollarSign },
     ]
+
+    console.log(activeTab)
 
     return (
         <div className="min-h-screen bg-[#f8f9f4]">
@@ -50,7 +50,6 @@ export default function ServiceManagementPage() {
                     {activeTab === "overview" && <ServiceStatistics />}
                     {activeTab === "service-types" && <ServiceTypeManagement />}
                     {activeTab === "service-info" && <ServiceInfoEditor />}
-                    {activeTab === "pricing" && <PremiumPriceSlider />}
                 </div>
             </div>
         </div>

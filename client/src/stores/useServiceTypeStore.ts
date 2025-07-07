@@ -14,7 +14,7 @@ const useServiceTypeStore = create<Store>((set) => ({
     serviceTypes: [],
     getByShop: async (serviceId) => {
         const response = await axios.get(`http://localhost:8080/api/serviceType/getByShop/${serviceId}`)
-        set((state) => ({ serviceTypes: [response.data] }))
+        set((state) => ({ serviceTypes: response.data }))
     },
     getName: async (serviceTypeId) => {
         const response = await axios.get(`http://localhost:8080/api/serviceType/getName/${serviceTypeId}`)

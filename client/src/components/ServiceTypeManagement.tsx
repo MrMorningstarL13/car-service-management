@@ -36,8 +36,6 @@ export default function ServiceTypeManagement() {
         getByShop(serviceId)
     }, [serviceId, getByShop])
 
-    console.log('serviceTypes', serviceTypes)
-
     const handleAddServiceType = () => {
         setEditingServiceType(null)
         setIsDialogOpen(true)
