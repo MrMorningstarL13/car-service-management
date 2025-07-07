@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { Calendar, Clock, Car, CheckCircle, XCircle, AlertCircle, Hourglass, Euro } from "lucide-react"
 import useServiceStore from "../stores/serviceStore"

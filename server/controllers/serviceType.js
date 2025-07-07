@@ -1,4 +1,4 @@
-const { ServiceType } = require('../models');
+const { ServiceType, Service } = require('../models');
 
 const serviceTypeController = {
     createServiceType: async (req, res) => {
@@ -44,6 +44,19 @@ const serviceTypeController = {
             }
         } catch (error) {
             console.warn("error when getting service types by shop")
+        }
+    },
+
+    getServiceTypeName: async (req, res) => {
+        try {
+            const serviceType = await ServiceType.findByPk(req.params.serviceTypeId)
+
+            if(!serviceType)
+                return res.status(404).json("No service type found!")
+
+            return res.status(200).json(serviceType.name[0].toUpperCase() + serviceType.name.substring(1))
+        } catch (error) {
+            res.status(500).json("error when getting service type name")
         }
     }
 }

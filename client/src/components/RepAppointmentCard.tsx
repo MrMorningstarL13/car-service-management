@@ -9,6 +9,7 @@ interface Employee {
     lastName: string
     position: string
     experienceLevel: string
+    auth_user: any
 }
 
 interface Repair {

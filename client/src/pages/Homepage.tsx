@@ -1,5 +1,3 @@
-"use client"
-
 import ShopCard from "../components/ShopCard"
 import Navbar from "../components/Navbar"
 import useServiceStore from "../stores/serviceStore"
@@ -11,6 +9,8 @@ import { Calendar } from "../components/ui/Calendar"
 import toast, { Toaster } from "react-hot-toast"
 import useFavouriteStore from "../stores/useFavouriteStore"
 import { Heart, Grid3X3 } from "lucide-react"
+import useAppointmentStore from "../stores/appointmentStore"
+import useEmployeeStore from "../stores/useEmployeeStore"
 
 export default function Home() {
     const [answeredPrompt, setAnsweredPrompt] = useState(false)
@@ -19,6 +19,8 @@ export default function Home() {
     const { services, fetchShops } = useServiceStore()
     const { fetchCars } = useCarStore()
     const { favourites, getByUser } = useFavouriteStore()
+    const { appointments, getByService } = useAppointmentStore()
+    const { employees, fetchEmployees } = useEmployeeStore()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,13 +40,14 @@ export default function Home() {
         fetchData()
         getByUser(currentUser.id)
 
-    }, [fetchShops, fetchCars, getByUser])
+        const serviceId = currentUser.employee.serviceId
+        getByService(serviceId)
+        fetchEmployees(serviceId)
 
-    const serviceCoordinates = services.map((service) => ({
-        id: service.id,
-        lat: service.lat,
-        lng: service.lng,
-    }))
+        console.log("employees", employees)
+        console.log("appointments", appointments)
+
+    }, [fetchShops, fetchCars, getByUser, getByService, fetchEmployees])
 
     const getUserLocation = (): Promise<{ lat: number; lng: number }> => {
         return new Promise((resolve, reject) => {
@@ -78,94 +81,6 @@ export default function Home() {
     const filteredServices =
         viewMode === "all" ? services : services.filter(service => favourites.some(f => f.serviceId === service.id))
 
-    const mockAppointments = [
-        {
-            id: 27,
-            scheduledDate: "2025-06-25T09:00:00.000Z",
-            estimatedDuration: null,
-            estimatedCost: 150,
-            checkIn: null,
-            checkOut: null,
-            status: "waiting",
-            priority: "normal",
-            createdAt: "2025-06-10T11:14:17.000Z",
-            updatedAt: "2025-06-10T11:14:17.000Z",
-            carId: 2,
-            invoiceId: null,
-            serviceId: 13,
-            repairs: [
-                {
-                    id: 9,
-                    isComplete: false,
-                    createdAt: "2025-06-10T11:14:17.000Z",
-                    updatedAt: "2025-06-10T11:14:17.000Z",
-                    appointmentId: 27,
-                    employeeId: null,
-                    serviceTypeId: 1,
-                },
-            ],
-        },
-        {
-            id: 28,
-            scheduledDate: "2025-06-18T08:30:00.000Z",
-            estimatedDuration: null,
-            estimatedCost: 235,
-            checkIn: null,
-            checkOut: null,
-            status: "waiting",
-            priority: "normal",
-            createdAt: "2025-06-10T11:15:00.000Z",
-            updatedAt: "2025-06-10T11:15:00.000Z",
-            carId: 2,
-            invoiceId: null,
-            serviceId: 13,
-            repairs: [
-                {
-                    id: 10,
-                    isComplete: false,
-                    createdAt: "2025-06-10T11:15:00.000Z",
-                    updatedAt: "2025-06-10T11:15:00.000Z",
-                    appointmentId: 28,
-                    employeeId: null,
-                    serviceTypeId: 2,
-                },
-                {
-                    id: 11,
-                    isComplete: false,
-                    createdAt: "2025-06-10T11:15:00.000Z",
-                    updatedAt: "2025-06-10T11:15:00.000Z",
-                    appointmentId: 28,
-                    employeeId: null,
-                    serviceTypeId: 1,
-                },
-            ],
-        },
-    ]
-
-    const mockEmployees = [
-        {
-            id: 1,
-            firstName: "John",
-            lastName: "Smith",
-            position: "Senior Mechanic",
-            experienceLevel: "Expert",
-        },
-        {
-            id: 2,
-            firstName: "Sarah",
-            lastName: "Johnson",
-            position: "Technician",
-            experienceLevel: "Intermediate",
-        },
-        {
-            id: 3,
-            firstName: "Mike",
-            lastName: "Davis",
-            position: "Junior Mechanic",
-            experienceLevel: "Beginner",
-        },
-    ]
-
     // @ts-ignore
     if (userStore.getState().user.role === "employee" && userStore.getState().user.employee.isRep) {
         return (
@@ -178,11 +93,11 @@ export default function Home() {
                     </div>
 
                     <div className="space-y-6">
-                        {mockAppointments.map((appointment) => (
+                        {appointments.map((appointment) => (
                             <RepAppointmentCard
                                 key={appointment.id}
                                 appointment={appointment}
-                                employees={mockEmployees}
+                                employees={employees}
                                 onAssignEmployee={handleAssignEmployee}
                                 onUpdateAppointmentStatus={handleUpdateAppointmentStatus}
                                 onUpdateAppointmentPriority={handleUpdateAppointmentPriority}
@@ -190,7 +105,7 @@ export default function Home() {
                         ))}
                     </div>
 
-                    {mockAppointments.length === 0 && (
+                    {appointments.length === 0 && (
                         <div className="text-center py-12">
                             <div className="text-gray-400 mb-4">
                                 <Calendar className="w-16 h-16 mx-auto" />

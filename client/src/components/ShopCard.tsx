@@ -1,5 +1,3 @@
-"use client"
-
 import { MapPin, Car } from "lucide-react"
 import { useEffect, useState } from "react"
 import BookingMenu from "./BookingMenu"

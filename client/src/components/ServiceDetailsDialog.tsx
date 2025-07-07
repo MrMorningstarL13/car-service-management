@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { X, MapPin, Star, DollarSign, Wrench, Send, User, Calendar } from "lucide-react"
 import useFeedbackStore from "../stores/useFeedbackStore"

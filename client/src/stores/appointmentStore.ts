@@ -7,6 +7,7 @@ type Store = {
     create: (carId: string, serviceId: number, appointmentData: any) => Promise<number>,
     getByUser: (userId: any) => Promise<void>,
     update: (appointmentId: string, appointmentData: any) => Promise<void>,
+    getByService: (serviceId: any) => Promise<void>,
 }
 
 const useAppointmentStore = create<Store>((set) => ({
@@ -48,6 +49,17 @@ const useAppointmentStore = create<Store>((set) => ({
             }))
         } catch (error) {
             console.warn('error updating appointment', error)
+        }
+    },
+    getByService: async(serviceId) => {
+        try {
+            const response = await axios.get(`${URL}/getByService/${serviceId}`)
+            
+            if(response != null) {
+                set((state) => ({ appointments: response.data}))
+            }
+        } catch (error) {
+            console.warn("error getting appointments by service", error)
         }
     }
 
