@@ -8,24 +8,28 @@ import SignUp from './pages/SignUp'
 import AuthGate from './components/AuthGate'
 import Employees from './pages/Employees'
 import Service from './pages/Service'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/login" element={<LogIn />} />
-                <Route path="/signup" element={<SignUp />} />
+        <>
+            <Toaster />
+            <Router>
+                <Routes>
+                    <Route path="/login" element={<LogIn />} />
+                    <Route path="/signup" element={<SignUp />} />
 
-                <Route element={<AuthGate />}>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/appointments" element={<Appointments />} />
-                    <Route path='/employees' element={<Employees />} />
-                    <Route path='/service' element={<Service/>} />
-                </Route>
+                    <Route element={<AuthGate />}>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/profile" element={<Profile />} />
+                        <Route path="/appointments" element={<Appointments />} />
+                        <Route path='/employees' element={<Employees />} />
+                        <Route path='/service' element={<Service />} />
+                    </Route>
 
-            </Routes>
-        </Router>
+                </Routes>
+            </Router>
+        </>
     )
 }
 

@@ -7,7 +7,9 @@ import { Plus, FileText, RefreshCw } from "lucide-react"
 import Navbar from "../components/Navbar"
 import useEmployeeStore from "../stores/useEmployeeStore"
 import useUserStore from "../stores/userStore"
-
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import toast from "react-hot-toast"
 export interface Employee {
     id: number
     firstName: string
@@ -37,6 +39,30 @@ export default function EmployeesPage() {
     const [isLoading, setIsLoading] = useState(false)
     const { currentServiceId } = useUserStore()
     const { employees, fetchEmployees, addEmployee, deleteEmployee, updateEmployee } = useEmployeeStore()
+
+    const exportToExcel = () => {
+        const flatEmployees = employees.map(emp => ({
+            ID: emp.id,
+            FirstName: emp.auth_user?.firstName || "",
+            LastName: emp.auth_user?.lastName || "",
+            Email: emp.auth_user?.email || "",
+            Role: emp.auth_user?.role || "",
+            Position: emp.position,
+            ExperienceLevel: emp.experienceLevel,
+            Salary: emp.salary,
+            HireDate: emp.hireDate,
+            IsRepresentative: emp.isRep ? "Yes" : "No",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(flatEmployees);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+
+        const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+        const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
+        saveAs(blob, "employees.xlsx");
+    };
+
 
     useEffect(() => {
         fetchEmployees(currentServiceId)
@@ -110,6 +136,11 @@ export default function EmployeesPage() {
         setEditingEmployee(null)
     }
 
+    const handleExport = () => {
+        toast.success("File has been exported succesfully")
+        exportToExcel()
+    }
+
     return (
         <main className="bg-[#f8f9f4] min-h-screen">
             <Navbar role="rep" />
@@ -131,7 +162,7 @@ export default function EmployeesPage() {
                             <RefreshCw size={18} className={`mr-2 ${isLoading ? "animate-spin" : ""}`} />
                             Refresh
                         </button>
-                        <button className="flex items-center px-3 py-2 bg-white border border-[rgba(119,150,109,1)] text-[rgba(119,150,109,1)] hover:bg-[rgba(119,150,109,0.1)] rounded-md transition-colors duration-200">
+                        <button onClick={handleExport} className="flex items-center px-3 py-2 bg-white border border-[rgba(119,150,109,1)] text-[rgba(119,150,109,1)] hover:bg-[rgba(119,150,109,0.1)] rounded-md transition-colors duration-200">
                             <FileText size={18} className="mr-2" />
                             Export
                         </button>

@@ -95,7 +95,7 @@ const serviceController = {
         try {
             const serviceId = req.params.serviceId;
 
-            const searchedService = Service.findByPk(serviceId)
+            const searchedService = await Service.findByPk(serviceId)
 
             if (searchedService) {
                 res.status(200).json(searchedService)
@@ -166,6 +166,31 @@ const serviceController = {
         } catch (error) {
             console.warn("Error when getting distances")
             res.status(500).json("There was an error when getting distances")
+        }
+    },
+    update: async (req, res) => {
+        try {
+            const serviceId = req.params.serviceId;
+            const updateData = req.body;
+
+            const service = await Service.findByPk(serviceId);
+
+            if (!service) {
+                return res.status(404).json("Service not found.");
+            }
+
+            await service.update(updateData);
+
+            res.status(200).json(service);
+        } catch (error) {
+            res.status(500).json(error.message);
+        }
+    },
+    getRepresentativeStatistics: async(req, res) => {
+        try {
+            
+        } catch (error) {
+            res.status(500).json(error.message)
         }
     }
 }

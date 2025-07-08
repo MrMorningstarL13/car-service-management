@@ -14,8 +14,6 @@ export default function ServiceManagementPage() {
         { id: "service-info", label: "Service Info", icon: Settings },
     ]
 
-    console.log(activeTab)
-
     return (
         <div className="min-h-screen bg-[#f8f9f4]">
             <Navbar role="rep" />

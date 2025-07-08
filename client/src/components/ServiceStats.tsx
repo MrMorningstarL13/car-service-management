@@ -108,28 +108,7 @@ export default function ServiceStatistics() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
-                    <h3 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Annual Profit Analysis</h3>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={profitData}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(189,198,103,0.3)" />
-                            <XAxis dataKey="year" tick={{ fill: "rgba(84,67,67,0.8)" }} />
-                            <YAxis tick={{ fill: "rgba(84,67,67,0.8)" }} />
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: "white",
-                                    border: "1px solid rgba(189,198,103,0.3)",
-                                    borderRadius: "8px",
-                                }}
-                            />
-                            <Bar dataKey="income" fill="rgba(119, 150, 109, 0.7)" name="Income" />
-                            <Bar dataKey="expenses" fill="rgba(86, 40, 45, 0.7)" name="Expenses" />
-                            <Bar dataKey="profit" fill="rgba(189, 198, 103, 1)" name="Profit" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-
+            <div className="grid grid-cols-1 gap-6">
                 {/* Service Distribution */}
                 <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                     <h3 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Service Type Distribution</h3>

@@ -161,9 +161,6 @@ const userController = {
 
     getStatistics: async (req, res) => {
         try {
-            /* 
-            spending distribution by car
-            */
             const { userId } = req.params
 
             const searchedUser = await User.findByPk(
@@ -226,10 +223,6 @@ const userController = {
 
                 spendingByCar[carName] = carSpending;
             });
-
-            cars.forEach(car => {
-                console.log(car)
-            })
 
             const result = {
                 totalCost,
