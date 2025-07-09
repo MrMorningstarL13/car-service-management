@@ -96,7 +96,39 @@ const controller = {
         } catch (error) {
             return res.status(500).json(error.message)
         }
-    }
+    },
+    completeAppointment: async( req, res ) => {
+        try {
+            const {appointmentId} = req.params
+
+            const searchedAppointment = await Appointment.findByPk(appointmentId,
+                {
+                    include: {
+                        model: Repair,
+                        attributes: ['isComplete']
+                    }
+                }
+            )
+
+            if(searchedAppointment.status === "finished")
+                return res.status(400).json("Appointment is already marked as completed!")
+
+            if(searchedAppointment.status === 'cancelled')
+                return res.status(400).json("Cann't complete a cancelled appointment")
+
+            if(searchedAppointment.repairs.some((el) => {
+                return !el.isComplete
+            })){
+                return res.status(400).json("There are still repairs undergoing!")
+            } else {
+                searchedAppointment.status = "finished";
+                await searchedAppointment.save();
+                return res.status(200).json("Appointment marked as completed successfuly")
+            }
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    },
 }
 
 module.exports = controller

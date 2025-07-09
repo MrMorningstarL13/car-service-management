@@ -1,11 +1,11 @@
 const { Repair, Car, Appointment } = require('../models')
 
 const repairController = {
-    createRepair: async(req, res) => {
+    createRepair: async (req, res) => {
         try {
             const { appointmentId, serviceTypeId } = req.params;
-            console.log( appointmentId, serviceTypeId )
-            
+            console.log(appointmentId, serviceTypeId)
+
             const result = await Repair.create({ appointmentId, serviceTypeId });
             console.log(result)
 
@@ -18,14 +18,33 @@ const repairController = {
             return res.status(500).json(error.message)
         }
     },
-    assignRepair: async(req, res) => {
+    assignRepair: async (req, res) => {
         try {
             const { repairId, employeeId } = req.params
         } catch (error) {
             return res.status(500).json(error.message)
         }
     },
-    getRepairsByEmployee: async(req, res) => {
+    completeRepair: async (req, res) => {
+        try {
+            const { repairId } = req.params
+
+            const searchedRepair = await Repair.findByPk(repairId)
+
+            if (!searchedRepair)
+                return res.status(404).json("No repair found for the specified ID")
+            console.log(searchedRepair)
+            if (searchedRepair.isComplete === true)
+                return res.status(400).json("The specified repair has already been completed")
+
+            searchedRepair.isComplete = true
+            await searchedRepair.save()
+            return res.status(200).json(searchedRepair)
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    },
+    getRepairsByEmployee: async (req, res) => {
         try {
             const { employeeId } = req.params
 
@@ -39,7 +58,7 @@ const repairController = {
                 }
             })
 
-            if(!searchedRepairs)
+            if (!searchedRepairs)
                 return res.status(404).json("No repairs found!")
 
             return res.status(200).json(searchedRepairs)
