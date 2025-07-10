@@ -2,7 +2,7 @@ import { useState } from "react"
 import ServiceTypeManagement from "../components/ServiceTypeManagement"
 import ServiceInfoEditor from "../components/ServiceInfo"
 import ServiceStatistics from "../components/ServiceStats"
-import { Settings, BarChart3, Wrench, DollarSign } from "lucide-react"
+import { Settings, BarChart3, Wrench } from "lucide-react"
 import Navbar from "../components/Navbar"
 
 export default function ServiceManagementPage() {

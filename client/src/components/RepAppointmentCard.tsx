@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
-import { Calendar, DollarSign, Car, AlertTriangle, CheckCircle, Play, X, Star } from "lucide-react"
+import { Calendar, Euro, Car, AlertTriangle, CheckCircle, Play, X, Star } from "lucide-react"
 import RepairCard from "./RepairCard"
 
 interface Employee {
@@ -127,7 +127,7 @@ export default function RepAppointmentCard({
                         <span>{formatDate(appointment.scheduledDate)}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <DollarSign className="w-4 h-4" />
+                        <Euro className="w-4 h-4" />
                         <span>Est. Cost: ${appointment.estimatedCost}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-600">

@@ -6,25 +6,25 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY)
 const invoiceController = {
     createCheckoutSession: async (req, res) => {
         try {
+            const invoiceData = req.body
 
             const session = await stripe.checkout.sessions.create({
                 payment_method_types: ['card'],
                 mode: 'payment',
-                //aici pun appointmentul final
                 line_items: [
                     {
                         price_data: {
-                            currency: 'usd',
+                            currency: 'eur',
                             product_data: {
-                                name: 'Example Product',
+                                name: `Appointment ID: ${invoiceData.appointmentId}`,
                             },
-                            unit_amount: 2000,
+                            unit_amount: invoiceData.appointment.estimatedCost * 100,
                         },
                         quantity: 1,
                     },
                 ],
-                success_url: 'http://localhost:3000/success',
-                cancel_url: 'http://localhost:3000/cancel',  
+                success_url: 'http://localhost:5173/success-payment?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url: 'http://localhost:5173/cancel-payment',
             });
 
             res.json({ url: session.url });

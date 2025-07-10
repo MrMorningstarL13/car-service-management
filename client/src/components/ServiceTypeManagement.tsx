@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Plus, Edit, Trash2, Wrench, DollarSign } from "lucide-react"
+import { Plus, Edit, Trash2, Wrench, Euro } from "lucide-react"
 
 import ServiceTypeDialog from "./ServiceTypeDialog"
 import DeleteConfirmDialog from "./DeleteConfirmDialog"
@@ -125,7 +125,7 @@ export default function ServiceTypeManagement() {
                         </p>
 
                         <div className="flex items-center">
-                            <DollarSign size={16} className="text-[rgba(119,150,109,1)] mr-2" />
+                            <Euro size={16} className="text-[rgba(119,150,109,1)] mr-2" />
                             <div>
                                 <p className="text-sm font-medium text-[rgba(84,67,67,1)]">
                                     ${serviceType.baseCost}

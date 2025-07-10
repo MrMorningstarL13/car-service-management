@@ -11,7 +11,7 @@ import {
   Pie,
   Cell,
 } from "recharts"
-import { DollarSign, TrendingUp } from "lucide-react"
+import { Euro, TrendingUp } from "lucide-react"
 import { useEffect, useState, useMemo } from "react"
 import useUserStore from "../stores/userStore"
 
@@ -125,7 +125,7 @@ export default function StatsDashboard() {
               </p>
             </div>
             <div className="p-3 bg-[rgba(119,150,109,0.1)] rounded-full">
-              <DollarSign size={24} className="text-[rgba(119,150,109,1)]" />
+              <Euro size={24} className="text-[rgba(119,150,109,1)]" />
             </div>
           </div>
         </div>

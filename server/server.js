@@ -11,10 +11,6 @@ const app = express()
 app.use(cookieParser())
 app.use(express.json())
 
-app.listen(port, () => {
-    console.log(`http://localhost:${port}`)
-})
-
 app.use(cors({
     origin:'http://localhost:5173',
     credentials: true
@@ -33,4 +29,8 @@ app.use('/api', router)
 
 app.get('/*', async (req, res) => {
     res.json("This is the default GET, you might have typed the URL wrong :P")
+})
+
+app.listen(port, () => {
+    console.log(`http://localhost:${port}`)
 })

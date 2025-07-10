@@ -62,7 +62,6 @@ const useAppointmentStore = create<Store>((set) => ({
             console.warn("error getting appointments by service", error)
         }
     }
-
 }))
 
 export default useAppointmentStore;

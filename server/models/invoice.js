@@ -12,11 +12,7 @@ module.exports = (db) => {
             allowNull: false,
         },
         paymentMethod: {
-            type: DataTypes.ENUM("cash", "card", "bank transfer"),
-            allowNull: false,
-        },
-        paymentStatus: {
-            type: DataTypes.ENUM("success", "awaiting payment"),
+            type: DataTypes.ENUM("cash", "card"),
             allowNull: false,
         },
         paymentDate: {

@@ -12,7 +12,7 @@ import {
     Pie,
     Cell,
 } from "recharts"
-import { TrendingUp, DollarSign, Users, Calendar, Award } from "lucide-react"
+import { TrendingUp, Euro, Users, Calendar, Award } from "lucide-react"
 
 const profitData = [
     { year: "2021", income: 145000, expenses: 98000, profit: 47000 },
@@ -76,7 +76,7 @@ export default function ServiceStatistics() {
                             <p className="text-xs text-[rgba(84,67,67,0.6)]">Current month</p>
                         </div>
                         <div className="p-3 bg-[rgba(189,198,103,0.1)] rounded-full">
-                            <DollarSign size={24} className="text-[rgba(189,198,103,1)]" />
+                            <Euro size={24} className="text-[rgba(189,198,103,1)]" />
                         </div>
                     </div>
                 </div>

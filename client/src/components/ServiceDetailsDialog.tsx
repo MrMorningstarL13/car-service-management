@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { X, MapPin, Star, DollarSign, Wrench, Send, User, Calendar } from "lucide-react"
+import { X, MapPin, Star, Euro, Wrench, Send, User, Calendar } from "lucide-react"
 import useFeedbackStore from "../stores/useFeedbackStore"
 import useUserStore from "../stores/userStore"
 import toast from "react-hot-toast"
@@ -180,7 +180,7 @@ export default function ServiceDetailsDialog({ isOpen, onClose, shop }: ServiceD
                                             <div className="flex justify-between items-start mb-2">
                                                 <h4 className="font-semibold text-[rgba(84,67,67,1)]">{service.name}</h4>
                                                 <div className="flex items-center text-[rgba(119,150,109,1)] font-bold">
-                                                    <DollarSign size={16} />
+                                                    <Euro size={16} />
                                                     <span>{service.baseCost}</span>
                                                 </div>
                                             </div>

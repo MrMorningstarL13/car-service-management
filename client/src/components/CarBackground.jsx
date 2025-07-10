@@ -29,7 +29,7 @@ Source: https://sketchfab.com/3d-models/free-porsche-911-carrera-4s-d01b25448379
 Title: (FREE) Porsche 911 Carrera 4S
 */
 function Porsche(props) {
-    const { scene, nodes, materials } = useGLTF('../../../public/911-transformed.glb')
+    const { scene, nodes, materials } = useGLTF('../../../911-transformed.glb')
     useLayoutEffect(() => {
         Object.values(nodes).forEach((node) => node.isMesh && (node.receiveShadow = node.castShadow = true))
         applyProps(materials.rubber, { color: '#222', roughness: 0.6, roughnessMap: null, normalScale: [4, 4] })

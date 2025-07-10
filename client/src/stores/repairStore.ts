@@ -8,6 +8,8 @@ type Store = {
     repairs: any[];
     createRepair: (appointmentId: number, serviceTypeId: number) => Promise<void>;
     assignRepair: (employeeId: number, repairId: number) => Promise<void>;
+    completeRepair: (repairId: number) => Promise<void>;
+
 }
 
 const repairStore = create<Store>()(
@@ -25,6 +27,14 @@ const repairStore = create<Store>()(
                 set((state) => ({
                     repairs: state.repairs.map(repair =>
                         repair.id === repairId ? { ...repair, employeeId } : repair
+                    )
+                }));
+            },
+            completeRepair: async (repairId: number) => {
+                const response = await axios.put(`${URL}/${repairId}/complete`);
+                set((state) => ({
+                    repairs: state.repairs.map(repair =>
+                        repair.id === repairId ? { ...repair, ...response.data } : repair
                     )
                 }));
             }
