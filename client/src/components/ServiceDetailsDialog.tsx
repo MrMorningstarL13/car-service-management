@@ -3,20 +3,13 @@ import { X, MapPin, Star, Euro, Wrench, Send, User, Calendar } from "lucide-reac
 import useFeedbackStore from "../stores/useFeedbackStore"
 import useUserStore from "../stores/userStore"
 import toast from "react-hot-toast"
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
 
 interface ServiceType {
     id: number
     name: string
     description: string
     baseCost: number
-}
-
-interface Feedback {
-    id: number
-    rating: number
-    comment: string
-    author: string
-    createdAt: string
 }
 
 interface ServiceDetailsDialogProps {
@@ -27,6 +20,8 @@ interface ServiceDetailsDialogProps {
         name: string
         address: string
         rating: number
+        lat: number
+        lng: number
         service_types: ServiceType[]
     }
 }
@@ -278,14 +273,39 @@ export default function ServiceDetailsDialog({ isOpen, onClose, shop }: ServiceD
                         <div className="space-y-4">
                             <h3 className="text-lg font-semibold text-[rgba(84,67,67,1)] mb-4">Location</h3>
 
-                            <div className="bg-[rgba(189,198,103,0.1)] border-2 border-dashed border-[rgba(189,198,103,0.3)] rounded-lg p-12 text-center">
-                                <MapPin size={64} className="mx-auto mb-4 text-[rgba(119,150,109,1)]" />
-                                <h4 className="text-lg font-medium text-[rgba(84,67,67,1)] mb-2">Interactive Map</h4>
-                                <p className="text-[rgba(84,67,67,0.7)]">Map integration coming soon</p>
-                                <p className="text-sm text-[rgba(84,67,67,0.6)] mt-2">{shop.address}</p>
+                            <div className="h-150 w-full rounded-lg overflow-hidden border border-[rgba(189,198,103,0.3)]">
+                                <MapContainer
+                                    center={[shop.lat, shop.lng] as [number, number]}
+                                    zoom={13}
+                                    scrollWheelZoom={false}
+                                    style={{ height: "100%", width: "100%" }}
+                                >
+                                    <TileLayer
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a>'
+                                    />
+                                    <Marker position={[shop.lat, shop.lng]}>
+                                        <Popup>
+                                            <strong>{shop.name}</strong><br />
+                                            {shop.address}
+                                        </Popup>
+                                    </Marker>
+                                </MapContainer>
                             </div>
+
+                            <p className="text-sm text-[rgba(84,67,67,0.6)] mt-2">{shop.address}</p>
+                            <a
+                                href={`https://www.google.com/maps/dir/?api=1&destination=${shop.lat},${shop.lng}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block mt-4 text-[rgba(119,150,109,1)] hover:underline font-medium"
+                            >
+                                Open in Google Maps →
+                            </a>
+
                         </div>
                     )}
+
                 </div>
             </div>
         </div>

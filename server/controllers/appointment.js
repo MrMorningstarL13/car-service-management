@@ -86,18 +86,23 @@ const controller = {
     },
     updateAppointment: async (req, res) => {
         try {
-            const searchedAppointment = await Appointment.findByPk(req.params.appointmentId)
+            const searchedAppointment = await Appointment.findByPk(req.params.appointmentId);
             if (!searchedAppointment) {
-                return res.status(404).json("Appointment not found")
+                return res.status(404).json("Appointment not found");
             }
-            const updatedAppointment = await searchedAppointment.update(req.body)
 
-            return res.status(200).json(updatedAppointment)
+            console.log(req.body)
+            
+            const updatedAppointment = await searchedAppointment.update(req.body);
+            if (!updatedAppointment) {
+                return res.status(500).json("Failed to update appointment");
+            }
+            return res.status(200).json(updatedAppointment);
         } catch (error) {
-            return res.status(500).json(error.message)
+            return res.status(500).json(error.message);
         }
     },
-    completeAppointment: async( req, res ) => {
+    markAppointmentWaitingPayment: async( req, res ) => {
         try {
             const {appointmentId} = req.params
 
@@ -114,16 +119,16 @@ const controller = {
                 return res.status(400).json("Appointment is already marked as completed!")
 
             if(searchedAppointment.status === 'cancelled')
-                return res.status(400).json("Cann't complete a cancelled appointment")
+                return res.status(400).json("Can't complete a cancelled appointment")
 
             if(searchedAppointment.repairs.some((el) => {
                 return !el.isComplete
             })){
                 return res.status(400).json("There are still repairs undergoing!")
             } else {
-                searchedAppointment.status = "finished";
+                searchedAppointment.status = "waiting_payment";
                 await searchedAppointment.save();
-                return res.status(200).json("Appointment marked as completed successfuly")
+                return res.status(200).json("Appointment marked as waiting payment successfuly")
             }
         } catch (error) {
             return res.status(500).json(error.message)

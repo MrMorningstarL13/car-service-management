@@ -1,27 +1,13 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import { CheckCircle, Home } from "lucide-react"
 import { useNavigate } from "react-router"
 
 export default function SuccessPayment() {
-    const [countdown, setCountdown] = useState(5)
     const navigate = useNavigate()
+    console.log("SuccessPayment component rendered")
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCountdown((prev) => {
-                if (prev <= 1) {
-                    clearInterval(timer)
-                    navigate("/")
-                    return 0
-                }
-                return prev - 1
-            })
-        }, 1000)
-
-        return () => clearInterval(timer)
-    }, [navigate])
+    const handleClick = () => {
+        navigate("/")
+    }
 
     return (
         <main className="min-h-screen bg-[#f8f9f4] flex items-center justify-center">
@@ -35,7 +21,7 @@ export default function SuccessPayment() {
                         Your payment has been processed successfully. Thank you for your business!
                     </p>
                 </div>
-
+                
                 <div className="bg-[rgba(119,150,109,0.05)] rounded-lg p-4 mb-6 border border-[rgba(119,150,109,0.2)]">
                     <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
@@ -48,30 +34,14 @@ export default function SuccessPayment() {
                         </div>
                     </div>
                 </div>
-
-                <div className="space-y-4">
-                    <div className="flex items-center justify-center space-x-2 text-[rgba(84,67,67,0.7)]">
-                        <Home size={16} />
-                        <span className="text-sm">Redirecting to home page in</span>
-                        <span className="font-bold text-[rgba(119,150,109,1)] text-lg">{countdown}</span>
-                        <span className="text-sm">seconds</span>
-                    </div>
-
-                    <div className="w-full bg-[rgba(189,198,103,0.2)] rounded-full h-2">
-                        <div
-                            className="bg-[rgba(119,150,109,1)] h-2 rounded-full transition-all duration-1000 ease-linear"
-                            style={{ width: `${((5 - countdown) / 5) * 100}%` }}
-                        ></div>
-                    </div>
-
-                    <button
-                        onClick={() => navigate("/")}
-                        className="w-full px-4 py-2 bg-[rgba(119,150,109,1)] hover:bg-[rgba(98,109,88,1)] text-white rounded-md transition-colors duration-200 flex items-center justify-center"
-                    >
-                        <Home size={18} className="mr-2" />
-                        Go to Home Now
-                    </button>
-                </div>
+                
+                <button
+                    onClick={handleClick}
+                    className="w-full px-4 py-2 bg-[rgba(119,150,109,1)] hover:bg-[rgba(98,109,88,1)] text-white rounded-md transition-colors duration-200 flex items-center justify-center"
+                >
+                    <Home size={18} className="mr-2" />
+                    Return to Home
+                </button>
             </div>
         </main>
     )

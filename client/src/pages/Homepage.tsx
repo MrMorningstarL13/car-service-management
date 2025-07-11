@@ -8,19 +8,22 @@ import RepAppointmentCard from "../components/RepAppointmentCard"
 import { Calendar } from "../components/ui/Calendar"
 import toast, { Toaster } from "react-hot-toast"
 import useFavouriteStore from "../stores/useFavouriteStore"
-import { Heart, Grid3X3 } from "lucide-react"
+import { Heart, Grid3X3, ChevronDown } from "lucide-react"
 import useAppointmentStore from "../stores/appointmentStore"
 import useEmployeeStore from "../stores/useEmployeeStore"
 
 export default function Home() {
     const [answeredPrompt, setAnsweredPrompt] = useState(false)
     const [viewMode, setViewMode] = useState<"all" | "favourites">("all")
+    const [isCompletedExpanded, setIsCompletedExpanded] = useState(false)
 
     const { services, fetchShops } = useServiceStore()
     const { fetchCars } = useCarStore()
     const { favourites, getByUser } = useFavouriteStore()
-    const { appointments, getByService } = useAppointmentStore()
+    const { appointments, getByService, update } = useAppointmentStore()
     const { employees, fetchEmployees } = useEmployeeStore()
+
+    const currentUser: any = userStore.getState().user
 
     useEffect(() => {
         const fetchData = async () => {
@@ -36,11 +39,10 @@ export default function Home() {
             fetchCars()
         }
 
-        const currentUser: any = userStore.getState().user
         fetchData()
         getByUser(currentUser.id)
 
-        if(currentUser.employee != null){
+        if (currentUser.employee != null) {
             const serviceId = currentUser.employee.serviceId
             getByService(serviceId)
             fetchEmployees(serviceId)
@@ -71,17 +73,23 @@ export default function Home() {
 
     const handleUpdateAppointmentStatus = (appointmentId: number, status: string) => {
         console.log(`Updating appointment ${appointmentId} status to ${status}`)
-        // Here you would make an API call to update the appointment status
-    }
-
-    const handleUpdateAppointmentPriority = (appointmentId: number, priority: string) => {
-        console.log(`Updating appointment ${appointmentId} priority to ${priority}`)
-        // Here you would make an API call to update the appointment priority
+        const updateBody = {
+            status: status
+        }
+        update(String(appointmentId), updateBody)
     }
 
     // Filter services based on view mode
     const filteredServices =
         viewMode === "all" ? services : services.filter(service => favourites.some(f => f.serviceId === service.id))
+
+    const activeAppointments = appointments.filter(
+        (appointment) => !["finished", "cancelled", "denied"].includes(appointment.status)
+    )
+
+    const completedAppointments = appointments.filter((appointment) =>
+        ["finished", "cancelled", "denied"].includes(appointment.status)
+    )
 
     // @ts-ignore
     if (userStore.getState().user.role === "employee" && userStore.getState().user.employee.isRep) {
@@ -94,26 +102,87 @@ export default function Home() {
                         <p className="text-gray-600">Manage appointments and assign repairs to employees</p>
                     </div>
 
-                    <div className="space-y-6">
-                        {appointments.map((appointment) => (
-                            <RepAppointmentCard
-                                key={appointment.id}
-                                appointment={appointment}
-                                employees={employees}
-                                onAssignEmployee={handleAssignEmployee}
-                                onUpdateAppointmentStatus={handleUpdateAppointmentStatus}
-                                onUpdateAppointmentPriority={handleUpdateAppointmentPriority}
-                            />
-                        ))}
+                    <div className="mb-8">
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-[rgba(84,67,67,1)]">
+                                Active Appointments ({activeAppointments.length})
+                            </h2>
+                            {activeAppointments.length > 0 && (
+                                <div className="flex items-center space-x-2 text-sm text-[rgba(84,67,67,0.6)]">
+                                    <div className="w-3 h-3 bg-[rgba(119,150,109,1)] rounded-full"></div>
+                                    <span>Requires attention</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="space-y-6">
+                            {activeAppointments.map((appointment) => (
+                                <RepAppointmentCard
+                                    key={appointment.id}
+                                    appointment={appointment}
+                                    employees={employees}
+                                    onAssignEmployee={handleAssignEmployee}
+                                    onUpdateAppointmentStatus={handleUpdateAppointmentStatus}
+                                />
+                            ))}
+                        </div>
+
+                        {activeAppointments.length === 0 && (
+                            <div className="bg-white rounded-lg shadow-md p-8 border border-[rgba(189,198,103,0.3)] text-center">
+                                <div className="text-[rgba(189,198,103,0.4)] mb-4">
+                                    <Calendar className="w-16 h-16 mx-auto" />
+                                </div>
+                                <h3 className="text-lg font-medium text-[rgba(84,67,67,1)] mb-2">No active appointments</h3>
+                                <p className="text-[rgba(84,67,67,0.6)]">New appointments will appear here when they are scheduled.</p>
+                            </div>
+                        )}
                     </div>
 
-                    {appointments.length === 0 && (
-                        <div className="text-center py-12">
-                            <div className="text-gray-400 mb-4">
-                                <Calendar className="w-16 h-16 mx-auto" />
-                            </div>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments scheduled</h3>
-                            <p className="text-gray-600">New appointments will appear here when they are scheduled.</p>
+                    {completedAppointments.length > 0 && (
+                        <div className="bg-white rounded-lg shadow-md border border-[rgba(189,198,103,0.3)] overflow-hidden">
+                            <button
+                                onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
+                                className="w-full px-6 py-4 bg-[rgba(189,198,103,0.05)] hover:bg-[rgba(189,198,103,0.1)] transition-colors duration-200 flex items-center justify-between"
+                            >
+                                <div className="flex items-center space-x-3">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-3 h-3 bg-[rgba(84,67,67,0.4)] rounded-full"></div>
+                                        <h2 className="text-xl font-bold text-[rgba(84,67,67,1)]">
+                                            Completed Appointments ({completedAppointments.length})
+                                        </h2>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-sm text-[rgba(84,67,67,0.6)]">
+                                        {isCompletedExpanded ? "Hide" : "Show"} completed
+                                    </span>
+                                    <ChevronDown
+                                        size={20}
+                                        className={`text-[rgba(84,67,67,0.6)] transition-transform duration-200 ${isCompletedExpanded ? "rotate-180" : ""
+                                            }`}
+                                    />
+                                </div>
+                            </button>
+
+                            {isCompletedExpanded && (
+                                <div className="p-6 border-t border-[rgba(189,198,103,0.2)]">
+                                    <div className="space-y-6">
+                                        {completedAppointments.map((appointment) => (
+                                            <div
+                                                key={appointment.id}
+                                                className="opacity-75 hover:opacity-100 transition-opacity duration-200"
+                                            >
+                                                <RepAppointmentCard
+                                                    appointment={appointment}
+                                                    employees={employees}
+                                                    onAssignEmployee={handleAssignEmployee}
+                                                    onUpdateAppointmentStatus={handleUpdateAppointmentStatus}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -161,11 +230,12 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <h1 className="text-3xl font-bold text-[rgba(84,67,67,1)] mb-4 sm:mb-0">Auto Shops Near You</h1>
 
+                        {/* View Toggle Buttons */}
                         <div className="flex bg-white rounded-lg shadow-sm border border-[rgba(189,198,103,0.3)] p-1">
                             <button
                                 onClick={() => setViewMode("all")}
                                 className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${viewMode === "all"
-                                        ? "bg-[rgba(119,150,109,1)] text-black shadow-sm"
+                                        ? "bg-[rgba(119,150,109,1)] text-white shadow-sm"
                                         : "text-[rgba(84,67,67,0.7)] hover:text-[rgba(84,67,67,1)] hover:bg-[rgba(189,198,103,0.1)]"
                                     }`}
                             >
@@ -176,7 +246,7 @@ export default function Home() {
                             <button
                                 onClick={() => setViewMode("favourites")}
                                 className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${viewMode === "favourites"
-                                        ? "bg-[rgba(119,150,109,1)] text-black shadow-sm"
+                                        ? "bg-[rgba(119,150,109,1)] text-white shadow-sm"
                                         : "text-[rgba(84,67,67,0.7)] hover:text-[rgba(84,67,67,1)] hover:bg-[rgba(189,198,103,0.1)]"
                                     }`}
                             >
@@ -189,6 +259,7 @@ export default function Home() {
                         </div>
                     </div>
 
+                    {/* Results Summary */}
                     <div className="mb-6">
                         <p className="text-[rgba(84,67,67,0.7)] text-sm">
                             {viewMode === "all"
@@ -197,6 +268,7 @@ export default function Home() {
                         </p>
                     </div>
 
+                    {/* Shop Cards Grid */}
                     {filteredServices.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredServices.map((shop) => (

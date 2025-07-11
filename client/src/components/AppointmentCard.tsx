@@ -3,9 +3,10 @@ import { Calendar, Clock, Car, CheckCircle, XCircle, AlertCircle, Hourglass, Eur
 import useServiceStore from "../stores/serviceStore"
 import useAppointmentStore from "../stores/appointmentStore"
 import useInvoiceStore from "../stores/useInvoiceStore"
+import {toast} from 'react-hot-toast'
 
 export interface Appointment {
-    id: number
+    id: any
     scheduledDate: string
     status: "waiting" | "accepted" | "in progress" | "denied" | "cancelled" | "finished" | "waiting_payment"
     serviceId: number
@@ -16,7 +17,7 @@ export interface Appointment {
 }
 
 export interface CarWithAppointments {
-    id: number
+    id: any
     brand: string
     model: string
     yearOfProduction: string
@@ -33,7 +34,8 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
     const { update } = useAppointmentStore()
 
     const handleCancel = () => {
-        update(appointment.id.toString(), { status: "cancelled" })
+        update(appointment.id, { status: "cancelled" })
+        toast.success("Appointment cancelled with success")
     }
 
     const { createCheckoutSession, sessionUrl } = useInvoiceStore()
@@ -55,12 +57,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                 icon: <Clock size={16} />,
                 text: "Waiting",
             },
-            accepted: {
-                color: "rgba(119, 150, 109, 1)",
-                bgColor: "rgba(119, 150, 109, 0.1)",
-                icon: <CheckCircle size={16} />,
-                text: "Accepted",
-            },
             "in progress": {
                 color: "rgba(98, 109, 88, 1)",
                 bgColor: "rgba(98, 109, 88, 0.1)",
@@ -72,12 +68,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                 bgColor: "rgba(86, 40, 45, 0.1)",
                 icon: <CreditCard size={16} />,
                 text: "Payment Required",
-            },
-            denied: {
-                color: "rgba(86, 40, 45, 1)",
-                bgColor: "rgba(86, 40, 45, 0.1)",
-                icon: <XCircle size={16} />,
-                text: "Denied",
             },
             cancelled: {
                 color: "rgba(86, 40, 45, 0.8)",

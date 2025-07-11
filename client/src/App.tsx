@@ -11,6 +11,7 @@ import Service from './pages/Service'
 import SuccessPayment from './pages/SuccessPayment'
 import CancelPayment from './pages/CancelPayment'
 import { Toaster } from 'react-hot-toast'
+import 'leaflet/dist/leaflet.css';
 
 function App() {
     return (
@@ -21,10 +22,11 @@ function App() {
                     <Route path="/login" element={<LogIn />} />
                     <Route path="/signup" element={<SignUp />} />
 
+                    <Route path="/success-payment" element={<SuccessPayment />} />
+                    <Route path="/cancel-payment" element={<CancelPayment />} />
+                    
                     <Route element={<AuthGate />}>
                         <Route path="/" element={<Home />} />
-                        <Route path="/success-payment" element={<SuccessPayment />} />
-                        <Route path="/cancel-payment" element={<CancelPayment />} />
                         <Route path="/profile" element={<Profile />} />
                         <Route path="/appointments" element={<Appointments />} />
                         <Route path='/employees' element={<Employees />} />

@@ -4,9 +4,12 @@ const { db } = require('./models')
 const router = require('./routes')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const { invoiceController } = require('./controllers')
 
 const port = 8080
 const app = express()
+
+app.post('/webhook/stripe-webhook', express.raw({ type: 'application/json' }), invoiceController.handleWebhook);
 
 app.use(cookieParser())
 app.use(express.json())

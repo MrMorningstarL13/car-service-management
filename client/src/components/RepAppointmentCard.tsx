@@ -44,7 +44,6 @@ interface AppointmentCardProps {
     employees: Employee[]
     onAssignEmployee: (repairId: number, employeeId: number) => void
     onUpdateAppointmentStatus: (appointmentId: number, status: string) => void
-    onUpdateAppointmentPriority: (appointmentId: number, priority: string) => void
 }
 
 export default function RepAppointmentCard({
@@ -52,7 +51,6 @@ export default function RepAppointmentCard({
     employees,
     onAssignEmployee,
     onUpdateAppointmentStatus,
-    onUpdateAppointmentPriority,
 }: AppointmentCardProps) {
     const [isExpanded, setIsExpanded] = useState(false)
 
@@ -60,7 +58,7 @@ export default function RepAppointmentCard({
         switch (status) {
             case "waiting":
                 return "bg-yellow-100 text-yellow-800"
-            case "in-progress":
+            case "in progress":
                 return "bg-blue-100 text-blue-800"
             case "completed":
                 return "bg-green-100 text-green-800"
@@ -93,10 +91,6 @@ export default function RepAppointmentCard({
 
     const handleStatusUpdate = (status: string) => {
         onUpdateAppointmentStatus(appointment.id, status)
-    }
-
-    const handlePriorityUpdate = () => {
-        onUpdateAppointmentPriority(appointment.id, "premium")
     }
 
     return (
@@ -138,8 +132,8 @@ export default function RepAppointmentCard({
 
                 <div className="flex flex-wrap gap-2">
                     <button
-                        onClick={() => handleStatusUpdate("in-progress")}
-                        disabled={appointment.status === "completed" || appointment.status === "denied"}
+                        onClick={() => handleStatusUpdate("in progress")}
+                        disabled={appointment.status === "waiting_payment"}
                         className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Play className="w-4 h-4" />
@@ -147,21 +141,12 @@ export default function RepAppointmentCard({
                     </button>
 
                     <button
-                        onClick={() => handleStatusUpdate("completed")}
-                        disabled={appointment.status === "completed" || appointment.status === "denied"}
+                        onClick={() => handleStatusUpdate("waiting_payment")}
+                        disabled={appointment.status === "waiting_payment"}
                         className="flex items-center space-x-1 px-3 py-1.5 bg-green-600 text-white text-sm rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <CheckCircle className="w-4 h-4" />
-                        <span>Mark as Finished</span>
-                    </button>
-
-                    <button
-                        onClick={handlePriorityUpdate}
-                        disabled={appointment.priority === "premium"}
-                        className="flex items-center space-x-1 px-3 py-1.5 bg-purple-600 text-white text-sm rounded-md hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <Star className="w-4 h-4" />
-                        <span>Premium Priority</span>
+                        <span>Mark as Awaiting Payment</span>
                     </button>
                 </div>
             </div>

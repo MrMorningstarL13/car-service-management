@@ -218,7 +218,16 @@ export default function ShopCard({ shop }: ShopProps) {
       )}
 
       {isDetailsDialogOpen && (
-        <ServiceDetailsDialog isOpen={isDetailsDialogOpen} onClose={closeDetailsDialog} shop={shop} />
+        <ServiceDetailsDialog
+          isOpen={isDetailsDialogOpen}
+          onClose={closeDetailsDialog}
+          shop={{
+            ...shop,
+            lat: Number(shop.lat),
+            lng: Number(shop.lng),
+            service_types: shop.service_types as any 
+          }}
+        />
       )}
     </>
   )
