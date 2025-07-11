@@ -91,8 +91,6 @@ const controller = {
                 return res.status(404).json("Appointment not found");
             }
 
-            console.log(req.body)
-            
             const updatedAppointment = await searchedAppointment.update(req.body);
             if (!updatedAppointment) {
                 return res.status(500).json("Failed to update appointment");

@@ -18,9 +18,22 @@ const repairController = {
             return res.status(500).json(error.message)
         }
     },
-    assignRepair: async (req, res) => {
+    assignEmployeeToRepair: async (req, res) => {
         try {
             const { repairId, employeeId } = req.params
+
+            const searchedRepair = await Repair.findByPk(repairId)
+
+            if (!searchedRepair)
+                return res.status(404).json("No repair was found for the specified ID!")
+
+            if(searchedRepair.employeeId === employeeId)
+                return res.status(400).json("This task is already assigned to this employee!")
+
+            searchedRepair.employeeId = employeeId
+
+            await searchedRepair.save()
+            return res.status("Employee was assigned with success")
         } catch (error) {
             return res.status(500).json(error.message)
         }
