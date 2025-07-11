@@ -27,13 +27,13 @@ const repairController = {
             if (!searchedRepair)
                 return res.status(404).json("No repair was found for the specified ID!")
 
-            if(searchedRepair.employeeId === employeeId)
+            if(searchedRepair.employeeId == employeeId)
                 return res.status(400).json("This task is already assigned to this employee!")
 
             searchedRepair.employeeId = employeeId
 
             await searchedRepair.save()
-            return res.status("Employee was assigned with success")
+            return res.status(200).json("Employee was assigned with success")
         } catch (error) {
             return res.status(500).json(error.message)
         }
