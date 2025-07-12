@@ -38,6 +38,7 @@ export default function RepairCard({ repair, employees, onAssignEmployee }: Repa
     const buttonRef = useRef<HTMLButtonElement>(null)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const { getName } = useServiceTypeStore()
+    console.log(repair)
 
     useEffect(() => {
         const fetchName = async () => {
@@ -121,7 +122,7 @@ export default function RepairCard({ repair, employees, onAssignEmployee }: Repa
                         <div className="flex items-center space-x-2">
                             <User className="w-4 h-4 text-gray-400" />
                             <span className="text-gray-900">
-                                {selectedEmployee ? `${selectedEmployee.firstName} ${selectedEmployee.lastName}` : "Select employee"}
+                                {selectedEmployee ? `${selectedEmployee.auth_user.firstName} ${selectedEmployee.auth_user.lastName}` : "Select employee"}
                             </span>
                         </div>
                         <ChevronDown

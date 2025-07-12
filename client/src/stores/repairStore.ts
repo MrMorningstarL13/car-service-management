@@ -9,7 +9,7 @@ type Store = {
     createRepair: (appointmentId: number, serviceTypeId: number) => Promise<void>;
     assignRepair: (employeeId: number, repairId: number) => Promise<void>;
     completeRepair: (repairId: number) => Promise<void>;
-
+    getByEmployee: (employeeId: number) => Promise<any>;
 }
 
 const repairStore = create<Store>()(
@@ -22,8 +22,8 @@ const repairStore = create<Store>()(
                     repairs: [...state.repairs, response.data]
                 }));
             },
-            assignRepair: async (employeeId: number, repairId: number) => {
-                await axios.put(`${URL}/${repairId}/assign`, { employeeId });
+            assignRepair: async (repairId: number, employeeId: number) => {
+                await axios.patch(`${URL}/assign/${repairId}/${employeeId}`)
                 set((state) => ({
                     repairs: state.repairs.map(repair =>
                         repair.id === repairId ? { ...repair, employeeId } : repair
@@ -31,12 +31,18 @@ const repairStore = create<Store>()(
                 }));
             },
             completeRepair: async (repairId: number) => {
-                const response = await axios.put(`${URL}/${repairId}/complete`);
+                const response = await axios.post(`${URL}/complete/${repairId}`);
                 set((state) => ({
                     repairs: state.repairs.map(repair =>
                         repair.id === repairId ? { ...repair, ...response.data } : repair
                     )
                 }));
+            },
+            getByEmployee: async( employeeId: number) => {
+                const response = await axios.get(`${URL}/getByEmployee/${employeeId}`)
+                set((state) => ({
+                    repairs: response.data
+                }))
             }
         }),
         {

@@ -11,6 +11,8 @@ import useFavouriteStore from "../stores/useFavouriteStore"
 import { Heart, Grid3X3, ChevronDown } from "lucide-react"
 import useAppointmentStore from "../stores/appointmentStore"
 import useEmployeeStore from "../stores/useEmployeeStore"
+import EmployeeDashboard from "../components/EmployeeDashboard"
+import repairStore from "../stores/repairStore"
 
 export default function Home() {
     const [answeredPrompt, setAnsweredPrompt] = useState(false)
@@ -22,6 +24,7 @@ export default function Home() {
     const { favourites, getByUser } = useFavouriteStore()
     const { appointments, getByService, update } = useAppointmentStore()
     const { employees, fetchEmployees } = useEmployeeStore()
+    const { assignRepair } = repairStore()
 
     const currentUser: any = userStore.getState().user
 
@@ -68,7 +71,7 @@ export default function Home() {
 
     const handleAssignEmployee = (repairId: number, employeeId: number) => {
         console.log(`Assigning employee ${employeeId} to repair ${repairId}`)
-        // Here you would make an API call to assign the employee
+        assignRepair(repairId, employeeId)
     }
 
     const handleUpdateAppointmentStatus = (appointmentId: number, status: string) => {
@@ -79,7 +82,6 @@ export default function Home() {
         update(String(appointmentId), updateBody)
     }
 
-    // Filter services based on view mode
     const filteredServices =
         viewMode === "all" ? services : services.filter(service => favourites.some(f => f.serviceId === service.id))
 
@@ -194,12 +196,7 @@ export default function Home() {
         return (
             <main className="min-h-screen bg-[#f8f9f4]">
                 <Navbar role="emp" />
-                <div className="flex items-center justify-center min-h-screen bg-[#f8f9f4]">
-                    <div className="text-center">
-                        <h1 className="text-2xl font-bold text-contrast-primary mb-4">Employee Interface</h1>
-                        <p className="text-secondary">Please wait while the employee interface is loading.</p>
-                    </div>
-                </div>
+                <EmployeeDashboard />
             </main>
         )
     }
@@ -230,12 +227,11 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
                         <h1 className="text-3xl font-bold text-[rgba(84,67,67,1)] mb-4 sm:mb-0">Auto Shops Near You</h1>
 
-                        {/* View Toggle Buttons */}
                         <div className="flex bg-white rounded-lg shadow-sm border border-[rgba(189,198,103,0.3)] p-1">
                             <button
                                 onClick={() => setViewMode("all")}
                                 className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${viewMode === "all"
-                                        ? "bg-[rgba(119,150,109,1)] text-white shadow-sm"
+                                        ? "bg-[rgba(119,150,109,1)] text-black shadow-sm"
                                         : "text-[rgba(84,67,67,0.7)] hover:text-[rgba(84,67,67,1)] hover:bg-[rgba(189,198,103,0.1)]"
                                     }`}
                             >
@@ -246,7 +242,7 @@ export default function Home() {
                             <button
                                 onClick={() => setViewMode("favourites")}
                                 className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${viewMode === "favourites"
-                                        ? "bg-[rgba(119,150,109,1)] text-white shadow-sm"
+                                        ? "bg-[rgba(119,150,109,1)] text-black shadow-sm"
                                         : "text-[rgba(84,67,67,0.7)] hover:text-[rgba(84,67,67,1)] hover:bg-[rgba(189,198,103,0.1)]"
                                     }`}
                             >
@@ -259,7 +255,6 @@ export default function Home() {
                         </div>
                     </div>
 
-                    {/* Results Summary */}
                     <div className="mb-6">
                         <p className="text-[rgba(84,67,67,0.7)] text-sm">
                             {viewMode === "all"
@@ -268,7 +263,6 @@ export default function Home() {
                         </p>
                     </div>
 
-                    {/* Shop Cards Grid */}
                     {filteredServices.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredServices.map((shop) => (

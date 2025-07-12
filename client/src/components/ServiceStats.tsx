@@ -12,7 +12,7 @@ import {
     Pie,
     Cell,
 } from "recharts"
-import { TrendingUp, Euro, Users, Calendar, Award } from "lucide-react"
+import { TrendingUp, Euro, Users, Calendar } from "lucide-react"
 
 const profitData = [
     { year: "2021", income: 145000, expenses: 98000, profit: 47000 },

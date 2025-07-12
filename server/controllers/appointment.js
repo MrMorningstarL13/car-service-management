@@ -49,7 +49,7 @@ const controller = {
                 include: [
                     {
                         model: Appointment,
-                        attributes: ['id', 'scheduledDate', 'status', 'serviceId', 'checkIn', 'checkOut', 'estimatedDuration', 'estimatedCost']
+                        attributes: ['id', 'scheduledDate', 'status', 'serviceId', 'invoiceId', 'checkIn', 'checkOut', 'estimatedDuration', 'estimatedCost']
                     },
                 ],
             });

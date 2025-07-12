@@ -1,4 +1,4 @@
-const { Repair, Car, Appointment } = require('../models')
+const { Repair, Car, Appointment, ServiceType } = require('../models')
 
 const repairController = {
     createRepair: async (req, res) => {
@@ -27,7 +27,7 @@ const repairController = {
             if (!searchedRepair)
                 return res.status(404).json("No repair was found for the specified ID!")
 
-            if(searchedRepair.employeeId == employeeId)
+            if (searchedRepair.employeeId == employeeId)
                 return res.status(400).json("This task is already assigned to this employee!")
 
             searchedRepair.employeeId = employeeId
@@ -61,24 +61,35 @@ const repairController = {
         try {
             const { employeeId } = req.params
 
-            const searchedRepairs = await Car.findAll({
-                include: {
-                    model: Appointment,
-                    include: {
-                        model: Repair,
-                        where: employeeId
+            const searchedRepairs = await Repair.findAll({
+                where: {
+                    employeeId: employeeId
+                },
+                include: [
+                    {
+                        model: Appointment,
+                        include: [
+                            {
+                                model: Car
+                            }
+                        ]
+                    },
+                    {
+                        model: ServiceType
                     }
-                }
-            })
+                ]
+            });
 
-            if (!searchedRepairs)
-                return res.status(404).json("No repairs found!")
+            if (!searchedRepairs || searchedRepairs.length === 0)
+                return res.status(404).json({ message: "No repairs found for this employee!" });
 
-            return res.status(200).json(searchedRepairs)
+            return res.status(200).json(searchedRepairs);
         } catch (error) {
-            return res.status(500).json("An unexpected server error has occured!")
+            console.error(error);
+            return res.status(500).json({ message: "An unexpected server error has occurred!" });
         }
     }
+
 }
 
 module.exports = repairController;

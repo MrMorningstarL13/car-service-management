@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react"
-import { createPortal } from "react-dom"
+import { useState } from "react"
 import { Calendar, Euro, Car, AlertTriangle, CheckCircle, Play, X, Star } from "lucide-react"
 import RepairCard from "./RepairCard"
+import { toast } from "react-hot-toast"
 
 interface Employee {
     id: number
@@ -90,12 +90,19 @@ export default function RepAppointmentCard({
     }
 
     const handleStatusUpdate = (status: string) => {
-        onUpdateAppointmentStatus(appointment.id, status)
+    if (status === "waiting_payment") {
+        const allRepairsComplete = appointment.repairs.every(repair => repair.isComplete)
+        if (!allRepairsComplete) {
+            toast.error("All repairs must be completed before marking as awaiting payment.")
+            return
+        }
     }
+    onUpdateAppointmentStatus(appointment.id, status)
+}
+
 
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            {/* Header */}
             <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-3">

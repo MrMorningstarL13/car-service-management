@@ -40,12 +40,9 @@ const useAppointmentStore = create<Store>((set) => ({
             const updatedAppointment = response.data
 
             set((state) => ({
-                appointments: state.appointments.map((car) => ({
-                    ...car,
-                    appointments: car.appointments.map((appointment: any) =>
-                        appointment.id === updatedAppointment.id ? updatedAppointment : appointment
-                    ),
-                })),
+                appointments: state.appointments.map((appointment: any) =>
+                    appointment.id === updatedAppointment.id ? updatedAppointment : appointment
+                ),
             }))
         } catch (error) {
             console.warn('error updating appointment', error)

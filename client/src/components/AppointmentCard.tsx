@@ -3,17 +3,19 @@ import { Calendar, Clock, Car, CheckCircle, XCircle, AlertCircle, Hourglass, Eur
 import useServiceStore from "../stores/serviceStore"
 import useAppointmentStore from "../stores/appointmentStore"
 import useInvoiceStore from "../stores/useInvoiceStore"
-import {toast} from 'react-hot-toast'
+import { toast } from 'react-hot-toast'
+import axios from "axios"
 
 export interface Appointment {
     id: any
     scheduledDate: string
-    status: "waiting" | "accepted" | "in progress" | "denied" | "cancelled" | "finished" | "waiting_payment"
+    status: "waiting" | "in progress" | "cancelled" | "finished" | "waiting_payment"
     serviceId: number
     checkIn: string | null
     checkOut: string | null
     estimatedDuration: number | null
     estimatedCost: number
+    invoiceId: any
 }
 
 export interface CarWithAppointments {
@@ -48,6 +50,35 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
             console.error("Stripe session URL not available.")
         }
     }
+
+    const handleInvoiceDownload = async () => {
+        try {
+            const invoiceId = appointment.invoiceId;
+            const response = await axios.get(`http://localhost:8080/api/payment/downloadInvoice/${invoiceId}`, {
+                responseType: 'blob',
+            });
+
+            if (response.headers['content-type'] !== 'application/pdf') {
+                throw new Error("Expected PDF content but got: " + response.headers['content-type']);
+            }
+
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const url = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `invoice-${car.model}-${appointment.id}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            toast.success("Invoice downloaded successfully.");
+        } catch (error) {
+            console.error("Download failed:", error);
+            toast.error("Invoice download failed.");
+        }
+    };
+
 
     const getStatusInfo = (status: string) => {
         const statusMap = {
@@ -111,7 +142,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                 }`}
             style={{ borderLeftColor: statusInfo.color }}
         >
-            {/* Header Section */}
             <div
                 className={`${isPaymentRequired
                     ? "bg-gradient-to-r from-[rgba(86,40,45,0.1)] to-[rgba(86,40,45,0.05)]"
@@ -141,7 +171,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                     </div>
                 </div>
 
-                {/* Payment Alert Banner */}
                 {isPaymentRequired && (
                     <div className="mt-3 p-2 bg-[rgba(86,40,45,0.1)] border border-[rgba(86,40,45,0.2)] rounded-lg">
                         <div className="flex items-center text-[rgba(86,40,45,1)]">
@@ -152,9 +181,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                 )}
             </div>
 
-            {/* Main Content */}
             <div className="p-6">
-                {/* Service Name - Prominent Display */}
                 <div className="mb-4 p-3 bg-[rgba(119,150,109,0.05)] rounded-lg border border-[rgba(119,150,109,0.1)]">
                     <div className="flex items-center">
                         <AlertCircle size={18} className="text-[rgba(119,150,109,1)] mr-2" />
@@ -167,9 +194,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                     </div>
                 </div>
 
-                {/* Details Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                    {/* Date & Time */}
                     <div className="flex items-center p-3 bg-[rgba(189,198,103,0.05)] rounded-lg">
                         <div className="p-2 bg-white rounded-full shadow-sm mr-3">
                             <Calendar size={16} className="text-[rgba(119,150,109,1)]" />
@@ -180,7 +205,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                         </div>
                     </div>
 
-                    {/* Cost */}
                     <div className="flex items-center p-3 bg-[rgba(189,198,103,0.05)] rounded-lg">
                         <div className="p-2 bg-white rounded-full shadow-sm mr-3">
                             <Euro size={16} className="text-[rgba(119,150,109,1)]" />
@@ -191,7 +215,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                         </div>
                     </div>
 
-                    {/* Duration */}
                     {appointment.estimatedDuration && (
                         <div className="flex items-center p-3 bg-[rgba(189,198,103,0.05)] rounded-lg">
                             <div className="p-2 bg-white rounded-full shadow-sm mr-3">
@@ -205,7 +228,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                     )}
                 </div>
 
-                {/* Check-in/Check-out Section */}
                 {(appointment.checkIn || appointment.checkOut) && (
                     <div className="mt-4 p-4 bg-[rgba(98,109,88,0.05)] rounded-lg border border-[rgba(98,109,88,0.1)]">
                         <h4 className="font-medium text-[rgba(84,67,67,1)] mb-3 text-sm">Service Timeline</h4>
@@ -236,7 +258,6 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                     </div>
                 )}
 
-                {/* Action Buttons */}
                 <div className="mt-6 flex justify-end space-x-3">
                     {isPaymentRequired && (
                         <button
@@ -248,7 +269,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                         </button>
                     )}
 
-                    {(appointment.status === "waiting" || appointment.status === "accepted") && (
+                    {(appointment.status === "waiting") && (
                         <button
                             className="px-4 py-2 text-sm font-medium rounded-lg border-2 border-[rgba(86,40,45,1)] text-[rgba(86,40,45,1)] hover:bg-[rgba(86,40,45,1)] hover:text-white transition-all duration-200 transform hover:scale-105"
                             onClick={handleCancel}
@@ -256,6 +277,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, c
                             Cancel Appointment
                         </button>
                     )}
+
+                    {appointment.status === "finished" && (
+                        <button
+                            className="px-4 py-2 text-sm font-medium rounded-lg border-2 border-[rgba(119,150,109,1)] text-[rgba(119,150,109,1)] hover:bg-[rgba(119,150,109,1)] hover:text-white transition-all duration-200 transform hover:scale-105"
+                            onClick={handleInvoiceDownload}
+                        >
+                            Download Invoice
+                        </button>
+                    )}
+
                 </div>
             </div>
         </div>
