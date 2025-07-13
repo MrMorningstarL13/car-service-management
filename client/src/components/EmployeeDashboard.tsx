@@ -78,7 +78,7 @@ export default function EmployeeDashboard() {
 
     const getRepairsForDate = (date: Date) => {
         return repairs.filter((repair) => {
-            const repairDate = new Date(repair.appointment.scheduledDate)
+            const repairDate = new Date(repair?.appointment?.scheduledDate)
             return repairDate.toDateString() === date.toDateString()
         })
     }

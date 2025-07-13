@@ -8,9 +8,10 @@ import useCarStore from "../stores/carStore"
 
 export default function Appointments() {
     const { fetchCars } = useCarStore()
-    const { appointments, getByUser } = useAppointmentStore()
+    const { userAppointments, getByUser } = useAppointmentStore()
     const currentUser: any = useUserStore.getState().user
     const currentUserId = currentUser.id
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
 
     useEffect(() => {
         fetchCars()
@@ -18,7 +19,7 @@ export default function Appointments() {
     }, [])
 
     const [selectedCarId, setSelectedCarId] = useState<number | null>(null)
-    const carsData = appointments
+    const carsData = userAppointments
 
     const allAppointments = useMemo(() => {
         return carsData.flatMap((car) =>
@@ -50,19 +51,19 @@ export default function Appointments() {
             }
         })
 
-        payment.sort(
-            (a, b) => new Date(a.appointment.scheduledDate).getTime() - new Date(b.appointment.scheduledDate).getTime(),
-        )
+        const sortFn = (a: any, b: any) => {
+            const dateA = new Date(a.appointment.scheduledDate).getTime()
+            const dateB = new Date(b.appointment.scheduledDate).getTime()
+            return sortOrder === "asc" ? dateA - dateB : dateB - dateA
+        }
 
-        active.sort(
-            (a, b) => new Date(a.appointment.scheduledDate).getTime() - new Date(b.appointment.scheduledDate).getTime(),
-        )
-        past.sort(
-            (a, b) => new Date(b.appointment.scheduledDate).getTime() - new Date(a.appointment.scheduledDate).getTime(),
-        )
+        payment.sort(sortFn)
+        active.sort(sortFn)
+        past.sort(sortFn)
 
         return { activeAppointments: active, pastAppointments: past, paymentAppointments: payment }
-    }, [filteredAppointments])
+    }, [filteredAppointments, sortOrder])
+
 
     return (
         <main className="min-h-screen bg-[#f8f9f4]">
@@ -81,8 +82,8 @@ export default function Appointments() {
                         <button
                             onClick={() => setSelectedCarId(null)}
                             className={`px-4 py-2 rounded-md border transition-colors duration-200 ${selectedCarId === null
-                                    ? "bg-[rgba(119,150,109,1)] text-white border-[rgba(119,150,109,1)]"
-                                    : "bg-white text-[rgba(84,67,67,1)] border-[rgba(189,198,103,1)] hover:bg-[rgba(189,198,103,0.1)]"
+                                ? "bg-[rgba(119,150,109,1)] text-white border-[rgba(119,150,109,1)]"
+                                : "bg-white text-[rgba(84,67,67,1)] border-[rgba(189,198,103,1)] hover:bg-[rgba(189,198,103,0.1)]"
                                 }`}
                         >
                             All Cars
@@ -93,8 +94,8 @@ export default function Appointments() {
                                 key={car.id}
                                 onClick={() => setSelectedCarId(car.id)}
                                 className={`px-4 py-2 rounded-md border transition-colors duration-200 flex items-center ${selectedCarId === car.id
-                                        ? "bg-[rgba(119,150,109,1)] text-white border-[rgba(119,150,109,1)]"
-                                        : "bg-white text-[rgba(84,67,67,1)] border-[rgba(189,198,103,1)] hover:bg-[rgba(189,198,103,0.1)]"
+                                    ? "bg-[rgba(119,150,109,1)] text-white border-[rgba(119,150,109,1)]"
+                                    : "bg-white text-[rgba(84,67,67,1)] border-[rgba(189,198,103,1)] hover:bg-[rgba(189,198,103,0.1)]"
                                     }`}
                             >
                                 <Car size={16} className="mr-2" />
@@ -102,6 +103,21 @@ export default function Appointments() {
                             </button>
                         ))}
                     </div>
+                    <div className="flex items-center justify-center mt-6">
+                        <label htmlFor="sortOrder" className="mr-2 text-[rgba(84,67,67,1)] font-medium">
+                            Order by Date:
+                        </label>
+                        <select
+                            id="sortOrder"
+                            value={sortOrder}
+                            onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+                            className="px-4 py-2 border rounded-md bg-white text-[rgba(84,67,67,1)] border-[rgba(189,198,103,1)] focus:outline-none"
+                        >
+                            <option value="asc">Oldest First</option>
+                            <option value="desc">Newest First</option>
+                        </select>
+                    </div>
+
                 </div>
 
                 {/* Payment Required Section */}

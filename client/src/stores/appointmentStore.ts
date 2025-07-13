@@ -3,7 +3,8 @@ import axios from "axios"
 const URL: string = "http://localhost:8080/api/appointment"
 
 type Store = {
-    appointments: any[],
+    userAppointments: any[],
+    serviceAppointments: any[],
     create: (carId: string, serviceId: number, appointmentData: any) => Promise<number>,
     getByUser: (userId: any) => Promise<void>,
     update: (appointmentId: string, appointmentData: any) => Promise<void>,
@@ -11,7 +12,8 @@ type Store = {
 }
 
 const useAppointmentStore = create<Store>((set) => ({
-    appointments: [],
+    userAppointments: [],
+    serviceAppointments: [],
     create: async (carId, serviceId, appointmentData) => {
         try {
             const response = await axios.post(`${URL}/create/${carId}/${serviceId}`, appointmentData)
@@ -28,7 +30,7 @@ const useAppointmentStore = create<Store>((set) => ({
         try {
             const response = await axios.get(`${URL}/getByUser/${userId}`)
             if (response != null) {
-                set((state) => ({ appointments: response.data }))
+                set((state) => ({ userAppointments: response.data }))
             }
         } catch (error) {
             console.warn("error in appointment store, getByUser")
@@ -40,7 +42,7 @@ const useAppointmentStore = create<Store>((set) => ({
             const updatedAppointment = response.data
 
             set((state) => ({
-                appointments: state.appointments.map((appointment: any) =>
+                userAppointments: state.userAppointments.map((appointment: any) =>
                     appointment.id === updatedAppointment.id ? updatedAppointment : appointment
                 ),
             }))
@@ -53,7 +55,7 @@ const useAppointmentStore = create<Store>((set) => ({
             const response = await axios.get(`${URL}/getByService/${serviceId}`)
             
             if(response != null) {
-                set((state) => ({ appointments: response.data}))
+                set((state) => ({ serviceAppointments: response.data}))
             }
         } catch (error) {
             console.warn("error getting appointments by service", error)

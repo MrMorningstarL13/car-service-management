@@ -22,7 +22,7 @@ export default function Home() {
     const { services, fetchShops } = useServiceStore()
     const { fetchCars } = useCarStore()
     const { favourites, getByUser } = useFavouriteStore()
-    const { appointments, getByService, update } = useAppointmentStore()
+    const { serviceAppointments, getByService, update } = useAppointmentStore()
     const { employees, fetchEmployees } = useEmployeeStore()
     const { assignRepair } = repairStore()
 
@@ -50,9 +50,6 @@ export default function Home() {
             getByService(serviceId)
             fetchEmployees(serviceId)
         }
-
-        console.log("employees", employees)
-        console.log("appointments", appointments)
 
     }, [fetchShops, fetchCars, getByUser, getByService, fetchEmployees])
 
@@ -85,16 +82,16 @@ export default function Home() {
     const filteredServices =
         viewMode === "all" ? services : services.filter(service => favourites.some(f => f.serviceId === service.id))
 
-    const activeAppointments = appointments.filter(
-        (appointment) => !["finished", "cancelled", "denied"].includes(appointment.status)
-    )
-
-    const completedAppointments = appointments.filter((appointment) =>
-        ["finished", "cancelled", "denied"].includes(appointment.status)
-    )
-
-    // @ts-ignore
-    if (userStore.getState().user.role === "employee" && userStore.getState().user.employee.isRep) {
+        
+        // @ts-ignore
+        if (userStore.getState().user.role === "employee" && userStore.getState().user.employee.isRep) {
+        const activeAppointments = serviceAppointments.filter(
+            (appointment) => !["finished", "cancelled", "denied"].includes(appointment.status)
+        )
+    
+        const completedAppointments = serviceAppointments.filter((appointment) =>
+            ["finished", "cancelled", "denied"].includes(appointment.status)
+        )
         return (
             <main className="min-h-full bg-[#f8f9f4]">
                 <Navbar role="rep" />

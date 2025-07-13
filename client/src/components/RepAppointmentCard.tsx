@@ -53,6 +53,7 @@ export default function RepAppointmentCard({
     onUpdateAppointmentStatus,
 }: AppointmentCardProps) {
     const [isExpanded, setIsExpanded] = useState(false)
+    console.log(appointment)
 
     const getStatusColor = (status: string) => {
         switch (status) {
