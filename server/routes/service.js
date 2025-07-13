@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { serviceController } = require('../controllers')
 
-router.post('/create', serviceController.create)
+router.post('/create/:employeeId', serviceController.create)
 router.post('/getAllShops', serviceController.getAll)
 router.get('/getServiceById/:serviceId', serviceController.getById)
 router.post('/addServiceType/:shopId/:serviceTypeName', serviceController.addServiceTypeToShop)

@@ -1,5 +1,12 @@
-const { Service } = require('../models')
-const { ServiceType } = require('../models')
+const { Op, fn, col } = require("sequelize")
+const {
+    Invoice,
+    Appointment,
+    Employee,
+    Repair,
+    ServiceType,
+    Service,
+} = require("../models")
 
 const serviceController = {
     create: async (req, res) => {
@@ -26,6 +33,10 @@ const serviceController = {
 
             if (completeServiceData) {
                 const createdService = await Service.create(completeServiceData);
+                const employee = await Employee.findOne({ where: {authUserId: req.params.employeeId}})
+                console.log("3",Object.getOwnPropertyNames(Object.getPrototypeOf(employee)));
+
+                employee.setService(createdService)
                 res.status(200).json(createdService);
             } else {
                 res.status(400).json('Failed to create service.');
@@ -48,9 +59,9 @@ const serviceController = {
 
             if (services.length === 0) {
                 res.status(404).json("There are no services.")
-            } 
+            }
 
-            if (!origin){
+            if (!origin) {
                 return res.status(200).json(services)
             }
 
@@ -66,11 +77,11 @@ const serviceController = {
                 return res.status(500).json("Error fetching data from Maps API")
             }
 
-            if(data.rows[0].elements.every( (element ) => element.status === "ZERO_RESULTS")) {
+            if (data.rows[0].elements.every((element) => element.status === "ZERO_RESULTS")) {
                 return res.status(404).json("No shops found withing a reachable driving distance.")
             }
 
-            const plainServices = services.map( service => service.get({ plain: true }) );
+            const plainServices = services.map(service => service.get({ plain: true }));
 
             const sortedShops = plainServices.map((service, index) => ({
                 ...service,
@@ -186,11 +197,162 @@ const serviceController = {
             res.status(500).json(error.message);
         }
     },
-    getRepresentativeStatistics: async(req, res) => {
+    getRepresentativeStatistics: async (req, res) => {
         try {
-            
+            const { serviceId } = req.params
+
+            const service = await Service.findByPk(serviceId)
+            if (!service) return res.status(404).json({ message: "Service not found" })
+
+            const now = new Date()
+            const currentYear = now.getFullYear()
+            const currentMonth = now.getMonth()
+            const monthStart = new Date(currentYear, currentMonth, 1)
+            const monthEnd = new Date(currentYear, currentMonth + 1, 0)
+
+            // Get all invoice IDs for non-cancelled appointments in this service
+            const appointmentsWithInvoices = await Appointment.findAll({
+                where: {
+                    serviceId,
+                    invoiceId: { [Op.ne]: null },
+                    status: { [Op.ne]: "cancelled" },
+                },
+                attributes: ['invoiceId'],
+                raw: true,
+            })
+
+            const invoiceIds = appointmentsWithInvoices.map(a => a.invoiceId)
+
+            // Total Revenue
+            const totalRevenue = await Invoice.sum("finalCost", {
+                where: {
+                    id: invoiceIds,
+                },
+            })
+
+            // Current Month Revenue
+            const currentMonthRevenue = await Invoice.sum("finalCost", {
+                where: {
+                    id: invoiceIds,
+                    paymentDate: {
+                        [Op.between]: [monthStart, monthEnd],
+                    },
+                },
+            })
+
+            // Active Employees
+            const activeEmployees = await Employee.count({
+                where: { serviceId },
+            })
+
+            // Completed Appointments (non-cancelled)
+            const completedAppointments = await Appointment.count({
+                where: {
+                    serviceId,
+                    status: "finished",
+                },
+            })
+
+            // Service Type Distribution (only non-cancelled appointments)
+            const serviceTypeCounts = await Repair.findAll({
+                attributes: [
+                    "serviceTypeId",
+                    [fn("COUNT", col("serviceTypeId")), "count"],
+                ],
+                include: [
+                    {
+                        model: ServiceType,
+                        attributes: ["name"],
+                        where: { serviceId },
+                    },
+                    {
+                        model: Appointment,
+                        attributes: [],
+                        where: {
+                            serviceId,
+                            status: { [Op.ne]: "cancelled" },
+                        },
+                    },
+                ],
+                group: ["repair.serviceTypeId", "service_type.id"],
+            })
+
+            const serviceTypeDistribution = serviceTypeCounts.map((entry) => ({
+                name: entry.service_type.name,
+                value: parseInt(entry.dataValues.count),
+            }))
+
+            // Monthly Trends (non-cancelled only)
+            const oneYearAgo = new Date(currentYear - 1, currentMonth + 1, 1)
+
+            const appointmentsByMonth = await Appointment.findAll({
+                attributes: [
+                    [fn("DATE_FORMAT", col("scheduledDate"), "%Y-%m"), "month"],
+                    [fn("COUNT", "*"), "appointments"],
+                ],
+                where: {
+                    serviceId,
+                    status: { [Op.ne]: "cancelled" },
+                    scheduledDate: {
+                        [Op.gte]: oneYearAgo,
+                    },
+                },
+                group: [fn("DATE_FORMAT", col("scheduledDate"), "%Y-%m")],
+                order: [[fn("DATE_FORMAT", col("scheduledDate"), "%Y-%m"), "ASC"]],
+                raw: true,
+            })
+
+            const revenueByMonth = await Invoice.findAll({
+                attributes: [
+                    [fn("DATE_FORMAT", col("paymentDate"), "%Y-%m"), "month"],
+                    [fn("SUM", col("finalCost")), "revenue"],
+                ],
+                where: {
+                    id: invoiceIds,
+                    paymentDate: {
+                        [Op.gte]: oneYearAgo,
+                    },
+                },
+                group: [fn("DATE_FORMAT", col("paymentDate"), "%Y-%m")],
+                order: [[fn("DATE_FORMAT", col("paymentDate"), "%Y-%m"), "ASC"]],
+                raw: true,
+            })
+
+            const monthlyTrendsMap = {}
+
+            for (const entry of appointmentsByMonth) {
+                monthlyTrendsMap[entry.month] = {
+                    month: entry.month,
+                    appointments: parseInt(entry.appointments),
+                    revenue: 0,
+                }
+            }
+
+            for (const entry of revenueByMonth) {
+                if (!monthlyTrendsMap[entry.month]) {
+                    monthlyTrendsMap[entry.month] = {
+                        month: entry.month,
+                        appointments: 0,
+                        revenue: 0,
+                    }
+                }
+                monthlyTrendsMap[entry.month].revenue = parseFloat(entry.revenue)
+            }
+
+            const monthlyTrends = Object.values(monthlyTrendsMap)
+
+            return res.json({
+                allTimeRevenue: totalRevenue || 0,
+                currentMonthRevenue: currentMonthRevenue || 0,
+                activeEmployees,
+                completedAppointments,
+                serviceTypeDistribution,
+                monthlyTrends,
+            })
+
         } catch (error) {
-            res.status(500).json(error.message)
+            console.error(error)
+            res.status(500).json({ message: "Server error", error })
         }
     }
 }

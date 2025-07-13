@@ -23,7 +23,7 @@ type Store = {
     services: any[],
     currentService: Service;
     fetchShops: (origin: any) => Promise<void>
-    create: (newService: Service) => Promise<void>
+    create: (newService: Service, employeeId: any) => Promise<void>
     getById: (serviceId: number) => Promise<BackendService>
     update: (serviceId: number, updatedService: Service) => Promise<void>
 }
@@ -33,20 +33,19 @@ const useServiceStore = create<Store>((set) => ({
     currentService: {},
     fetchShops: async (origin) => {
         try {
-            await axios.post(`${URL}/getAllShops`, { origin })
-                .then((response) => {
-                    set({ services: response.data })
-                })
-                .catch((error) => {
-                    console.warn(error)
-                })
-        } catch (error) {
-            console.warn("error fetching services")
+            console.log(origin)
+            const response = await axios.post(`http://localhost:8080/api/service/getAllShops`, { origin })
+            console.log(response)
+            set({ services: response.data })
+            set({ currentService: response.data })
+
+        } catch (error: any) {
+            console.warn("error", error)
         }
     },
-    create: async (newService) => {
+    create: async (newService, employeeId) => {
         try {
-            await axios.post(`${URL}/create`, newService)
+            await axios.post(`${URL}/create/${employeeId}`, newService)
                 .then((response) => {
                     set({ currentService: response.data })
                 })

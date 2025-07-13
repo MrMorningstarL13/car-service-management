@@ -13,51 +13,71 @@ import {
     Cell,
 } from "recharts"
 import { TrendingUp, Euro, Users, Calendar } from "lucide-react"
+import axios from "axios"
+import { useEffect, useState } from "react"
 
-const profitData = [
-    { year: "2021", income: 145000, expenses: 98000, profit: 47000 },
-    { year: "2022", income: 168000, expenses: 112000, profit: 56000 },
-    { year: "2023", income: 195000, expenses: 128000, profit: 67000 },
-    { year: "2024", income: 220000, expenses: 145000, profit: 75000 },
+const COLORS = [
+    "rgba(119,150,109,1)",
+    "rgba(189,198,103,1)",
+    "rgba(98,109,88,1)",
+    "rgba(86,40,45,1)",
+    "rgba(84,67,67,0.5)",
 ]
 
-const monthlyData = [
-    { month: "Jan", appointments: 45, revenue: 18500 },
-    { month: "Feb", appointments: 52, revenue: 21200 },
-    { month: "Mar", appointments: 48, revenue: 19800 },
-    { month: "Apr", appointments: 61, revenue: 24500 },
-    { month: "May", appointments: 58, revenue: 23200 },
-    { month: "Jun", appointments: 65, revenue: 26800 },
-]
+export default function ServiceStatistics({ serviceId }: { serviceId: number }) {
+    const [stats, setStats] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<Error | null>(null)
 
-const serviceTypeData = [
-    { name: "Oil Change", value: 30, color: "rgba(119, 150, 109, 1)" },
-    { name: "Brake Service", value: 25, color: "rgba(189, 198, 103, 1)" },
-    { name: "Tire Service", value: 20, color: "rgba(98, 109, 88, 1)" },
-    { name: "Engine Repair", value: 15, color: "rgba(86, 40, 45, 1)" },
-    { name: "Other", value: 5, color: "rgba(84, 67, 67, 0.5)" },
-]
+    useEffect(() => {
+        if (!serviceId) return
 
-export default function ServiceStatistics() {
-    const currentYear = new Date().getFullYear()
-    const currentYearData = profitData.find((d) => d.year === currentYear.toString()) || profitData[profitData.length - 1]
+        const fetchStats = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/service/getStats/${serviceId}`)
+                setStats(response.data)
+            } catch (err: any) {
+                setError(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchStats()
+    }, [serviceId])
+
+    if (loading) return <p>Loading statistics...</p>
+    if (error) return <p>Error loading statistics: {error.message}</p>
+    if (!stats) return null
+
+    const {
+        allTimeRevenue,
+        currentMonthRevenue,
+        activeEmployees,
+        completedAppointments,
+        serviceTypeDistribution,
+        monthlyTrends,
+    } = stats
+
+    const serviceTypeData = serviceTypeDistribution.map((item: any, index: number) => ({
+        ...item,
+        color: COLORS[index % COLORS.length],
+    }))
 
     return (
         <div className="space-y-6">
-            {/* Header */}
             <div>
                 <h2 className="text-2xl font-bold text-[rgba(84,67,67,1)]">Business Analytics</h2>
                 <p className="text-[rgba(84,67,67,0.7)]">Track your service performance and financial metrics</p>
             </div>
 
-            {/* Key Metrics Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                     <div className="flex items-center justify-between">
                         <div>
                             <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">All-time Revenue</h3>
                             <p className="text-2xl font-bold text-[rgba(119,150,109,1)]">
-                                ${currentYearData.profit.toLocaleString()}
+                                ${allTimeRevenue?.toLocaleString() || "0"}
                             </p>
                         </div>
                         <div className="p-3 bg-[rgba(119,150,109,0.1)] rounded-full">
@@ -71,7 +91,7 @@ export default function ServiceStatistics() {
                         <div>
                             <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Monthly Revenue</h3>
                             <p className="text-2xl font-bold text-[rgba(189,198,103,1)]">
-                                ${monthlyData[monthlyData.length - 1].revenue.toLocaleString()}
+                                ${currentMonthRevenue?.toLocaleString() || "0"}
                             </p>
                             <p className="text-xs text-[rgba(84,67,67,0.6)]">Current month</p>
                         </div>
@@ -85,7 +105,7 @@ export default function ServiceStatistics() {
                     <div className="flex items-center justify-between">
                         <div>
                             <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Active Employees</h3>
-                            <p className="text-2xl font-bold text-[rgba(98,109,88,1)]">12</p>
+                            <p className="text-2xl font-bold text-[rgba(98,109,88,1)]">{activeEmployees}</p>
                         </div>
                         <div className="p-3 bg-[rgba(98,109,88,0.1)] rounded-full">
                             <Users size={24} className="text-[rgba(98,109,88,1)]" />
@@ -98,7 +118,7 @@ export default function ServiceStatistics() {
                         <div>
                             <h3 className="text-sm font-medium text-[rgba(84,67,67,0.7)]">Completed Appointments</h3>
                             <p className="text-2xl font-bold text-[rgba(86,40,45,1)]">
-                                {monthlyData[monthlyData.length - 1].appointments}
+                                {completedAppointments ?? "0"}
                             </p>
                         </div>
                         <div className="p-3 bg-[rgba(86,40,45,0.1)] rounded-full">
@@ -109,7 +129,6 @@ export default function ServiceStatistics() {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
-                {/* Service Distribution */}
                 <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                     <h3 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Service Type Distribution</h3>
                     <ResponsiveContainer width="100%" height={300}>
@@ -123,7 +142,7 @@ export default function ServiceStatistics() {
                                 paddingAngle={5}
                                 dataKey="value"
                             >
-                                {serviceTypeData.map((entry, index) => (
+                                {serviceTypeData.map((entry: any, index: number) => (
                                     <Cell key={`cell-${index}`} fill={entry.color} />
                                 ))}
                             </Pie>
@@ -138,7 +157,7 @@ export default function ServiceStatistics() {
                         </PieChart>
                     </ResponsiveContainer>
                     <div className="mt-4 grid grid-cols-2 gap-2">
-                        {serviceTypeData.map((item, index) => (
+                        {serviceTypeData.map((item: any, index: number) => (
                             <div key={index} className="flex items-center">
                                 <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }} />
                                 <span className="text-sm text-[rgba(84,67,67,0.8)]">{item.name}</span>
@@ -148,11 +167,10 @@ export default function ServiceStatistics() {
                 </div>
             </div>
 
-            {/* Monthly Trends */}
             <div className="bg-white shadow-md rounded-lg p-6 border border-[rgba(189,198,103,0.3)]">
                 <h3 className="text-xl font-semibold text-[rgba(84,67,67,1)] mb-4">Monthly Performance Trends</h3>
                 <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={monthlyData}>
+                    <LineChart data={monthlyTrends}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(189,198,103,0.3)" />
                         <XAxis dataKey="month" tick={{ fill: "rgba(84,67,67,0.8)" }} />
                         <YAxis yAxisId="left" tick={{ fill: "rgba(84,67,67,0.8)" }} />

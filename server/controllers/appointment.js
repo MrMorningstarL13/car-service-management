@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { Appointment, Car, Repair, Service } = require('../models')
+const { Appointment, Car, Repair, Service, User } = require('../models')
 
 const controller = {
     createAppointment: async (req, res) => {
@@ -41,10 +41,18 @@ const controller = {
     },
     getAppointmentsByUser: async (req, res) => {
         try {
-            const userId = req.params.userId
+            const authUserId = req.params.userId;
+
+            const user = await User.findOne({
+                where: { authUserId }
+            });
+
+            if (!user) {
+                return res.status(404).json("User not found");
+            }
 
             const carsWithAppointments = await Car.findAll({
-                where: { userId },
+                where: { userId: user.id },
                 attributes: ['id', 'brand', 'model', 'yearOfProduction'],
                 include: [
                     {

@@ -29,6 +29,7 @@ const useAppointmentStore = create<Store>((set) => ({
     getByUser: async (userId) => {
         try {
             const response = await axios.get(`${URL}/getByUser/${userId}`)
+            console.log("response", response)
             if (response != null) {
                 set((state) => ({ userAppointments: response.data }))
             }

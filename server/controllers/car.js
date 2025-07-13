@@ -1,17 +1,21 @@
-const { User } = require('../models');
-const { Car } = require('../models');
+const { User, AuthUser, Car } = require('../models');
 const axios = require('axios');
 const { redisClient } = require('../utils/redisClient');
 
 const carController = {
     create: async (req, res) => {
         try {
-            const searchedUser = await User.findByPk(req.params.userId);
+            const { userId } = req.params
+            const searchedUser = await AuthUser.findByPk(userId, {
+                include: {
+                    model: User
+                }
+            });
 
             const data = req.body;
             const createdCar = await Car.create(data);
 
-            const isOk = await searchedUser.addCar(createdCar);
+            const isOk = await searchedUser.user.addCar(createdCar);
             if (isOk) {
                 res.status(200).json(createdCar);
             } else {
@@ -26,13 +30,18 @@ const carController = {
         try {
 
             const userId = req.params.userId;
-            const searchedUser = await User.findByPk(userId);
+            const searchedUser = await AuthUser.findByPk(userId, {
+                include: {
+                    model: User
+                }
+            });
+
             if (!searchedUser) {
                 return res.status(404).json({ message: "User not found" });
             }
 
             const cars = await Car.findAll({
-                where: { userId: userId },
+                where: { userId: searchedUser.user.id },
             });
 
             if (cars.length === 0) {

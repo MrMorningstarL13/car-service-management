@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import axios from "axios"
 import { useAuthStore } from "./useAuthStore"
 import useCarStore from "./carStore"
+import useAppointmentStore from "./appointmentStore"
 
 const URL: string = "http://localhost:8080/api/user"
 
@@ -93,6 +94,8 @@ const useUserStore = create<Store>()(
                     set({ currentServiceId: 0 })
                     useCarStore.getState().cars = []
                     useAuthStore.getState().loggedIn = false
+                    useAppointmentStore.getState().userAppointments = []
+                    useAppointmentStore.getState().serviceAppointments = []
                 } catch (error) {
                     console.warn("error logging out user")
                 }

@@ -2,57 +2,67 @@ const { Feedback, Service, Appointment, Car, User, AuthUser } = require('../mode
 
 const controller = {
     create: async (req, res) => {
-        const { userId, serviceId } = req.params;
-        const { rating, comment } = req.body;
+        try {
+            const { userId: authUserId, serviceId } = req.params;
+            const { rating, comment } = req.body;
 
-        if (!rating || !comment) {
-            return res.status(400).json('You must add a rating and a comment!');
-        }
-        if (rating < 0 || rating > 10) {
-            return res.status(400).json('Invalid rating range, please insert a valid rating!');
-        }
+            if (!rating || !comment) {
+                return res.status(400).json('You must add a rating and a comment!');
+            }
+            if (rating < 0 || rating > 10) {
+                return res.status(400).json('Invalid rating range, please insert a valid rating!');
+            }
 
-        const cars = await Car.findAll({
-            where: { userId },
-            attributes: ['id'],
-            include: [{
-                model: Appointment,
+            const user = await User.findOne({
+                where: { authUserId },
+                include: {
+                    model: AuthUser,
+                    attributes: ['firstName', 'lastName']
+                }
+            });
+
+            if (!user) {
+                return res.status(404).json('User not found');
+            }
+
+            const cars = await Car.findAll({
+                where: { userId: user.id },
                 attributes: ['id'],
-                where: { serviceId }
-            }]
-        });
+                include: [{
+                    model: Appointment,
+                    attributes: ['id'],
+                    where: { serviceId }
+                }]
+            });
 
-        if (cars.length === 0) {
-            return res.status(404).json(
-                'No appointments found at this service! Please make an appointment before adding a review.'
-            );
+            if (cars.length === 0) {
+                return res.status(404).json(
+                    'No appointments found at this service! Please make an appointment before adding a review.'
+                );
+            }
+
+            const { firstName, lastName } = user.auth_user;
+            const author = `${firstName} ${lastName}`.trim();
+
+            const service = await Service.findByPk(serviceId);
+            if (!service) {
+                return res.status(404).json('Service not found');
+            }
+
+            const feedback = await service.createFeedback({
+                rating,
+                comment,
+                author
+            });
+
+            return res.status(201).json(feedback);
+
+        } catch (error) {
+            console.error('Error creating feedback:', error);
+            return res.status(500).json('Internal server error');
         }
-
-        const user = await User.findByPk(userId, {
-            include: { model: AuthUser, attributes: ['firstName', 'lastName'] }
-        });
-
-        if (!user) {
-            return res.status(404).json('User not found');
-        }
-
-        const { firstName, lastName } = user.auth_user;
-        const author = `${firstName} ${lastName}`.trim();
-
-        const service = await Service.findByPk(serviceId);
-        if (!service) {
-            return res.status(404).json('Service not found');
-        }
-
-        const feedback = await service.createFeedback({
-            rating,
-            comment,
-            author,
-        });
-
-        return res.status(201).json(feedback);
-
     },
+
     update: async (req, res) => {
         try {
             const { feedbackId } = req.params;
@@ -105,10 +115,10 @@ const controller = {
             const { serviceId } = req.params
 
             const result = await Feedback.findAll({
-                where: {serviceId}
+                where: { serviceId }
             })
 
-            if(result.length === 0)
+            if (result.length === 0)
                 return res.status(404).json("No reviews found for this service")
             return res.status(200).json(result)
         } catch (error) {
@@ -121,11 +131,11 @@ const controller = {
             const { serviceId } = req.params
 
             const ratings = await Feedback.findAll({
-                where: {serviceId},
+                where: { serviceId },
                 attributes: ['rating']
             })
 
-            if(!ratings){
+            if (!ratings) {
                 return res.status(404).json(0)
             }
 

@@ -84,17 +84,18 @@ const userController = {
                 }
             }
 
-            const token = jwt.sign({ id: createdAuthUser.id }, JWT_SECRET, {
-                expiresIn: '4h'
-            })
+            // const token = jwt.sign({ id: createdAuthUser.id }, JWT_SECRET, {
+            //     expiresIn: '4h'
+            // })
 
             if (createdAuthUser && createdEntity) {
                 await t.commit();
 
-                return res.cookie("bearer", token, {
-                    maxAge: 4 * 60 * 60 * 1000,
-                    httpOnly: true,
-                }).status(200).json({ user: { createdAuthUser, createdEntity } })
+                // return res.cookie("bearer", token, {
+                //     maxAge: 4 * 60 * 60 * 1000,
+                //     httpOnly: true,
+                // }).status(200).json({ user: { ...createdAuthUser, ...createdEntity } })
+                return res.status(200)
             } else {
                 await t.rollback()
                 return res.status(418).json("error when creating complete user")
@@ -163,9 +164,9 @@ const userController = {
         try {
             const { userId } = req.params
 
-            const searchedUser = await User.findByPk(
-                userId,
+            const searchedUser = await User.findOne(
                 {
+                    where: { AuthUserId: userId },
                     attributes: ['id'],
                     include: {
                         model: Car,

@@ -4,9 +4,13 @@ import ServiceInfoEditor from "../components/ServiceInfo"
 import ServiceStatistics from "../components/ServiceStats"
 import { Settings, BarChart3, Wrench } from "lucide-react"
 import Navbar from "../components/Navbar"
+import useUserStore from "../stores/userStore"
 
 export default function ServiceManagementPage() {
     const [activeTab, setActiveTab] = useState("overview")
+    const currentUser:any = useUserStore.getState().user
+    console.log(currentUser)
+    const currentServiceId = currentUser.employee.serviceId
 
     const tabs = [
         { id: "overview", label: "Overview", icon: BarChart3 },
@@ -45,7 +49,7 @@ export default function ServiceManagementPage() {
                 </div>
 
                 <div className="space-y-6">
-                    {activeTab === "overview" && <ServiceStatistics />}
+                    {activeTab === "overview" && <ServiceStatistics serviceId={currentServiceId}/>}
                     {activeTab === "service-types" && <ServiceTypeManagement />}
                     {activeTab === "service-info" && <ServiceInfoEditor />}
                 </div>

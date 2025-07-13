@@ -43,11 +43,12 @@ const useCarStore = create<Store>()(
                 try {
 
                     const currentUser: any = useUserStore.getState().user;
+                    console.log(currentUser.id)
 
                     const response = await axios.post(`${URL}/create/${currentUser.id}`, newCar, { withCredentials: true });
                     set((state) => ({ cars: [...state.cars, response.data] }));
                 } catch (error) {
-                    console.warn('error adding car');
+                    console.warn(error);
                 }
             },
             deleteCar: async (carId) => {

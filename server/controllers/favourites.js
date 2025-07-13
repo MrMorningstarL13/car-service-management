@@ -5,7 +5,7 @@ const favController = {
         try {
             const {userId, serviceId} = req.params;
 
-            const user = await User.findByPk(userId)
+            const user = await User.findOne({ where: { authUserId: userId }})
             const service = await Service.findByPk(serviceId)
 
             if(!user || !service)
@@ -25,7 +25,7 @@ const favController = {
         try {
             const {userId, serviceId} = req.params;
 
-            const user = await User.findByPk(userId)
+            const user = await User.findOne({where: {authUserId: userId }})
             const service = await Service.findByPk(serviceId)
 
             if(!user || !service)
@@ -42,11 +42,16 @@ const favController = {
     },
     getFavouritesForUser: async(req, res) => {
         try {
-            const {userId} = req.params;
+            const { userId } = req.params;
+            const user = await User.findOne({ where: { authUserId: userId } });
+            if (!user) {
+                return res.status(404).json("No user found!");
+            }
+            const actualUserId = user.id;
 
             const favouriteServices = await Favourite.findAll({
                 where: {
-                    userId: userId
+                    userId: actualUserId
                 }
             })
 

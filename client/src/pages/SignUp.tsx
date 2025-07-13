@@ -34,6 +34,7 @@ export default function SignUp() {
         e.preventDefault();
         const entity = authUserData.role === "customer" ? { user: userData } : { employee: employeeData }
 
+        navigate('/login')
         await createUser(authUserData, entity);
     }
 
