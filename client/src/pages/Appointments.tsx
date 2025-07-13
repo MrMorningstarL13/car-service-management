@@ -16,7 +16,7 @@ export default function Appointments() {
     useEffect(() => {
         fetchCars()
         getByUser(currentUserId)
-    }, [])
+    }, [userAppointments])
 
     const [selectedCarId, setSelectedCarId] = useState<number | null>(null)
     const carsData = userAppointments

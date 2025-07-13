@@ -50,7 +50,7 @@ export default function Home() {
             fetchEmployees(serviceId)
         }
 
-    }, [fetchShops, fetchCars, getByUser, getByService, fetchEmployees])
+    }, [fetchShops, fetchCars, getByUser, getByService, fetchEmployees, serviceAppointments])
 
     const getUserLocation = (): Promise<{ lat: number; lng: number }> => {
         return new Promise((resolve, reject) => {
