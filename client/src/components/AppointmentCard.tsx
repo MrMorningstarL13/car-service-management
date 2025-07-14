@@ -29,15 +29,19 @@ export interface CarWithAppointments {
 interface AppointmentCardProps {
     appointment: Appointment
     car: CarWithAppointments
+    onCancel:any
 }
 
-export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, car }) => {
+export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, car, onCancel }) => {
     const { services } = useServiceStore()
     const { update } = useAppointmentStore()
 
-    const handleCancel = () => {
-        update(appointment.id, { status: "cancelled" })
+    const handleCancel = async() => {
+        await update(appointment.id, { status: "cancelled" })
         toast.success("Appointment cancelled with success")
+        if(onCancel){
+            onCancel()
+        }
     }
 
     const { createCheckoutSession, sessionUrl } = useInvoiceStore()

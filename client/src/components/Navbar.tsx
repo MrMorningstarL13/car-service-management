@@ -122,7 +122,7 @@ export default function Navbar({ role }: NavbarProps) {
 
                 {isMenuOpen && (
                     <div className="md:hidden pb-4">
-                        <div className="pt-2 pb-4">
+                        {/* <div className="pt-2 pb-4">
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <Search className="h-5 w-5 text-tertiary" />
@@ -133,7 +133,7 @@ export default function Navbar({ role }: NavbarProps) {
                                     className="w-full pl-10 py-2 pr-3 rounded-md border border-secondary focus:border-tertiary text-contrast-primary focus:outline-none"
                                 />
                             </div>
-                        </div>
+                        </div> */}
 
                         <div className="flex flex-col space-y-2">
                             <NavButton

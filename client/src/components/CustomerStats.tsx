@@ -121,7 +121,7 @@ export default function StatsDashboard() {
                                 Total Money Spent
                             </h3>
                             <p className="text-2xl font-bold text-[rgba(119,150,109,1)]">
-                                ${stats.totalSpent.toLocaleString()}
+                                €{stats.totalSpent.toLocaleString()}
                             </p>
                         </div>
                         <div className="p-3 bg-[rgba(119,150,109,0.1)] rounded-full">
@@ -137,7 +137,7 @@ export default function StatsDashboard() {
                                 Avg. Appointment Cost
                             </h3>
                             <p className="text-2xl font-bold text-[rgba(189,198,103,1)]">
-                                ${stats.averageAppointmentCost.toFixed(2)}
+                                €{stats.averageAppointmentCost.toFixed(2)}
                             </p>
                         </div>
                         <div className="p-3 bg-[rgba(189,198,103,0.1)] rounded-full">

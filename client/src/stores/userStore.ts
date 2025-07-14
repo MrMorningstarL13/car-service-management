@@ -4,6 +4,7 @@ import axios from "axios"
 import { useAuthStore } from "./useAuthStore"
 import useCarStore from "./carStore"
 import useAppointmentStore from "./appointmentStore"
+import repairStore from "./repairStore"
 
 const URL: string = "http://localhost:8080/api/user"
 
@@ -96,6 +97,7 @@ const useUserStore = create<Store>()(
                     useAuthStore.getState().loggedIn = false
                     useAppointmentStore.getState().userAppointments = []
                     useAppointmentStore.getState().serviceAppointments = []
+                    repairStore.getState().repairs = []
                 } catch (error) {
                     console.warn("error logging out user")
                 }
@@ -107,7 +109,7 @@ const useUserStore = create<Store>()(
                     const results = await axios.get(`${URL}/statistics/${currentUser.id}`)
                     return results.data
                 } catch (error) {
-                    console.warn("error when computing statistics")
+                    console.warn("error when computing statistics", error)
                 }
             }
         }),

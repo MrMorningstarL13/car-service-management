@@ -34,9 +34,8 @@ const serviceController = {
             if (completeServiceData) {
                 const createdService = await Service.create(completeServiceData);
                 const employee = await Employee.findOne({ where: {authUserId: req.params.employeeId}})
-                console.log("3",Object.getOwnPropertyNames(Object.getPrototypeOf(employee)));
 
-                employee.setService(createdService)
+                await employee.setService(createdService)
                 res.status(200).json(createdService);
             } else {
                 res.status(400).json('Failed to create service.');

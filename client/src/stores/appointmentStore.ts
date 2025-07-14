@@ -46,11 +46,10 @@ const useAppointmentStore = create<Store>((set) => ({
             const response = await axios.patch(`${URL}/update/${appointmentId}`, appointmentData)
             const updatedAppointment = response.data
 
-            // Merge with existing to avoid overwriting missing fields
             set((state) => ({
                 userAppointments: state.userAppointments.map((appointment: any) =>
                     appointment.id === updatedAppointment.id
-                        ? { ...appointment, ...updatedAppointment } // ensure new object reference
+                        ? { ...appointment, ...updatedAppointment }
                         : appointment
                 ),
             }))

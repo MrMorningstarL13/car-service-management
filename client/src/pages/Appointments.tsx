@@ -16,7 +16,7 @@ export default function Appointments() {
     useEffect(() => {
         fetchCars()
         getByUser(currentUserId)
-    }, [userAppointments])
+    }, [getByUser])
 
     const [selectedCarId, setSelectedCarId] = useState<number | null>(null)
     const carsData = userAppointments
@@ -64,6 +64,9 @@ export default function Appointments() {
         return { activeAppointments: active, pastAppointments: past, paymentAppointments: payment }
     }, [filteredAppointments, sortOrder])
 
+    const handleOnCancel=async()=>{
+        await getByUser(currentUserId)
+    }
 
     return (
         <main className="min-h-screen bg-[#f8f9f4]">
@@ -134,13 +137,12 @@ export default function Appointments() {
                         </div>
                         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                             {paymentAppointments.map(({ appointment, car }) => (
-                                <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} />
+                                <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} onCancel={handleOnCancel} />
                             ))}
                         </div>
                     </div>
                 )}
 
-                {/* Active Appointments */}
                 <div className="mb-8">
                     <h2 className="text-2xl font-bold text-[rgba(84,67,67,1)] mb-4">
                         Active Appointments ({activeAppointments.length})
@@ -153,13 +155,12 @@ export default function Appointments() {
                     ) : (
                         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                             {activeAppointments.map(({ appointment, car }) => (
-                                <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} />
+                                <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} onCancel={handleOnCancel}/>
                             ))}
                         </div>
                     )}
                 </div>
 
-                {/* Past Appointments */}
                 <div>
                     <h2 className="text-2xl font-bold text-[rgba(84,67,67,1)] mb-4">
                         Past Appointments ({pastAppointments.length})
@@ -172,7 +173,7 @@ export default function Appointments() {
                     ) : (
                         <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
                             {pastAppointments.map(({ appointment, car }) => (
-                                <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} />
+                                <AppointmentCard key={`${car.id}-${appointment.id}`} appointment={appointment} car={car} onCancel={handleOnCancel}/>
                             ))}
                         </div>
                     )}

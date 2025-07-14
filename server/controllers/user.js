@@ -162,65 +162,66 @@ const userController = {
 
     getStatistics: async (req, res) => {
         try {
-            const { userId } = req.params
+            const { userId } = req.params;
 
-            const searchedUser = await User.findOne(
-                {
-                    where: { AuthUserId: userId },
-                    attributes: ['id'],
+            const searchedUser = await User.findOne({
+                where: { AuthUserId: userId },
+                attributes: ['id'],
+                include: {
+                    model: Car,
+                    attributes: ['brand', 'model', 'yearOfProduction', 'plateNumber'],
                     include: {
-                        model: Car,
-                        attributes: ['brand', 'model', 'yearOfProduction', 'plateNumber'],
-                        include: {
-                            model: Appointment,
-                            attributes: ['scheduledDate', 'estimatedCost', 'status']
-                        }
+                        model: Appointment,
+                        attributes: ['scheduledDate', 'estimatedCost', 'status']
                     }
                 }
-            )
+            });
 
-            const cars = searchedUser.cars
+            const cars = searchedUser.cars;
 
-            const appointments = cars.map(el => el.appointments)
-            const totalCost = appointments.flat().map(el => el.estimatedCost).reduce((a, b) => a + b)
+            // Filter only "finished" appointments
+            const appointments = cars.flatMap(car =>
+                car.appointments.filter(appt => appt.status === "finished")
+            );
 
-            const noAppointments = appointments.flat().length
+            const totalCost = appointments.map(el => el.estimatedCost).reduce((a, b) => a + b, 0);
+            const noAppointments = appointments.length;
+            const averageCost = noAppointments > 0 ? totalCost / noAppointments : 0;
 
-            const averageCost = totalCost / noAppointments
-
-            let averageCostByCar = {}
-            let costByCar = {}
+            let averageCostByCar = {};
+            let costByCar = {};
 
             cars.forEach(car => {
-                let carName = `${car.yearOfProduction} ${car.brand} ${car.model}`;
+                const carName = `${car.yearOfProduction} ${car.brand} ${car.model}`;
 
-                let appointmentsByCar = car.appointments.map(el => el.estimatedCost)
-                let noAppointments = appointmentsByCar.flat().length
-                let totalCost = appointmentsByCar.reduce((a, b) => a + b)
-                let averageCost = totalCost / noAppointments
+                const finishedAppointments = car.appointments.filter(appt => appt.status === "finished");
+                const costs = finishedAppointments.map(appt => appt.estimatedCost);
+                const total = costs.reduce((a, b) => a + b, 0);
+                const count = costs.length;
+                const average = count > 0 ? total / count : 0;
 
-
-                averageCostByCar[carName] = averageCost
-
-                costByCar[carName] = totalCost
-            })
+                averageCostByCar[carName] = average;
+                costByCar[carName] = total;
+            });
 
             let spendingByCar = {};
 
             cars.forEach(car => {
-                let carName = `${car.yearOfProduction} ${car.brand} ${car.model}`;
+                const carName = `${car.yearOfProduction} ${car.brand} ${car.model}`;
                 let carSpending = {};
 
-                car.appointments.forEach(appointment => {
-                    let year = new Date(appointment.scheduledDate).getFullYear();
-                    let cost = Number(appointment.estimatedCost);
+                car.appointments
+                    .filter(appt => appt.status === "finished")
+                    .forEach(appointment => {
+                        const year = new Date(appointment.scheduledDate).getFullYear();
+                        const cost = Number(appointment.estimatedCost);
 
-                    if (!carSpending[year]) {
-                        carSpending[year] = 0;
-                    }
+                        if (!carSpending[year]) {
+                            carSpending[year] = 0;
+                        }
 
-                    carSpending[year] += cost;
-                });
+                        carSpending[year] += cost;
+                    });
 
                 spendingByCar[carName] = carSpending;
             });
@@ -231,13 +232,14 @@ const userController = {
                 averageCostByCar,
                 spendingByCar,
                 costByCar
-            }
+            };
 
-            res.status(200).json(result)
+            res.status(200).json(result);
         } catch (error) {
-            res.status(500).json(error.message)
+            res.status(500).json(error.message);
         }
     }
+
 }
 
 module.exports = userController

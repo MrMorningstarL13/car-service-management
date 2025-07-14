@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import axios from "axios"
+import useUserStore from './userStore'
 const URL: string = "http://localhost:8080/api/service"
 
 type Service = {
@@ -37,7 +38,6 @@ const useServiceStore = create<Store>((set) => ({
             const response = await axios.post(`http://localhost:8080/api/service/getAllShops`, { origin })
             console.log(response)
             set({ services: response.data })
-            set({ currentService: response.data })
 
         } catch (error: any) {
             console.warn("error", error)
@@ -45,10 +45,9 @@ const useServiceStore = create<Store>((set) => ({
     },
     create: async (newService, employeeId) => {
         try {
-            await axios.post(`${URL}/create/${employeeId}`, newService)
-                .then((response) => {
-                    set({ currentService: response.data })
-                })
+            const response = await axios.post(`${URL}/create/${employeeId}`, newService)
+                set({ currentService: response.data })
+                useUserStore.getState().currentServiceId = response.data.id
         } catch (error) {
             console.warn(error)
         }

@@ -1,9 +1,7 @@
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
-import useServiceTypeStore from "../stores/useServiceTypeStore"
-import userStore from "../stores/userStore"
+import toast from "react-hot-toast"
 
 interface ServiceType {
     id: number
@@ -23,7 +21,7 @@ export default function ServiceTypeDialog({ isOpen, onClose, onSave, serviceType
     const [formData, setFormData] = useState({
         name: "",
         description: "",
-        baseCost: 0,
+        baseCost: "0",
     })
 
     useEffect(() => {
@@ -31,27 +29,39 @@ export default function ServiceTypeDialog({ isOpen, onClose, onSave, serviceType
             setFormData({
                 name: serviceType.name,
                 description: serviceType.description,
-                baseCost: serviceType.baseCost,
+                baseCost: serviceType.baseCost.toString(),
             })
         } else {
             setFormData({
                 name: "",
                 description: "",
-                baseCost: 0,
+                baseCost: "0",
             })
         }
     }, [serviceType, isOpen])
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        onSave(formData)
+
+        const parsedBaseCost = parseFloat(formData.baseCost)
+        if (isNaN(parsedBaseCost) || parsedBaseCost < 0) {
+            alert("Please enter a valid base cost.")
+            return
+        }
+
+        onSave({
+            name: formData.name,
+            description: formData.description,
+            baseCost: parsedBaseCost,
+        })
+        toast.success("Service type created with success!")
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        const { name, value, type } = e.target
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target
         setFormData({
             ...formData,
-            [name]: type === "number" ? Number.parseFloat(value) : value,
+            [name]: value,
         })
     }
 
@@ -99,7 +109,7 @@ export default function ServiceTypeDialog({ isOpen, onClose, onSave, serviceType
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-[rgba(84,67,67,0.9)] mb-1">Base Cost ($)</label>
+                            <label className="block text-sm font-medium text-[rgba(84,67,67,0.9)] mb-1">Base Cost (€)</label>
                             <input
                                 type="number"
                                 name="baseCost"

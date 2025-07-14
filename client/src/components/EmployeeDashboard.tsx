@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { CheckCircle2, ChevronLeft, ChevronRight, Car, Wrench, Clock } from "lucide-react"
 import repairStore from "../stores/repairStore"
 import useUserStore from "../stores/userStore"
+import toast from "react-hot-toast"
 
 interface Repair {
     id: number
@@ -101,6 +102,7 @@ export default function EmployeeDashboard() {
 
     const handleCompleteRepair = (repairId: number) => {
         completeRepair(repairId)
+        toast.success("Completed task!")
     }
 
     const getPriorityColor = (priority: string) => {

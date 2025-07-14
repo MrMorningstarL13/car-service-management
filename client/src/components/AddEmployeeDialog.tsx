@@ -199,7 +199,6 @@ export default function AddEmployeeDialog({ isOpen, onClose, onSubmit, isLoading
                 value={formData.salary}
                 onChange={handleChange}
                 min="0"
-                step="1000"
                 className="w-full px-3 py-2 rounded-md border border-[rgba(119,150,109,1)] focus:border-[rgba(98,109,88,1)] text-[rgba(84,67,67,1)] focus:outline-none"
                 required
               />
